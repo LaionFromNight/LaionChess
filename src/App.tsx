@@ -9,13 +9,18 @@ import {
   getPieceLabel,
 } from './chess/logic';
 import { parseFen, toFen } from './chess/fen';
-import { exportPgn, parsePgn, gameStateToPgnGame } from './chess/pgn';
-import { replayPgnGame } from './chess/replay';
+import { exportPgn, parsePgn } from './chess/pgn';
 import type { SpottingMode } from './chess/analysis';
+import {
+  createGameTree, addNode, getNodeState, findChildByMove,
+  getMainLineTip, deleteSubtree, pgnGameToTree, treeToPgnGame,
+} from './chess/tree';
+import type { GameTree } from './chess/tree';
 import { getAttackedSquares, computeDefenseEdges, computeExchanges } from './chess/analysis';
 import Board from './components/Board';
 import MoveList from './components/MoveList';
 import SpottingPanel from './components/SpottingPanel';
+import PromotionPicker from './components/PromotionPicker';
 
 // ── shared style helpers ──────────────────────────────────────────────────────
 
@@ -543,48 +548,41 @@ function buildSpottingOverlay(modes: Set<SpottingMode>, state: GameState): React
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // ── game state ──────────────────────────────────────────────────────────────
-  const [gameState, setGameState] = useState<GameState>(createInitialState);
-  const [baseState, setBaseState] = useState<GameState>(createInitialState);
+  // ── game tree ───────────────────────────────────────────────────────────────
+  const [tree, setTree] = useState<GameTree>(() => createGameTree(createInitialState()));
+  const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<Position | null>(null);
   const [animPiece, setAnimPiece] = useState<AnimPiece | null>(null);
 
-  // ── history navigation ──────────────────────────────────────────────────────
-  const [viewIndex, setViewIndex] = useState(0);
+  // ── playback ────────────────────────────────────────────────────────────────
   const [isPlaying, setIsPlaying] = useState(false);
   const [playSpeed, setPlaySpeed] = useState(1000);
 
-  // Refs for use inside interval/keyboard callbacks (avoid stale closures)
-  const viewIndexRef = useRef(viewIndex);
-  const gameStateRef = useRef(gameState);
-  const displayedStateRef = useRef<GameState>(gameState);
+  // Refs for stale-closure-safe callbacks
+  const currentNodeIdRef = useRef(currentNodeId);
+  const treeRef = useRef(tree);
+  const displayedStateRef = useRef<GameState>(tree.initialState);
 
-  const maxIndex = gameState.moveHistory.length;
-  const isHistoryMode = viewIndex < maxIndex;
+  const mainLineTip = useMemo(() => getMainLineTip(tree), [tree]);
+  const isAnalysisMode = currentNodeId !== mainLineTip;
+  const hasAnyMoves = tree.rootChildren.length > 0;
 
-  const displayedState = useMemo<GameState>(() => {
-    if (!isHistoryMode) return gameState;
-    let s = baseState;
-    for (let i = 0; i < viewIndex; i++) {
-      const m = gameState.moveHistory[i];
-      s = executeMove(s, m.from, m.to, m.promotion);
-    }
-    return s;
-  }, [viewIndex, gameState, baseState, isHistoryMode]);
+  const displayedState = useMemo(() => getNodeState(tree, currentNodeId), [tree, currentNodeId]);
 
-  const displayedLastMove = displayedState.moveHistory.length > 0
-    ? displayedState.moveHistory[displayedState.moveHistory.length - 1]
-    : null;
+  const displayedLastMove = currentNodeId !== null ? (tree.nodes[currentNodeId]?.move ?? null) : null;
 
   const displayedCheckSquare = useMemo(() => {
     if (!displayedState.isCheck) return null;
     return findKing(displayedState.board, displayedState.currentTurn);
   }, [displayedState]);
 
-  // Keep refs in sync every render so interval/keyboard callbacks aren't stale
-  useEffect(() => { viewIndexRef.current = viewIndex; });
-  useEffect(() => { gameStateRef.current = gameState; });
+  // Keep refs in sync
+  useEffect(() => { currentNodeIdRef.current = currentNodeId; });
+  useEffect(() => { treeRef.current = tree; });
   useEffect(() => { displayedStateRef.current = displayedState; });
+
+  // ── promotion picker ────────────────────────────────────────────────────────
+  const [pendingPromotion, setPendingPromotion] = useState<{ from: Position; to: Position } | null>(null);
 
   // ── spotting modes (multi-select) ───────────────────────────────────────────
   const [spottingModes, setSpottingModes] = useState<Set<SpottingMode>>(new Set());
@@ -595,8 +593,8 @@ export default function App() {
   );
 
   // ── board size ───────────────────────────────────────────────────────────────
-  const [boardSize, setBoardSize] = useState(560);
-  const BOARD_MIN = 360, BOARD_MAX = 900, BOARD_STEP = 60;
+  const [boardSize, setBoardSize] = useState(900);
+  const BOARD_MIN = 240, BOARD_STEP = 60;
 
   // ── modal states ────────────────────────────────────────────────────────────
   const [showNewGame, setShowNewGame] = useState(false);
@@ -610,34 +608,35 @@ export default function App() {
   const [copyFenMsg, setCopyFenMsg] = useState('');
   const [copyPgnMsg, setCopyPgnMsg] = useState('');
   const pgnRef = useRef<HTMLTextAreaElement>(null);
-  const anyModalOpen = showNewGame || showExport;
+  const anyModalOpen = showNewGame || showExport || pendingPromotion !== null;
 
   // ── valid moves ─────────────────────────────────────────────────────────────
   const validMoves = useMemo(() => {
-    if (!selectedPos || isHistoryMode) return [];
+    if (!selectedPos) return [];
     return getLegalMoves(
-      gameState.board, selectedPos,
-      gameState.enPassantTarget,
-      gameState.whiteCanCastleKingside, gameState.whiteCanCastleQueenside,
-      gameState.blackCanCastleKingside, gameState.blackCanCastleQueenside,
+      displayedState.board, selectedPos,
+      displayedState.enPassantTarget,
+      displayedState.whiteCanCastleKingside, displayedState.whiteCanCastleQueenside,
+      displayedState.blackCanCastleKingside, displayedState.blackCanCastleQueenside,
     );
-  }, [gameState, selectedPos, isHistoryMode]);
+  }, [displayedState, selectedPos]);
 
   // ── step-forward with animation ──────────────────────────────────────────────
   const stepForwardWithAnim = useCallback(() => {
     setIsPlaying(false);
     setSelectedPos(null);
-    const curIdx = viewIndexRef.current;
-    const gs = gameStateRef.current;
-    const curMax = gs.moveHistory.length;
-    if (curIdx >= curMax) return;
-    const move = gs.moveHistory[curIdx];
+    const t = treeRef.current;
+    const curId = currentNodeIdRef.current;
+    const children = curId === null ? t.rootChildren : (t.nodes[curId]?.children ?? []);
+    if (children.length === 0) return;
+    const nextId = children[0];
+    const move = t.nodes[nextId]?.move;
     const curState = displayedStateRef.current;
     if (move && curState) {
       const piece = curState.board[move.from.row][move.from.col];
       if (piece) setAnimPiece({ piece, from: move.from, to: move.to });
     }
-    setViewIndex(prev => Math.min(curMax, prev + 1));
+    setCurrentNodeId(nextId);
   }, []);
 
   // ── keyboard ────────────────────────────────────────────────────────────────
@@ -648,7 +647,9 @@ export default function App() {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         setIsPlaying(false); setSelectedPos(null);
-        setViewIndex(prev => Math.max(0, prev - 1));
+        const curId = currentNodeIdRef.current;
+        const t = treeRef.current;
+        setCurrentNodeId(curId !== null ? (t.nodes[curId]?.parentId ?? null) : null);
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
         stepForwardWithAnim();
@@ -656,61 +657,87 @@ export default function App() {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [maxIndex, anyModalOpen, stepForwardWithAnim]);
+  }, [anyModalOpen, stepForwardWithAnim]);
 
   // ── auto-play ───────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!isPlaying) return;
     const id = setInterval(() => {
-      const curIdx = viewIndexRef.current;
-      const gs = gameStateRef.current;
-      const curMax = gs.moveHistory.length;
-      if (curIdx >= curMax) { setIsPlaying(false); return; }
-      const move = gs.moveHistory[curIdx];
+      const t = treeRef.current;
+      const curId = currentNodeIdRef.current;
+      const children = curId === null ? t.rootChildren : (t.nodes[curId]?.children ?? []);
+      if (children.length === 0) { setIsPlaying(false); return; }
+      const nextId = children[0];
+      const move = t.nodes[nextId]?.move;
       const curState = displayedStateRef.current;
       if (move && curState) {
         const piece = curState.board[move.from.row][move.from.col];
         if (piece) setAnimPiece({ piece, from: move.from, to: move.to });
       }
-      setViewIndex(prev => {
-        const next = prev + 1;
-        if (next >= curMax) { setIsPlaying(false); return curMax; }
-        return next;
-      });
+      setCurrentNodeId(nextId);
     }, playSpeed);
     return () => clearInterval(id);
   }, [isPlaying, playSpeed]);
 
   // ── helpers ─────────────────────────────────────────────────────────────────
-  function applyNewState(s: GameState, base?: GameState) {
-    setGameState(s);
-    setBaseState(base ?? s);
-    setViewIndex(s.moveHistory.length);
+  function applyNewTree(newTree: GameTree, nodeId?: string | null) {
+    setTree(newTree);
+    setCurrentNodeId(nodeId !== undefined ? nodeId : getMainLineTip(newTree));
     setSelectedPos(null);
     setIsPlaying(false);
   }
 
-  const handleSquareClick = useCallback((pos: Position) => {
-    if (isHistoryMode) return;
-    if (gameState.isCheckmate || gameState.isStalemate) return;
-    if (selectedPos && validMoves.some(m => m.row === pos.row && m.col === pos.col)) {
-      const movingPiece = gameState.board[selectedPos.row][selectedPos.col];
-      if (movingPiece) setAnimPiece({ piece: movingPiece, from: selectedPos, to: pos });
-      const newState = executeMove(gameState, selectedPos, pos);
-      setGameState(newState);
-      setViewIndex(newState.moveHistory.length);
-      setSelectedPos(null);
+  function doTreeMove(from: Position, to: Position, promotion?: import('./chess/types').PieceType) {
+    const movingPiece = displayedState.board[from.row][from.col];
+    const existing = findChildByMove(tree, currentNodeId, from, to, promotion);
+    if (existing) {
+      if (movingPiece) setAnimPiece({ piece: movingPiece, from, to });
+      setCurrentNodeId(existing);
       return;
     }
-    const piece = gameState.board[pos.row][pos.col];
-    setSelectedPos(piece && piece.color === gameState.currentTurn ? pos : null);
-  }, [isHistoryMode, gameState, selectedPos, validMoves]);
+    if (movingPiece) setAnimPiece({ piece: movingPiece, from, to });
+    const newState = executeMove(displayedState, from, to, promotion);
+    const lastMove = newState.moveHistory[newState.moveHistory.length - 1];
+    const { tree: newTree, nodeId } = addNode(tree, currentNodeId, lastMove, newState);
+    setTree(newTree);
+    setCurrentNodeId(nodeId);
+  }
+
+  const handleSquareClick = useCallback((pos: Position) => {
+    if (displayedState.isCheckmate || displayedState.isStalemate) return;
+    if (pendingPromotion) return;
+    if (selectedPos && validMoves.some(m => m.row === pos.row && m.col === pos.col)) {
+      const movingPiece = displayedState.board[selectedPos.row][selectedPos.col];
+      const isPromotion = movingPiece?.type === 'pawn' && (pos.row === 0 || pos.row === 7);
+      if (isPromotion) {
+        setPendingPromotion({ from: selectedPos, to: pos });
+        setSelectedPos(null);
+        return;
+      }
+      setSelectedPos(null);
+      doTreeMove(selectedPos, pos);
+      return;
+    }
+    const piece = displayedState.board[pos.row][pos.col];
+    setSelectedPos(piece && piece.color === displayedState.currentTurn ? pos : null);
+  }, [displayedState, selectedPos, validMoves, pendingPromotion, tree, currentNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handlePromotionSelect = useCallback((pieceType: import('./chess/types').PieceType) => {
+    if (!pendingPromotion) return;
+    setPendingPromotion(null);
+    doTreeMove(pendingPromotion.from, pendingPromotion.to, pieceType);
+  }, [pendingPromotion, displayedState, tree, currentNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handlePromotionCancel = useCallback(() => {
+    setPendingPromotion(null);
+  }, []);
 
   const handleUndo = () => {
-    if (gameState.moveHistory.length === 0) return;
-    let s = baseState;
-    for (const m of gameState.moveHistory.slice(0, -1)) s = executeMove(s, m.from, m.to, m.promotion);
-    applyNewState(s, baseState);
+    const tip = getMainLineTip(tree);
+    if (tip === null) return;
+    const parentId = tree.nodes[tip].parentId;
+    setTree(deleteSubtree(tree, tip));
+    setCurrentNodeId(parentId);
   };
 
   // ── new game modal ──────────────────────────────────────────────────────────
@@ -719,14 +746,14 @@ export default function App() {
     setPgnText(''); setPgnError(''); setShowNewGame(true);
   };
 
-  const startFresh = () => { applyNewState(createInitialState()); setShowNewGame(false); };
+  const startFresh = () => { applyNewTree(createGameTree(createInitialState()), null); setShowNewGame(false); };
 
   const loadFromFen = () => {
     const trimmed = fenInput.trim();
     if (!trimmed) { setFenError('FEN cannot be empty'); return; }
     const state = parseFen(trimmed);
     if (!state) { setFenError('Invalid FEN — check all 6 fields'); return; }
-    applyNewState(state); setShowNewGame(false);
+    applyNewTree(createGameTree(state), null); setShowNewGame(false);
   };
 
   const loadFromPgn = () => {
@@ -736,14 +763,16 @@ export default function App() {
     const initState = (game.tags.SetUp === '1' && game.tags.FEN)
       ? (parseFen(game.tags.FEN) ?? createInitialState())
       : createInitialState();
-    const { state, errors } = replayPgnGame(game, { lenient: true });
-    if (errors.length > 0 && state.moveHistory.length === 0) { setPgnError(errors.slice(0, 3).join('; ')); return; }
-    applyNewState(state, initState); setShowNewGame(false);
+    const newTree = pgnGameToTree(game, initState);
+    if (newTree.rootChildren.length === 0 && game.moves.length > 0) {
+      setPgnError('Could not parse any moves from PGN'); return;
+    }
+    applyNewTree(newTree); setShowNewGame(false);
   };
 
   // ── export ──────────────────────────────────────────────────────────────────
-  const currentFen = toFen(gameState);
-  const currentPgn = exportPgn(gameStateToPgnGame(gameState));
+  const currentFen = toFen(displayedState);
+  const currentPgn = exportPgn(treeToPgnGame(tree));
 
   const copyFen = () => navigator.clipboard.writeText(currentFen).then(() => {
     setCopyFenMsg('Copied!'); setTimeout(() => setCopyFenMsg(''), 2000);
@@ -753,28 +782,22 @@ export default function App() {
   });
 
   // ── status ───────────────────────────────────────────────────────────────────
-  const statusText = isHistoryMode
-    ? `Move ${viewIndex} of ${maxIndex}`
-    : displayedState.isCheckmate
-      ? `Checkmate! ${displayedState.currentTurn === 'white' ? 'Black' : 'White'} wins!`
-      : displayedState.isStalemate ? 'Stalemate! Draw.'
-      : displayedState.isCheck
-        ? `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} is in check!`
-        : `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} to move`;
+  const statusText = displayedState.isCheckmate
+    ? `Checkmate! ${displayedState.currentTurn === 'white' ? 'Black' : 'White'} wins!`
+    : displayedState.isStalemate ? 'Stalemate! Draw.'
+    : displayedState.isCheck
+      ? `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} is in check!`
+      : isAnalysisMode ? 'Analysis'
+      : `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} to move`;
 
-  const statusColor = isHistoryMode ? '#ff9f43'
-    : displayedState.isCheckmate ? '#ff0040'
+  const statusColor = displayedState.isCheckmate ? '#ff0040'
     : displayedState.isStalemate ? '#ffd93d'
     : displayedState.isCheck ? '#ff9f43'
+    : isAnalysisMode ? '#ff9f43'
     : displayedState.currentTurn === 'white' ? '#fff' : '#0ff';
 
-  const statusClass = !isHistoryMode && displayedState.isCheckmate ? 'checkmate-overlay'
-    : !isHistoryMode && displayedState.isCheck ? 'status-slide-in' : '';
-
-  const navTo = (idx: number) => {
-    setIsPlaying(false); setSelectedPos(null);
-    setViewIndex(Math.max(0, Math.min(idx, maxIndex)));
-  };
+  const statusClass = displayedState.isCheckmate ? 'checkmate-overlay'
+    : displayedState.isCheck ? 'status-slide-in' : '';
 
   const SPEED_OPTIONS = [{ label: '1s', ms: 1000 }, { label: '5s', ms: 5000 }, { label: '15s', ms: 15000 }];
 
@@ -821,8 +844,8 @@ export default function App() {
           <div style={{ position: 'relative' }}>
             <Board
               board={displayedState.board}
-              selectedPos={isHistoryMode ? null : selectedPos}
-              validMoves={isHistoryMode ? [] : validMoves}
+              selectedPos={selectedPos}
+              validMoves={validMoves}
               lastMove={displayedLastMove ? { from: displayedLastMove.from, to: displayedLastMove.to } : null}
               checkSquare={displayedCheckSquare}
               enPassantTarget={displayedState.enPassantTarget}
@@ -835,7 +858,18 @@ export default function App() {
               isStalemate={displayedState.isStalemate}
               currentTurn={displayedState.currentTurn}
               onSquareClick={handleSquareClick}
+              onResize={setBoardSize}
               overlay={spottingOverlay}
+              interactiveOverlay={pendingPromotion ? (
+                <PromotionPicker
+                  color={displayedState.currentTurn}
+                  col={pendingPromotion.to.col}
+                  isWhitePromotion={displayedState.currentTurn === 'white'}
+                  squarePx={Math.round(boardSize / 8)}
+                  onSelect={handlePromotionSelect}
+                  onCancel={handlePromotionCancel}
+                />
+              ) : undefined}
               boardSize={boardSize}
               hidePieceAt={animPiece?.to ?? null}
               animOverlay={animPiece ? (
@@ -846,36 +880,36 @@ export default function App() {
                 />
               ) : undefined}
             />
-            {isHistoryMode && (
+            {isAnalysisMode && (
               <div style={{
                 position: 'absolute', inset: 0,
-                backgroundColor: 'rgba(200,200,255,0.08)',
-                border: '2px solid rgba(255,160,50,0.25)',
+                backgroundColor: 'rgba(200,200,255,0.06)',
+                border: '2px solid rgba(255,160,50,0.22)',
                 borderRadius: 4, pointerEvents: 'none', zIndex: 20,
                 boxSizing: 'border-box',
               }} />
             )}
           </div>
 
-          {maxIndex > 0 && (
+          {hasAnyMoves && (
             <MoveList
-              moves={gameState.moveHistory}
-              activeIndex={viewIndex > 0 ? viewIndex - 1 : -1}
-              onMoveClick={(idx) => { setIsPlaying(false); setSelectedPos(null); setViewIndex(idx + 1); }}
+              tree={tree}
+              currentNodeId={currentNodeId}
+              onNavigate={(id: string | null) => { setIsPlaying(false); setSelectedPos(null); setCurrentNodeId(id); }}
               boardSize={boardSize}
             />
           )}
         </div>
 
         {/* Navigation controls */}
-        {maxIndex > 0 && (
+        {hasAnyMoves && (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
             <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => navTo(0)} disabled={viewIndex === 0}>⏮</Btn>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => navTo(viewIndex - 1)} disabled={viewIndex === 0}>◀</Btn>
+              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</Btn>
+              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</Btn>
               <button onClick={() => {
                 if (isPlaying) { setIsPlaying(false); return; }
-                if (viewIndex >= maxIndex) setViewIndex(0);
+                if (currentNodeId === mainLineTip) setCurrentNodeId(null);
                 setIsPlaying(true);
               }} style={{
                 padding: '8px 20px', fontSize: 13, fontWeight: 700,
@@ -884,8 +918,8 @@ export default function App() {
                 backgroundColor: isPlaying ? '#1a0e00' : '#001a0a',
                 color: isPlaying ? '#ff9f43' : '#00ff88', letterSpacing: 1,
               }}>{isPlaying ? '⏸ Pause' : '▶ Play'}</button>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={stepForwardWithAnim} disabled={viewIndex >= maxIndex}>▶</Btn>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => navTo(maxIndex)} disabled={viewIndex >= maxIndex}>⏭</Btn>
+              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</Btn>
+              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</Btn>
               <div style={{ display: 'flex', gap: 3, marginLeft: 8 }}>
                 {SPEED_OPTIONS.map(({ label, ms }) => (
                   <button key={ms} onClick={() => setPlaySpeed(ms)} style={{
@@ -898,14 +932,14 @@ export default function App() {
                 ))}
               </div>
             </div>
-            {isHistoryMode && (
+            {isAnalysisMode && (
               <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: '#ff9f43' }}>
-                <span style={{ letterSpacing: 1 }}>◀ History view — use ← → or click a move</span>
-                <button onClick={() => navTo(maxIndex)} style={{
+                <span style={{ letterSpacing: 1 }}>Analysis — moves create variations</span>
+                <button onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} style={{
                   padding: '4px 12px', fontSize: 11, fontWeight: 600,
                   border: '1px solid #ff9f4360', borderRadius: 4,
                   cursor: 'pointer', backgroundColor: '#1a0e00', color: '#ff9f43',
-                }}>Jump to current →</button>
+                }}>Jump to end →</button>
               </div>
             )}
           </div>
@@ -920,20 +954,20 @@ export default function App() {
             backgroundColor: 'transparent', color: boardSize <= BOARD_MIN ? '#333' : '#888', lineHeight: 1,
           }}>−</button>
           <span style={{ fontSize: 12, color: '#666', fontFamily: 'monospace', minWidth: 40, textAlign: 'center' }}>{boardSize}px</span>
-          <button onClick={() => setBoardSize(s => Math.min(BOARD_MAX, s + BOARD_STEP))} disabled={boardSize >= BOARD_MAX} style={{
+          <button onClick={() => setBoardSize(s => s + BOARD_STEP)} style={{
             width: 28, height: 28, fontSize: 16, fontWeight: 700,
-            border: '1px solid #333', borderRadius: 4, cursor: boardSize >= BOARD_MAX ? 'not-allowed' : 'pointer',
-            backgroundColor: 'transparent', color: boardSize >= BOARD_MAX ? '#333' : '#888', lineHeight: 1,
+            border: '1px solid #333', borderRadius: 4, cursor: 'pointer',
+            backgroundColor: 'transparent', color: '#888', lineHeight: 1,
           }}>+</button>
         </div>
 
         {/* Game controls */}
         <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button onClick={handleUndo} disabled={maxIndex === 0 || isHistoryMode} style={{
+          <button onClick={handleUndo} disabled={mainLineTip === null} style={{
             ...BTN, border: '1px solid #00ffff40',
-            backgroundColor: (maxIndex === 0 || isHistoryMode) ? '#1a1a2e' : '#0d2840',
-            color: (maxIndex === 0 || isHistoryMode) ? '#555' : '#00ffff',
-            cursor: (maxIndex === 0 || isHistoryMode) ? 'not-allowed' : 'pointer',
+            backgroundColor: mainLineTip === null ? '#1a1a2e' : '#0d2840',
+            color: mainLineTip === null ? '#555' : '#00ffff',
+            cursor: mainLineTip === null ? 'not-allowed' : 'pointer',
           }}>↩ Undo</button>
           <button onClick={openNewGame} style={{ ...BTN, border: '1px solid #ff00ff40', backgroundColor: '#1a0a2e', color: '#ff00ff' }}>⟳ New Game</button>
           <button onClick={() => setShowExport(true)} style={{ ...BTN, border: '1px solid #00ff8840', backgroundColor: '#0a1a0a', color: '#00ff88' }}>↑ Export</button>

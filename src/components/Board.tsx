@@ -1,6 +1,9 @@
+import { useRef } from 'react';
 import { Square, Position } from '../chess/types';
 import SquareComponent from './Square';
 import '../App.css';
+
+const BOARD_MIN_PX = 240;
 
 interface BoardProps {
   board: Square[][];
@@ -18,8 +21,10 @@ interface BoardProps {
   isStalemate: boolean;
   currentTurn: 'white' | 'black';
   onSquareClick: (pos: Position) => void;
+  onResize?: (size: number) => void;
   overlay?: React.ReactNode;
   animOverlay?: React.ReactNode;
+  interactiveOverlay?: React.ReactNode;
   hidePieceAt?: Position | null;
   boardSize?: number;
 }
@@ -40,13 +45,34 @@ export default function Board({
   isStalemate,
   currentTurn,
   onSquareClick,
+  onResize,
   overlay,
   animOverlay,
+  interactiveOverlay,
   hidePieceAt,
   boardSize,
 }: BoardProps) {
   const dim = boardSize ? `${boardSize}px` : 'min(80vw, 560px)';
   const squarePx = boardSize ? Math.round(boardSize / 8) : undefined;
+
+  const dragRef = useRef<{ startX: number; startY: number; startSize: number } | null>(null);
+
+  const handleResizeDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!onResize) return;
+    e.preventDefault();
+    e.stopPropagation();
+    dragRef.current = { startX: e.clientX, startY: e.clientY, startSize: boardSize ?? 560 };
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handleResizeMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current || !onResize) return;
+    const { startX, startY, startSize } = dragRef.current;
+    const delta = Math.round((e.clientX - startX + (e.clientY - startY)) / 2);
+    onResize(Math.max(BOARD_MIN_PX, startSize + delta));
+  };
+
+  const handleResizeUp = () => { dragRef.current = null; };
 
   const isValidMove = (row: number, col: number) =>
     validMoves.some((m) => m.row === row && m.col === col);
@@ -126,6 +152,37 @@ export default function Board({
         {animOverlay && (
           <div style={{ position: 'absolute', inset: 0, zIndex: 30, pointerEvents: 'none' }}>
             {animOverlay}
+          </div>
+        )}
+
+        {/* Interactive overlay — pointer events on (z=50) */}
+        {interactiveOverlay && (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 50 }}>
+            {interactiveOverlay}
+          </div>
+        )}
+
+        {/* Resize handle */}
+        {onResize && (
+          <div
+            onPointerDown={handleResizeDown}
+            onPointerMove={handleResizeMove}
+            onPointerUp={handleResizeUp}
+            title="Drag to resize board"
+            style={{
+              position: 'absolute', bottom: 0, right: 0,
+              width: 28, height: 28,
+              cursor: 'nwse-resize',
+              zIndex: 60,
+              display: 'flex', alignItems: 'flex-end', justifyContent: 'flex-end',
+              padding: 5,
+            }}
+          >
+            <svg width="13" height="13" viewBox="0 0 13 13" style={{ pointerEvents: 'none' }}>
+              <line x1="2" y1="13" x2="13" y2="2" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="6" y1="13" x2="13" y2="6" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeLinecap="round"/>
+              <line x1="10" y1="13" x2="13" y2="10" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
           </div>
         )}
 
