@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="cyan">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analysis Board — LaionChess</title>
+<link rel="stylesheet" href="css/laion.css">
+<link rel="stylesheet" href="css/board.css">
+<style>
+  .page { max-width: 1460px; }
+  .an-grid {
+    display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 24px;
+    align-items: start; margin-top: 8px;
+  }
+  .an-board-row { display: flex; gap: 12px; justify-content: center; }
+  .an-board-wrap { width: min(100%, calc(100vh - 170px)); min-width: 280px; }
+
+  .an-panel {
+    border: 1px solid var(--line); background: rgba(13, 17, 23, 0.7);
+    border-radius: 12px; padding: 16px; display: flex; flex-direction: column;
+    gap: 14px; min-height: 560px;
+  }
+  .an-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .an-head .ttl { font-family: var(--mono); font-size: 15px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); }
+  .an-head .full-app { margin-left: auto; font-family: var(--mono); font-size: 11px; color: var(--text-faint); text-decoration: none; letter-spacing: 1px; }
+  .an-head .full-app:hover { color: var(--accent); }
+
+  .an-toggles { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+  .toggle .sw {
+    width: 32px; height: 18px; border-radius: 10px; background: #2a2a3a; position: relative;
+    transition: background 0.15s;
+  }
+  .toggle .sw::after {
+    content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px;
+    border-radius: 50%; background: #888; transition: left 0.15s, background 0.15s;
+  }
+  .toggle.on .sw { background: var(--accent-soft); border: 1px solid var(--accent-border); }
+  .toggle.on .sw::after { left: 15px; background: var(--accent); }
+  .toggle .lb { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--text-dim); text-transform: uppercase; }
+
+  .an-moves {
+    flex: 1; min-height: 140px; overflow-y: auto; background: var(--panel-2);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px;
+    font-family: var(--mono); font-size: 13px; line-height: 2;
+  }
+  .an-moves .num { color: #444; margin-right: 3px; }
+  .an-moves .mv { cursor: pointer; padding: 2px 5px; border-radius: 4px; margin-right: 4px; }
+  .an-moves .mv.w { color: #e0e0e0; }
+  .an-moves .mv.b { color: #6cc5c8; }
+  .an-moves .mv:hover { background: rgba(255, 255, 255, 0.07); }
+  .an-moves .mv.active { color: var(--green); background: rgba(0, 255, 136, 0.12); outline: 1px solid rgba(0, 255, 136, 0.35); }
+  .an-moves .empty { color: #3a3a4a; font-style: italic; }
+
+  .an-nav { display: flex; gap: 8px; align-items: center; }
+  .an-nav .spacer { flex: 1; }
+
+  .book-section .sec-title {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-faint); margin-bottom: 8px;
+  }
+
+  .fen-row { display: flex; gap: 8px; }
+  .fen-row .input { font-family: var(--mono); font-size: 11px; }
+
+  @media (max-width: 980px) {
+    .an-grid { grid-template-columns: 1fr; }
+    .an-board-wrap { width: min(100%, calc(100vh - 260px)); }
+    .an-panel { min-height: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-scan"></div>
+<div class="page" data-screen-label="Analysis Board">
+
+  <header class="site-header menu-host">
+    <a class="wordmark" href="index.html">
+      <span class="knight">&#9822;</span><span class="name">LaionChess</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="Analysis.html" class="active">Analysis</a>
+      <a href="Openings.html">Openings</a>
+      <a href="Create Course.html">Create</a>
+      <a href="Master Plan.html">Master Plan</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-icon btn-ghost" id="nav-settings" title="Settings" aria-label="Settings">&#9881;</button>
+    </div>
+  </header>
+
+  <div class="an-grid">
+    <div class="an-board-row">
+      <div id="spot-panel"></div>
+      <div class="eval-bar" id="eval-bar">
+        <span class="val top" id="eval-top"></span>
+        <div class="white-share" id="eval-fill" style="height: 50%;"></div>
+        <span class="val bottom" id="eval-val">0.0</span>
+      </div>
+      <div class="an-board-wrap"><div id="board"></div></div>
+    </div>
+
+    <aside class="an-panel menu-host" data-screen-label="Analysis Panel">
+      <div class="an-head">
+        <span class="ttl">Analysis Board</span>
+        <a class="full-app" href="https://laionfromnight.github.io/LaionChess/" target="_blank" rel="noopener">Full engine app &#8599;</a>
+      </div>
+
+      <div class="an-toggles">
+        <div class="toggle on" id="tg-eval"><span class="sw"></span><span class="lb">Evaluation</span></div>
+        <div class="toggle on" id="tg-book"><span class="sw"></span><span class="lb">Common moves</span></div>
+        <div class="toggle" id="tg-top"><span class="sw"></span><span class="lb">Top 3 arrows</span></div>
+      </div>
+
+      <div class="an-moves" id="moves"><span class="empty">Make a move on the board — both sides are playable.</span></div>
+
+      <div class="an-nav">
+        <button class="btn btn-icon btn-cyan" id="nav-start" title="Start position">&#9198;</button>
+        <button class="btn btn-icon btn-cyan" id="nav-back" title="Back">&#9664;</button>
+        <button class="btn btn-icon btn-cyan" id="nav-fwd" title="Forward">&#9654;</button>
+        <button class="btn btn-icon btn-cyan" id="nav-end" title="Last move">&#9197;</button>
+        <div class="spacer"></div>
+        <button class="btn btn-icon btn-ghost" id="panel-settings" title="Board settings">&#9881;</button>
+        <button class="btn btn-magenta" id="btn-reset">&#8635; New</button>
+      </div>
+
+      <div class="book-section" id="book-section">
+        <div class="sec-title">Common Moves &mdash; master games</div>
+        <div class="book" id="book"></div>
+      </div>
+
+      <div>
+        <div class="fen-row">
+          <input class="input" id="fen-out" readonly>
+          <button class="btn btn-yellow" id="btn-fen">FEN</button>
+          <button class="btn btn-green" id="btn-pgn">PGN</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/board.js"></script>
+<script src="js/settings-menu.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/book.js"></script>
+<script src="js/spotting.js"></script>
+<script>
+(function () {
+  var engine = new LaionEngine();
+  var board = new LaionBoard(document.getElementById('board'), { interactive: true, onSquare: onSquare });
+  var spot = LaionSpotting.create(board);
+  LaionSpotting.buildPanel(document.getElementById('spot-panel'), spot);
+  var selected = null, legal = [];
+  var showEval = true, showBook = true, showTop = false;
+
+  // accept ?fen= from other pages
+  try {
+    var qfen = new URLSearchParams(location.search).get('fen');
+    if (qfen) engine.load(qfen);
+  } catch (e) {}
+
+  var el = {
+    moves: document.getElementById('moves'),
+    book: document.getElementById('book'),
+    bookSection: document.getElementById('book-section'),
+    evalBar: document.getElementById('eval-bar'),
+    evalFill: document.getElementById('eval-fill'),
+    evalVal: document.getElementById('eval-val'),
+    evalTop: document.getElementById('eval-top'),
+    fen: document.getElementById('fen-out'),
+  };
+
+  function sync(lastMv) {
+    board.setFen(engine.boardFen());
+    if (lastMv) {
+      var hl = {}; hl[lastMv.from] = 'last'; hl[lastMv.to] = 'last';
+      board.setHighlights(hl);
+    }
+    renderMoves();
+    renderEval();
+    renderBook();
+    renderTopArrows();
+    el.fen.value = engine.fen();
+    document.getElementById('nav-back').disabled = !engine.canBack();
+    document.getElementById('nav-start').disabled = !engine.canBack();
+    document.getElementById('nav-fwd').disabled = !engine.canFwd();
+    document.getElementById('nav-end').disabled = !engine.canFwd();
+  }
+
+  function renderMoves() {
+    if (!engine.sans.length) {
+      el.moves.innerHTML = '<span class="empty">Make a move on the board — both sides are playable.</span>';
+      return;
+    }
+    var html = '';
+    for (var i = 0; i < engine.sans.length; i++) {
+      if (i % 2 === 0) html += '<span class="num">' + (i / 2 + 1) + '.</span>';
+      var cls = 'mv ' + (i % 2 === 0 ? 'w' : 'b') + (engine.ptr === i + 1 ? ' active' : '');
+      html += '<span class="' + cls + '" data-i="' + (i + 1) + '">' + engine.sans[i] + '</span>';
+    }
+    el.moves.innerHTML = html;
+    el.moves.querySelectorAll('.mv').forEach(function (m) {
+      m.addEventListener('click', function () {
+        engine.jumpTo(+m.dataset.i);
+        sync();
+      });
+    });
+  }
+
+  function renderEval() {
+    el.evalBar.style.display = showEval ? '' : 'none';
+    if (!showEval) return;
+    var e = engine.eval();
+    var pct = 50 + Math.max(-45, Math.min(45, e * 6));
+    el.evalFill.style.height = pct + '%';
+    var label = (e > 0 ? '+' : '') + e.toFixed(1);
+    if (e >= 0) { el.evalVal.textContent = label; el.evalTop.textContent = ''; }
+    else { el.evalTop.textContent = label; el.evalVal.textContent = ''; }
+  }
+
+  function renderTopArrows() {
+    board.clearArrow();
+    if (!showTop) return;
+    var rows = LaionBook.data[engine.key()];
+    if (!rows) return;
+    var colors = ['rgba(0, 255, 136, 0.9)', 'rgba(255, 217, 61, 0.8)', 'rgba(255, 0, 255, 0.7)'];
+    var widths = [2.8, 2.2, 1.7];
+    rows.slice(0, 3).forEach(function (r, i) {
+      var mv = engine.findBySan(r[0]);
+      if (mv) board.addArrow(mv.from, mv.to, colors[i], widths[i]);
+    });
+  }
+
+  function renderBook() {
+    el.bookSection.style.display = showBook ? '' : 'none';
+    if (!showBook) return;
+    LaionBook.render(el.book, engine.key(), function (san) {
+      var mv = engine.findBySan(san);
+      if (mv) { engine.make(mv); sync(mv); }
+    });
+  }
+
+  function onSquare(sq) {
+    var piece = engine.pieceAt(sq);
+    if (selected) {
+      var mv = null;
+      for (var i = 0; i < legal.length; i++) if (legal[i].to === sq) { mv = legal[i]; break; }
+      if (mv) { engine.make(mv); selected = null; legal = []; sync(mv); return; }
+      selected = null; legal = [];
+      board.clearHighlights();
+      if (piece && piece[0] === engine.turn) select(sq);
+      return;
+    }
+    if (piece && piece[0] === engine.turn) select(sq);
+  }
+
+  function select(sq) {
+    selected = sq;
+    legal = engine.movesFrom(sq);
+    var hl = {}; hl[sq] = 'select';
+    legal.forEach(function (m) { hl[m.to] = 'dot'; });
+    board.setHighlights(hl);
+  }
+
+  /* toggles */
+  function wireToggle(id, fn) {
+    var t = document.getElementById(id);
+    t.addEventListener('click', function () {
+      t.classList.toggle('on');
+      fn(t.classList.contains('on'));
+    });
+  }
+  wireToggle('tg-eval', function (on) { showEval = on; renderEval(); });
+  wireToggle('tg-book', function (on) { showBook = on; renderBook(); });
+  wireToggle('tg-top', function (on) { showTop = on; renderTopArrows(); });
+
+  /* nav */
+  document.getElementById('nav-start').addEventListener('click', function () { engine.jumpTo(0); sync(); });
+  document.getElementById('nav-back').addEventListener('click', function () { engine.jumpTo(engine.ptr - 1); sync(); });
+  document.getElementById('nav-fwd').addEventListener('click', function () { engine.jumpTo(engine.ptr + 1); sync(); });
+  document.getElementById('nav-end').addEventListener('click', function () { engine.jumpTo(engine.snapshots.length - 1); sync(); });
+  document.getElementById('btn-reset').addEventListener('click', function () { engine.load('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq -'); sync(); });
+
+  document.getElementById('btn-fen').addEventListener('click', function () {
+    el.fen.value = engine.fen(); el.fen.select();
+    try { navigator.clipboard.writeText(engine.fen()); } catch (e) {}
+  });
+  document.getElementById('btn-pgn').addEventListener('click', function () {
+    el.fen.value = engine.pgn() || '(no moves)'; el.fen.select();
+    try { navigator.clipboard.writeText(engine.pgn()); } catch (e) {}
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft' && engine.canBack()) { engine.jumpTo(engine.ptr - 1); sync(); }
+    if (e.key === 'ArrowRight' && engine.canFwd()) { engine.jumpTo(engine.ptr + 1); sync(); }
+  });
+
+  LaionSettingsMenu.attach(document.getElementById('nav-settings'));
+  LaionSettingsMenu.attach(document.getElementById('panel-settings'));
+  sync();
+})();
+</script>
+</body>
+</html>

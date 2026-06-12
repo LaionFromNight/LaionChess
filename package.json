@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "server": "node server/book-server.mjs",
+    "script": "node server/book-script.mjs",
+    "server:offline": "BOOK_MODE=offline node server/book-server.mjs"
   },
   "dependencies": {
     "react": "^19.2.5",

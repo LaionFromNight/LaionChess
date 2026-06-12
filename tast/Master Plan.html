@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="cyan">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Master Plan — LaionChess Opening Trainer</title>
+<link rel="stylesheet" href="css/laion.css">
+<style>
+  .doc { max-width: 860px; margin: 0 auto; }
+  .doc-head { padding: 36px 0 10px; }
+  .doc-head h1 { font-size: clamp(24px, 4vw, 36px); }
+  .doc-head .sub { color: var(--text-dim); margin-top: 10px; font-size: 14px; line-height: 1.6; }
+  .doc section { margin-top: 36px; }
+  .doc h2 {
+    font-family: var(--mono); font-size: 15px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-bottom: 16px;
+  }
+  .doc h3 { font-size: 15px; margin: 18px 0 8px; color: var(--text); }
+  .doc p, .doc li { font-size: 14px; line-height: 1.7; color: #c9c9d4; }
+  .doc ul, .doc ol { padding-left: 22px; margin: 8px 0; }
+  .doc li { margin: 4px 0; }
+  .doc code {
+    font-family: var(--mono); font-size: 12px; color: var(--green);
+    background: rgba(0, 255, 136, 0.07); padding: 1px 5px; border-radius: 4px;
+  }
+  .doc pre {
+    background: #0a0a14; border: 1px solid var(--line); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; margin: 10px 0;
+  }
+  .doc pre code { background: none; padding: 0; color: #b8e6c8; font-size: 12px; line-height: 1.6; }
+  .doc table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+  .doc th {
+    font-family: var(--mono); font-size: 10px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text-faint); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line-2);
+  }
+  .doc td { padding: 9px 10px; border-bottom: 1px solid var(--line); color: #c9c9d4; vertical-align: top; }
+  .doc td:first-child { font-family: var(--mono); font-size: 12px; color: var(--accent); white-space: nowrap; }
+  .phase-tag { font-family: var(--mono); font-size: 10px; letter-spacing: 1px; }
+
+  @media print {
+    body { background: #ffffff !important; color: #111; }
+    .bg-grid, .bg-scan, .site-header, .no-print { display: none !important; }
+    .doc p, .doc li, .doc td { color: #222 !important; }
+    .doc h2 { color: #0a6c6c !important; border-color: #ccc; }
+    .doc code { color: #0a6c2c !important; background: #f0f5f0 !important; }
+    .doc pre { background: #f7f7f7 !important; border-color: #ddd !important; }
+    .doc pre code { color: #333 !important; }
+    .doc th { color: #666 !important; border-color: #bbb !important; }
+    .doc td { border-color: #ddd !important; }
+    .doc td:first-child { color: #0a6c6c !important; }
+    .h-display { -webkit-text-fill-color: #111 !important; color: #111 !important; background: none !important; filter: none !important; }
+    .doc-head .sub, .kicker { color: #555 !important; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-scan"></div>
+<div class="page" data-screen-label="Master Plan">
+
+  <header class="site-header menu-host no-print">
+    <a class="wordmark" href="index.html">
+      <span class="knight">&#9822;</span><span class="name">LaionChess</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="Analysis.html">Analysis</a>
+      <a href="Openings.html">Openings</a>
+      <a href="Create Course.html">Create</a>
+      <a href="Master Plan.html" class="active">Master Plan</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-ghost" onclick="window.print()">&#128424; Print / PDF</button>
+    </div>
+  </header>
+
+  <article class="doc">
+    <div class="doc-head">
+      <span class="kicker">Implementation Master Plan</span>
+      <h1 class="h-display">Opening Trainer</h1>
+      <p class="sub">Roadmap for extending the existing LaionChess analysis app
+      (Vite + React + TypeScript, GitHub Pages) with an opening training platform:
+      course catalog, Learn/Practice trainer, course creator, and shared theming.
+      The interactive prototype in this project is the design reference for every screen.</p>
+    </div>
+
+    <section>
+      <h2>0 &middot; Current state</h2>
+      <ul>
+        <li>Single-page analysis board: <code>src/App.tsx</code> (~1000 lines), <code>Board.tsx</code>, <code>Square.tsx</code>, <code>MoveList.tsx</code>, <code>PromotionPicker.tsx</code>, <code>SpottingPanel.tsx</code>.</li>
+        <li>Chess logic lives in <code>src/chess/</code>; PGN/FEN docs already written in <code>tech-chess-docs/</code>.</li>
+        <li>Styling: inline style objects + small <code>App.css</code>; colors hard-coded per component.</li>
+        <li>No routing, no persistence layer, Unicode glyph pieces only.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>1 &middot; Phase plan</h2>
+      <table>
+        <thead><tr><th>Phase</th><th>Scope</th><th>Key deliverables</th><th>Est.</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>P0 Foundations</td>
+            <td>Design tokens + settings store</td>
+            <td>CSS variables for the neon palette (<code>css/laion.css</code> in this prototype is the source of truth); <code>useSettings()</code> hook persisting board theme, piece set, accent, toggles to localStorage.</td>
+            <td>2&ndash;3 d</td>
+          </tr>
+          <tr>
+            <td>P1 Board v2</td>
+            <td>Themeable board component</td>
+            <td>Refactor <code>Board/Square</code> to read theme from settings; add SVG piece sets (cburnett, merida, alpha &mdash; bundle in <code>public/pieces/</code>, keep licenses); arrow + highlight overlay layer; smooth piece transitions.</td>
+            <td>3&ndash;4 d</td>
+          </tr>
+          <tr>
+            <td>P2 Shell</td>
+            <td>Routing + navigation</td>
+            <td><code>react-router</code> with <code>HashRouter</code> (GitHub Pages safe): <code>/</code> home, <code>/analysis</code> (existing app), <code>/openings</code>, <code>/train/:courseId</code>, <code>/create</code>; shared header per prototype.</td>
+            <td>2 d</td>
+          </tr>
+          <tr>
+            <td>P3 Trainer MVP</td>
+            <td>Learn + Practice modes</td>
+            <td>Course/Line data model (below); trainer state machine; coach notes, hint arrows, mistake tracking; per-mode progress in localStorage; Scotch Game as the first bundled course.</td>
+            <td>5&ndash;7 d</td>
+          </tr>
+          <tr>
+            <td>P4 Creator</td>
+            <td>Course creator + PGN import</td>
+            <td>Reuse the analysis PGN parser; PGN variations &rarr; lines, comments &rarr; coach notes; lichess study import via its PGN export URL; manual "build on the board" mode reusing the analysis tree UI; courses saved locally.</td>
+            <td>5&ndash;7 d</td>
+          </tr>
+          <tr>
+            <td>P5 SRS</td>
+            <td>Drill + Time modes</td>
+            <td>Lightweight SM-2 scheduling per line (due dates, ease factor); Drill = due lines queue; Time = countdown per move; unlock rules (e.g. learn 3 lines first) as in the prototype.</td>
+            <td>4&ndash;5 d</td>
+          </tr>
+          <tr>
+            <td>P6 Polish</td>
+            <td>UX details</td>
+            <td>Move sounds, completion effects, mobile layout pass (board-first stacking per prototype), PWA manifest, optional PL locale.</td>
+            <td>3&ndash;4 d</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>2 &middot; Data model</h2>
+<pre><code>type Ply = {
+  san: string;            // "Nxd4"
+  from: Square; to: Square;
+  promo?: PieceType;
+  note?: string;          // coach text (Learn mode, before user move)
+};
+
+type Line = {
+  id: string;
+  name: string;           // "Mieses Variation — 4...Nf6"
+  tag?: 'Main' | 'Sideline' | 'Trap' | 'Punish';
+  plies: Ply[];           // from the starting position
+};
+
+type Course = {
+  id: string; name: string; description: string;
+  author: string; playAs: 'w' | 'b';
+  lines: Line[];
+};
+
+type Progress = {        // localStorage: `laionchess-progress:${courseId}`
+  learn: Record&lt;LineId, true&gt;;
+  practice: Record&lt;LineId, true&gt;;
+  srs?: Record&lt;LineId, { due: number; ease: number; reps: number }&gt;;
+};</code></pre>
+      <p>Bundled courses ship as static JSON in <code>public/courses/</code>;
+      user-created courses live in localStorage first, with export/import as
+      <code>.json</code> or PGN. A backend (Supabase or similar) is intentionally
+      out of scope until P6+ — everything above works fully client-side on GitHub Pages.</p>
+    </section>
+
+    <section>
+      <h2>3 &middot; Trainer state machine</h2>
+<pre><code>idle ──start line──▶ prompt(user)
+prompt ──correct move──▶ animate ──▶ opponent reply ──▶ prompt
+prompt ──wrong move───▶ flash + mistake++ ──▶ prompt
+prompt ──no plies left─▶ complete(line) ──▶ save progress ──▶ next line</code></pre>
+      <ul>
+        <li><strong>Learn:</strong> coach note + arrow + source-square hint shown before every user move.</li>
+        <li><strong>Practice:</strong> no hints; arrow only via the Hint button (marks the run imperfect); mistakes counted.</li>
+        <li>Validation is repertoire-based (expected move only) &mdash; no engine needed in the trainer; full legality stays in the analysis app.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4 &middot; Theming &amp; settings</h2>
+      <ul>
+        <li>One settings store drives the whole app: <code>boardTheme</code> (Classic Wood / Neon Night / Forest / Ice), <code>pieceSet</code> (Cburnett / Merida / Alpha / Glyph), <code>accent</code> (cyan / green / magenta / amber), <code>arrows</code>, <code>coords</code>.</li>
+        <li>Board colors are CSS custom properties on the board root &mdash; adding a theme is a 4-line entry, no component changes.</li>
+        <li>Piece sets resolve to <code>public/pieces/&lt;set&gt;/&lt;code&gt;.svg</code>; the Glyph set keeps the current Unicode look as a zero-asset fallback.</li>
+        <li>The settings popover (gear) is shared between the header and the trainer toolbar &mdash; same component, same store.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>5 &middot; Risks &amp; decisions</h2>
+      <table>
+        <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td>App.tsx size</td><td>P2 splits the analysis page into a route module before new features land; no behavior changes.</td></tr>
+          <tr><td>PGN edge cases</td><td>Importer accepts a validated subset first (variations + comments); reject with a clear error instead of mis-parsing. Docs in <code>tech-chess-docs/</code> already cover the format.</td></tr>
+          <tr><td>localStorage limits</td><td>Courses are small (KBs). Add export reminder when storage exceeds a threshold.</td></tr>
+          <tr><td>Piece asset licenses</td><td>Cburnett (CC BY-SA), Merida/Alpha (free for use) &mdash; include <code>public/pieces/LICENSES.md</code>.</td></tr>
+          <tr><td>GitHub Pages routing</td><td>HashRouter avoids 404s on refresh; no server config needed.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6 &middot; Definition of done (per phase)</h2>
+      <ol>
+        <li>Matches the prototype screens (this project) visually on desktop and mobile widths.</li>
+        <li>Settings persist across reloads and apply on every page.</li>
+        <li>Trainer completes all 6 Scotch lines in both modes without console errors.</li>
+        <li>Lighthouse: no regressions vs. the current analysis app.</li>
+      </ol>
+    </section>
+  </article>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/settings-menu.js"></script>
+</body>
+</html>

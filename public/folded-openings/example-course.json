@@ -1,0 +1,26 @@
+{
+  "schema": "laionchess.folded-opening.v1",
+  "id": "example-course",
+  "title": "Example Course",
+  "sideToTrain": "white",
+  "startingFen": "rn1qkbnr/ppp2ppp/8/3pp3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3",
+  "generatedAt": "2026-06-11T00:00:00.000Z",
+  "lines": [
+    {
+      "id": "line-1",
+      "name": "Line 1",
+      "pgn": "1. exd5",
+      "finalFen": "rn1qkbnr/ppp2ppp/8/3Pp3/8/5N2/PPPP1PPP/RNBQKB1R b KQkq - 0 3",
+      "moves": [
+        {
+          "ply": 1,
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5",
+          "piece": "pawn",
+          "color": "white"
+        }
+      ]
+    }
+  ]
+}

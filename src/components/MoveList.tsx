@@ -367,14 +367,14 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
-  const panelHeight = boardSize ? `${boardSize}px` : 'min(80vw, 560px)';
+  const panelHeight = '220px';
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: 220 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
 
       {/* ── Move panel ── */}
       <div style={{
-        width: 220,
+        width: '100%',
         height: panelHeight,
         overflowY: 'auto',
         backgroundColor: '#0d1117',
@@ -496,7 +496,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
       {/* ── Variation switcher buttons ── */}
       {showButtonBar && (
         <div style={{
-          width: 220,
+          width: '100%',
           display: 'flex',
           flexWrap: 'wrap',
           gap: 3,

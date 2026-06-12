@@ -20,3 +20,32 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Github Page
 [Under](https://laionfromnight.github.io/LaionChess/)
+
+## Common Moves (opening book) data
+
+Common Moves are served from a layered source so the app **always works**:
+
+1. **Local book server** (dev only) — serves a persistent offline DB and, in
+   online mode, fills gaps from the Lichess Opening Explorer and saves them.
+2. **Bundled offline DB** — `public/book/explorer.json`, shipped in the build.
+3. **Hardcoded demo book** — `src/data/book.ts`, last-resort seed.
+
+### GitHub Pages (no backend)
+
+Pages is fully static. `public/book/explorer.json` is bundled into the build and
+the app reads it offline — `VITE_BOOK_SERVER` is unset there, so it never tries a
+server. To enrich what Pages serves, run the local server, browse positions to
+cache them, and commit the updated `public/book/explorer.json`.
+
+> The old Cloudflare Worker proxy was removed: a browser can't call Lichess
+> directly (401 on `Origin`) and the Worker also got 401 (cloud egress IPs /
+> wrong host). Live data now flows only through the local server.
+
+### Local development with live data
+
+```bash
+npm run server   # online with cache (default); or: npm run server:offline
+npm run dev      # in another terminal — .env.local points it at the server
+```
+
+See [`server/README.md`](server/README.md) for the API, DB format, and modes.

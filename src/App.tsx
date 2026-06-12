@@ -1,26 +1,42 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import type { GameState, Position, PieceColor, Board as ChessBoard, Piece } from './chess/types';
+import type { GameState, Position, PieceColor } from './chess/types';
 import {
   createInitialState,
   executeMove,
   getLegalMoves,
   findKing,
-  isKingInCheck,
   getPieceLabel,
 } from './chess/logic';
 import { parseFen, toFen } from './chess/fen';
 import { exportPgn, parsePgn } from './chess/pgn';
+import { resolveSan } from './chess/san';
 import type { SpottingMode } from './chess/analysis';
 import {
   createGameTree, addNode, getNodeState, findChildByMove,
-  getMainLineTip, deleteSubtree, pgnGameToTree, treeToPgnGame,
+  getMainLineTip, getPathToNode, deleteSubtree, pgnGameToTree, treeToPgnGame,
 } from './chess/tree';
 import type { GameTree } from './chess/tree';
-import { getAttackedSquares, computeDefenseEdges, computeExchanges } from './chess/analysis';
 import Board from './components/Board';
 import MoveList from './components/MoveList';
 import SpottingPanel from './components/SpottingPanel';
 import PromotionPicker from './components/PromotionPicker';
+import SettingsMenu from './components/SettingsMenu';
+import EvalBar from './components/EvalBar';
+import CommonMoves from './components/CommonMoves';
+import BookFilters from './components/BookFilters';
+import AnimatedPiece, { type AnimPiece } from './components/AnimatedPiece';
+import { useSettings, BOARD_THEMES } from './settings/useSettings';
+import { pieceSrc, pieceCode } from './board/pieceSrc';
+import { buildSpottingOverlay } from './board/spottingOverlay';
+import { getEvaluation } from './board/evaluation';
+import { computeTopArrows } from './board/topArrows';
+import { useOpeningExplorer } from './board/lichess';
+import { useEngine, barSearchMs, SEARCH_LEVELS_MS } from './board/engine';
+import { expandPv, type PvMove } from './board/pv';
+import EnginePanel, { type PanelLine } from './components/EnginePanel';
+import { useCourses, type CourseCardMeta } from './courses/useCourses';
+import { loadProgress, countDone } from './courses/progress';
+import TrainerView from './views/TrainerView';
 
 // ── shared style helpers ──────────────────────────────────────────────────────
 
@@ -71,488 +87,220 @@ function Btn({ color, bg, border, onClick, children, disabled }: {
   );
 }
 
+function PanelToggle({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
+  return (
+    <button type="button" className={`toggle btnish ${on ? 'on' : 'off'}`} onClick={onClick}>
+      <span className="sw" />
+      <span className="lb">{label}</span>
+    </button>
+  );
+}
+
 function downloadBlob(text: string, filename: string) {
-  const blob = new Blob([text], { type: 'text/plain' });
+  const blob = new Blob([text], { type: filename.endsWith('.json') ? 'application/json' : 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = filename; a.click();
   URL.revokeObjectURL(url);
 }
 
-// ── animated piece ────────────────────────────────────────────────────────────
+function squareName(pos: Position): string {
+  return `${String.fromCharCode(97 + pos.col)}${8 - pos.row}`;
+}
 
-type AnimPiece = { piece: Piece; from: Position; to: Position };
+function slugify(value: string): string {
+  const slug = value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || 'laion-course';
+}
 
-function AnimatedPiece({ anim, boardSize, onDone }: {
-  anim: AnimPiece; boardSize: number; onDone: () => void;
-}) {
-  const divRef = useRef<HTMLDivElement>(null);
-  const squarePx = boardSize / 8;
-  const initDX = (anim.from.col - anim.to.col) * squarePx;
-  const initDY = (anim.from.row - anim.to.row) * squarePx;
+function lineSans(nodes: string[], tree: GameTree): string {
+  if (nodes.length === 0) return '';
+  return nodes.map((nodeId, index) => {
+    const node = tree.nodes[nodeId];
+    const san = node?.move.san ?? '?';
+    if (index % 2 === 0) return `${Math.floor(index / 2) + 1}. ${san}`;
+    return san;
+  }).join(' ');
+}
 
-  useEffect(() => {
-    // Two rAFs ensure initial transform is painted before transition starts
-    const id = requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const el = divRef.current;
-        if (!el) return;
-        el.style.transition = 'transform 0.3s cubic-bezier(0, 0, 0.2, 1)';
-        el.style.transform = 'translate(0px, 0px)';
-      });
-    });
-    const timer = setTimeout(onDone, 340);
-    return () => { cancelAnimationFrame(id); clearTimeout(timer); };
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+function collectTerminalPaths(tree: GameTree): string[][] {
+  const paths: string[][] = [];
 
-  const fontSize = Math.round(squarePx * 0.70);
-  const isWhite = anim.piece.color === 'white';
+  function walk(children: string[], path: string[]) {
+    if (children.length === 0) {
+      if (path.length > 0) paths.push(path);
+      return;
+    }
+    for (const childId of children) {
+      const child = tree.nodes[childId];
+      if (!child) continue;
+      walk(child.children, [...path, childId]);
+    }
+  }
 
+  walk(tree.rootChildren, []);
+  return paths;
+}
+
+function buildFoldedOpeningJson(tree: GameTree, title: string, side: PieceColor) {
+  const paths = collectTerminalPaths(tree);
+  const safeTitle = title.trim() || 'Untitled Course';
+  return {
+    schema: 'laionchess.folded-opening.v1',
+    id: slugify(safeTitle),
+    title: safeTitle,
+    sideToTrain: side,
+    startingFen: toFen(tree.initialState),
+    generatedAt: new Date().toISOString(),
+    lines: paths.map((path, index) => {
+      const lastNode = tree.nodes[path[path.length - 1]];
+      return {
+        id: `line-${index + 1}`,
+        name: `Line ${index + 1}`,
+        pgn: lineSans(path, tree),
+        finalFen: lastNode ? toFen(lastNode.state) : toFen(tree.initialState),
+        moves: path.map((nodeId, ply) => {
+          const move = tree.nodes[nodeId].move;
+          return {
+            ply: ply + 1,
+            san: move.san ?? '?',
+            from: squareName(move.from),
+            to: squareName(move.to),
+            piece: move.piece.type,
+            color: move.piece.color,
+            ...(move.promotion ? { promotion: move.promotion } : {}),
+          };
+        }),
+      };
+    }),
+  };
+}
+
+type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master';
+
+type CourseCard = {
+  id: string;
+  name: string;
+  tag: string;
+  tagClass?: string;
+  desc: string;
+  lines: number;
+  fen: string;
+  ready: boolean;
+};
+
+const COURSES: CourseCard[] = [
+  {
+    id: 'scotch-game',
+    name: 'Scotch Game',
+    tag: 'Ready',
+    tagClass: 'tag-green',
+    desc: 'A direct weapon against 1...e5. Open the center on move 3 and develop with tempo.',
+    lines: 6,
+    fen: 'r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 4',
+    ready: true,
+  },
+  {
+    id: 'italian-game',
+    name: 'Italian Game',
+    tag: 'Planned',
+    desc: 'Quiet development, long-term pressure on f7. The classical school in one course.',
+    lines: 12,
+    fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+    ready: false,
+  },
+  {
+    id: 'sicilian',
+    name: 'Sicilian Defense',
+    tag: 'Planned',
+    desc: 'Fight for the win as Black from move one. Open Sicilian main lines.',
+    lines: 24,
+    fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2',
+    ready: false,
+  },
+  {
+    id: 'london',
+    name: 'London System',
+    tag: 'Planned',
+    desc: 'One setup against everything. Solid structure, clear plans, minimal theory.',
+    lines: 14,
+    fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2',
+    ready: false,
+  },
+  {
+    id: 'queens-gambit',
+    name: "Queen's Gambit",
+    tag: 'Planned',
+    desc: 'Offer the c-pawn, take the center. Declined and Accepted main lines.',
+    lines: 18,
+    fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2',
+    ready: false,
+  },
+  {
+    id: 'caro-kann',
+    name: 'Caro-Kann Defense',
+    tag: 'Planned',
+    desc: 'The solid answer to 1.e4: sound structure without giving up activity.',
+    lines: 16,
+    fen: 'rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
+    ready: false,
+  },
+];
+
+function MiniBoard({ fen }: { fen: string }) {
+  const { settings } = useSettings();
+  const theme = BOARD_THEMES[settings.boardTheme] ?? BOARD_THEMES.classic;
+  const state = parseFen(fen) ?? createInitialState();
   return (
-    <div ref={divRef} style={{
-      position: 'absolute',
-      left: anim.to.col * squarePx,
-      top: anim.to.row * squarePx,
-      width: squarePx,
-      height: squarePx,
-      transform: `translate(${initDX}px, ${initDY}px)`,
-      transition: 'none',
-      pointerEvents: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontSize,
-      userSelect: 'none',
-    }}>
-      <span style={{
-        lineHeight: 1,
-        color: isWhite ? '#ffffff' : '#1a1a1a',
-        textShadow: isWhite
-          ? '0 0 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.4)'
-          : '0 0 3px rgba(255,255,255,0.5)',
-        filter: isWhite ? 'drop-shadow(0 0 1px rgba(0,0,0,0.9))' : 'none',
-      }}>
-        {getPieceLabel(anim.piece)}
-      </span>
+    <div className="mini-board" aria-hidden="true">
+      {state.board.map((row, rowIdx) => row.map((piece, colIdx) => {
+        const light = (rowIdx + colIdx) % 2 === 0;
+        const src = piece ? pieceSrc(settings.pieceSet, piece.color, piece.type) : null;
+        return (
+          <span key={`${rowIdx}-${colIdx}`} style={{ background: light ? theme.light : theme.dark }}>
+            {piece && (src
+              ? <img src={src} alt={pieceCode(piece.color, piece.type)} draggable={false} style={{ width: '92%', height: '92%' }} />
+              : <span style={{ color: piece.color === 'white' ? '#fff' : '#111', textShadow: piece.color === 'white' ? '0 0 2px #000' : '0 0 2px #fff' }}>{getPieceLabel(piece)}</span>
+            )}
+          </span>
+        );
+      }))}
     </div>
   );
 }
 
-// ── king-shot helpers ─────────────────────────────────────────────────────────
-
-function findCheckingPieces(board: ChessBoard, kingPos: Position, attackerColor: PieceColor): Position[] {
-  const result: Position[] = [];
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = board[r][c];
-      if (!piece || piece.color !== attackerColor) continue;
-      const attacked = getAttackedSquares(board, { row: r, col: c }, piece.type, piece.color);
-      if (attacked.some(sq => sq.row === kingPos.row && sq.col === kingPos.col)) {
-        result.push({ row: r, col: c });
-      }
-    }
-  }
-  return result;
-}
-
-function isRawAttackedBy(board: ChessBoard, pos: Position, byColor: PieceColor): boolean {
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = board[r][c];
-      if (!piece || piece.color !== byColor) continue;
-      const attacked = getAttackedSquares(board, { row: r, col: c }, piece.type, piece.color);
-      if (attacked.some(sq => sq.row === pos.row && sq.col === pos.col)) return true;
-    }
-  }
-  return false;
-}
-
-// ── spotting overlay SVG renderer ─────────────────────────────────────────────
-
-function getPinAxis(board: ChessBoard, piecePos: Position, color: PieceColor): Set<string> | null {
-  const kingPos = findKing(board, color);
-  if (!kingPos) return null;
-
-  const tmp: ChessBoard = board.map(row => [...row]);
-  tmp[piecePos.row][piecePos.col] = null;
-  if (!isKingInCheck(tmp, color)) return null;
-
-  const dr = piecePos.row - kingPos.row;
-  const dc = piecePos.col - kingPos.col;
-  const stepR = dr === 0 ? 0 : dr > 0 ? 1 : -1;
-  const stepC = dc === 0 ? 0 : dc > 0 ? 1 : -1;
-
-  const axis = new Set<string>();
-  let r = kingPos.row + stepR, c = kingPos.col + stepC;
-  while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-    axis.add(`${r},${c}`); r += stepR; c += stepC;
-  }
-  r = kingPos.row - stepR; c = kingPos.col - stepC;
-  while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-    axis.add(`${r},${c}`); r -= stepR; c -= stepC;
-  }
-  return axis;
-}
-
-function computeLegalControlMap(state: GameState): { white: number[][]; black: number[][] } {
-  const white = Array.from({ length: 8 }, () => new Array(8).fill(0));
-  const black = Array.from({ length: 8 }, () => new Array(8).fill(0));
-
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = state.board[r][c];
-      if (!piece) continue;
-      const map = piece.color === 'white' ? white : black;
-
-      if (piece.type === 'king') {
-        const moves = getLegalMoves(
-          state.board, { row: r, col: c },
-          state.enPassantTarget,
-          state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-          state.blackCanCastleKingside, state.blackCanCastleQueenside,
-        );
-        for (const sq of moves) map[sq.row][sq.col]++;
-      } else {
-        const attacked = getAttackedSquares(state.board, { row: r, col: c }, piece.type, piece.color);
-        const pinAxis = getPinAxis(state.board, { row: r, col: c }, piece.color);
-        for (const sq of attacked) {
-          if (pinAxis && !pinAxis.has(`${sq.row},${sq.col}`)) continue;
-          map[sq.row][sq.col]++;
-        }
-      }
-    }
-  }
-  return { white, black };
-}
-
-const ALL_DEFS = (
-  <defs>
-    <pattern id="stripe-lo" patternUnits="userSpaceOnUse" width="0.28" height="0.28" patternTransform="rotate(45 0 0)">
-      <line x1="0" y1="0" x2="0" y2="0.28" stroke="rgba(255,70,70,0.80)" strokeWidth="0.10" />
-    </pattern>
-    <pattern id="stripe-hi" patternUnits="userSpaceOnUse" width="0.28" height="0.28" patternTransform="rotate(45 0 0)">
-      <line x1="0" y1="0" x2="0" y2="0.28" stroke="rgba(200,0,0,0.95)" strokeWidth="0.17" />
-    </pattern>
-    <marker id="arr-a" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 4 2, 0 4" fill="rgba(255,80,80,0.9)" />
-    </marker>
-    <marker id="arr-d" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 4 2, 0 4" fill="rgba(80,255,160,0.9)" />
-    </marker>
-    <marker id="arr-shot-safe" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 5 2.5, 0 5" fill="rgba(60,255,90,0.95)" />
-    </marker>
-    <marker id="arr-shot-unsafe" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 5 2.5, 0 5" fill="rgba(180,0,255,0.95)" />
-    </marker>
-  </defs>
-);
-
-function buildSpottingOverlay(modes: Set<SpottingMode>, state: GameState): React.ReactNode {
-  if (modes.size === 0) return null;
-
-  const { board, currentTurn } = state;
-
-  const SVG_PROPS = {
-    viewBox: '0 0 8 8',
-    width: '100%',
-    height: '100%',
-    style: { position: 'absolute' as const, inset: 0 },
-    xmlns: 'http://www.w3.org/2000/svg',
-  };
-
-  const layers: React.ReactNode[] = [ALL_DEFS];
-
-  // ── LaionEye ────────────────────────────────────────────────────────────────
-  const eyeModes = (['eye-full','eye-white','eye-black','eye-1','eye-2'] as SpottingMode[]).filter(m => modes.has(m));
-  if (eyeModes.length > 0) {
-    const ctl = computeLegalControlMap(state);
-    const rects: React.ReactNode[] = [];
-    for (let r = 0; r < 8; r++) {
-      for (let c = 0; c < 8; c++) {
-        let count = 0;
-        for (const m of eyeModes) {
-          let v = 0;
-          if (m === 'eye-full')  v = Math.max(ctl.white[r][c], ctl.black[r][c]);
-          else if (m === 'eye-white') v = ctl.white[r][c];
-          else if (m === 'eye-black') v = ctl.black[r][c];
-          else if (m === 'eye-1') v = currentTurn === 'white' ? ctl.white[r][c] : ctl.black[r][c];
-          else if (m === 'eye-2') v = currentTurn === 'white' ? ctl.black[r][c] : ctl.white[r][c];
-          if (v > count) count = v;
-        }
-        if (count > 0) {
-          const fill = count <= 2 ? 'url(#stripe-lo)' : 'url(#stripe-hi)';
-          rects.push(<rect key={`e-${r}-${c}`} x={c} y={r} width={1} height={1} fill={fill} />);
-        }
-      }
-    }
-    layers.push(<g key="eye">{rects}</g>);
-  }
-
-  // ── Dalmacja ────────────────────────────────────────────────────────────────
-  if (modes.has('dalmacja')) {
-    const edges = computeDefenseEdges(board);
-    const lines = edges.map((e, i) => {
-      const x1 = e.from.col + 0.5, y1 = e.from.row + 0.5;
-      const x2 = e.to.col + 0.5, y2 = e.to.row + 0.5;
-      const stroke = e.color === 'white' ? 'rgba(255,220,90,0.82)' : 'rgba(0,200,255,0.82)';
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke={stroke} strokeWidth={0.065} strokeLinecap="round"
-        strokeDasharray="0.18 0.10" />;
-    });
-    const defended = new Set<string>();
-    edges.forEach(e => defended.add(`${e.to.row},${e.to.col}`));
-    const dots = [...defended].map(key => {
-      const [r, c] = key.split(',').map(Number);
-      const piece = board[r][c];
-      const fill = piece?.color === 'white' ? 'rgba(255,220,90,0.45)' : 'rgba(0,200,255,0.45)';
-      return <circle key={key} cx={c + 0.5} cy={r + 0.5} r={0.38} fill={fill} />;
-    });
-    layers.push(<g key="dalmacja">{dots}{lines}</g>);
-  }
-
-  // ── Lufycfer ────────────────────────────────────────────────────────────────
-  if (modes.has('lufycfer')) {
-    const exchanges = computeExchanges(board);
-    const elems: React.ReactNode[] = [];
-    for (const ex of exchanges) {
-      const { square, attackers, defenders } = ex;
-      const sqFill = attackers.length > defenders.length
-        ? 'rgba(255,60,60,0.50)'
-        : 'rgba(50,255,130,0.45)';
-      elems.push(<rect key={`sq-${square.row}-${square.col}`}
-        x={square.col} y={square.row} width={1} height={1} fill={sqFill} />);
-      const tx = square.col + 0.5, ty = square.row + 0.5;
-      for (const a of attackers) {
-        const ax = a.pos.col + 0.5, ay = a.pos.row + 0.5;
-        const dx = tx - ax, dy = ty - ay;
-        const len = Math.sqrt(dx * dx + dy * dy);
-        elems.push(<line key={`a-${a.pos.row}-${a.pos.col}-${square.row}-${square.col}`}
-          x1={ax} y1={ay} x2={tx - (dx / len) * 0.4} y2={ty - (dy / len) * 0.4}
-          stroke="rgba(255,80,80,0.80)" strokeWidth={0.06}
-          markerEnd="url(#arr-a)" strokeLinecap="round" />);
-      }
-      for (const d of defenders) {
-        const dx2 = d.pos.col + 0.5, dy2 = d.pos.row + 0.5;
-        const vx = tx - dx2, vy = ty - dy2;
-        const len = Math.sqrt(vx * vx + vy * vy);
-        elems.push(<line key={`d-${d.pos.row}-${d.pos.col}-${square.row}-${square.col}`}
-          x1={dx2} y1={dy2} x2={tx - (vx / len) * 0.4} y2={ty - (vy / len) * 0.4}
-          stroke="rgba(80,255,160,0.80)" strokeWidth={0.06}
-          markerEnd="url(#arr-d)" strokeLinecap="round" />);
-      }
-    }
-    layers.push(<g key="lufycfer">{elems}</g>);
-  }
-
-  // ── King Path ────────────────────────────────────────────────────────────────
-  if (modes.has('king-path')) {
-    const elems: React.ReactNode[] = [];
-
-    for (const color of ['white', 'black'] as PieceColor[]) {
-      const kingPos = findKing(board, color);
-      if (!kingPos) continue;
-      const kx = kingPos.col + 0.5, ky = kingPos.row + 0.5;
-      const ringColor   = color === 'white' ? 'rgba(255,215,60,0.85)' : 'rgba(0,210,255,0.85)';
-      const pinColor    = color === 'white' ? 'rgba(255,200,50,0.90)' : 'rgba(0,220,255,0.90)';
-      // Bright inner color for mobile-piece rings — high contrast on any square
-      const mobileBright = color === 'white' ? '#ffe040' : '#00eeff';
-
-      // King always gets a ring
-      elems.push(<circle key={`king-ring-${color}`}
-        cx={kx} cy={ky} r={0.43}
-        fill="none" stroke={ringColor} strokeWidth={0.08} />);
-
-      const colorInCheck = isKingInCheck(board, color);
-
-      if (!colorInCheck) {
-        // No check: pin lines only, nothing on free pieces
-        for (let r = 0; r < 8; r++) {
-          for (let c = 0; c < 8; c++) {
-            const piece = board[r][c];
-            if (!piece || piece.color !== color || piece.type === 'king') continue;
-            const tmp: ChessBoard = board.map(row => [...row]);
-            tmp[r][c] = null;
-            if (!isKingInCheck(tmp, color)) continue;
-
-            const px = c + 0.5, py = r + 0.5;
-            elems.push(<line key={`pin-line-${r}-${c}`}
-              x1={kx} y1={ky} x2={px} y2={py}
-              stroke={pinColor} strokeWidth={0.07}
-              strokeDasharray="0.18 0.10" strokeLinecap="round" />);
-
-            const dr = r === kingPos.row ? 0 : r > kingPos.row ? 1 : -1;
-            const dc = c === kingPos.col ? 0 : c > kingPos.col ? 1 : -1;
-            let sr = r + dr, sc = c + dc;
-            while (sr >= 0 && sr < 8 && sc >= 0 && sc < 8) {
-              if (tmp[sr][sc]) {
-                elems.push(<line key={`pin-ray-${r}-${c}`}
-                  x1={px} y1={py} x2={sc + 0.5} y2={sr + 0.5}
-                  stroke="rgba(255,60,60,0.60)" strokeWidth={0.05}
-                  strokeDasharray="0.10 0.08" strokeLinecap="round" />);
-                break;
-              }
-              sr += dr; sc += dc;
-            }
-          }
-        }
-      } else {
-        // In check: double-stroke ring on pieces that can move, no lines
-        const dests = new Set<string>();
-        for (let r = 0; r < 8; r++) {
-          for (let c = 0; c < 8; c++) {
-            const piece = board[r][c];
-            if (!piece || piece.color !== color) continue;
-            const moves = getLegalMoves(board, { row: r, col: c },
-              state.enPassantTarget,
-              state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-              state.blackCanCastleKingside, state.blackCanCastleQueenside);
-            if (moves.length > 0) {
-              // Dark halo for contrast, bright inner ring
-              elems.push(<circle key={`mobile-halo-${r}-${c}`}
-                cx={c + 0.5} cy={r + 0.5} r={0.41}
-                fill="none" stroke="rgba(0,0,0,0.70)" strokeWidth={0.14} />);
-              elems.push(<circle key={`mobile-${r}-${c}`}
-                cx={c + 0.5} cy={r + 0.5} r={0.41}
-                fill="none" stroke={mobileBright} strokeWidth={0.08} />);
-              for (const m of moves) dests.add(`${m.row},${m.col}`);
-            }
-          }
-        }
-        // Purple dots on legal destinations
-        for (const key of dests) {
-          const [r, c] = key.split(',').map(Number);
-          elems.push(<circle key={`dest-${r}-${c}`}
-            cx={c + 0.5} cy={r + 0.5} r={0.20}
-            fill="rgba(190,0,255,0.85)" />);
-        }
-      }
-    }
-
-    layers.push(<g key="king-path">{elems}</g>);
-  }
-
-  // ── King Shot ────────────────────────────────────────────────────────────────
-  if (modes.has('king-shot')) {
-    const elems: React.ReactNode[] = [];
-    const oppColor: PieceColor = currentTurn === 'white' ? 'black' : 'white';
-    const oppKingPos = findKing(board, oppColor);
-
-    if (oppKingPos) {
-      // Source ring: orange for white pieces, blue for black pieces
-      const srcRing = currentTurn === 'white' ? '#ff9020' : '#2090ff';
-
-      type ShotInfo = {
-        fr: number; fc: number; tr: number; tc: number;
-        checkers: Position[];
-        unsafe: boolean;
-      };
-      const shots: ShotInfo[] = [];
-      const sources = new Set<string>();
-
-      for (let r = 0; r < 8; r++) {
-        for (let c = 0; c < 8; c++) {
-          const piece = board[r][c];
-          if (!piece || piece.color !== currentTurn) continue;
-
-          const legal = getLegalMoves(board, { row: r, col: c },
-            state.enPassantTarget,
-            state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-            state.blackCanCastleKingside, state.blackCanCastleQueenside);
-
-          for (const dest of legal) {
-            const tmp: ChessBoard = board.map(row => [...row]);
-            if (piece.type === 'pawn' && state.enPassantTarget &&
-                dest.row === state.enPassantTarget.row && dest.col === state.enPassantTarget.col) {
-              tmp[piece.color === 'white' ? dest.row + 1 : dest.row - 1][dest.col] = null;
-            }
-            tmp[dest.row][dest.col] = (piece.type === 'pawn' && (dest.row === 0 || dest.row === 7))
-              ? { type: 'queen', color: piece.color }
-              : piece;
-            tmp[r][c] = null;
-
-            if (!isKingInCheck(tmp, oppColor)) continue;
-
-            // Find which pieces are actually delivering check (ray source)
-            const checkers = findCheckingPieces(tmp, oppKingPos, currentTurn);
-            // Unsafe = any checking piece is attacked by opponent (can be recaptured)
-            const unsafe = checkers.some(chk => isRawAttackedBy(tmp, chk, oppColor));
-
-            sources.add(`${r},${c}`);
-            shots.push({ fr: r, fc: c, tr: dest.row, tc: dest.col, checkers, unsafe });
-          }
-        }
-      }
-
-      // Source rings (deduplicated per piece)
-      for (const key of sources) {
-        const [r, c] = key.split(',').map(Number);
-        const fx = c + 0.5, fy = r + 0.5;
-        elems.push(<circle key={`shot-halo-${key}`}
-          cx={fx} cy={fy} r={0.42}
-          fill="none" stroke="rgba(0,0,0,0.65)" strokeWidth={0.15} />);
-        elems.push(<circle key={`shot-src-${key}`}
-          cx={fx} cy={fy} r={0.42}
-          fill="none" stroke={srcRing} strokeWidth={0.09} />);
-      }
-
-      const kx = oppKingPos.col + 0.5, ky = oppKingPos.row + 0.5;
-
-      for (const { fr, fc, tr, tc, checkers, unsafe } of shots) {
-        const fx = fc + 0.5, fy = fr + 0.5;
-        const tx = tc + 0.5, ty = tr + 0.5;
-        const k = `${fr}-${fc}-${tr}-${tc}`;
-
-        // Green = safe (checker can't be recaptured), purple = unsafe (checker can be taken)
-        const shotColor  = unsafe ? '#b400ff' : '#3cff5a';
-        const destFill   = unsafe ? 'rgba(180,0,255,0.28)' : 'rgba(50,255,80,0.28)';
-        const arrowMark  = unsafe ? 'url(#arr-shot-unsafe)' : 'url(#arr-shot-safe)';
-
-        elems.push(<rect key={`shot-dest-${k}`}
-          x={tc} y={tr} width={1} height={1} fill={destFill} />);
-
-        // Move arrow: piece → destination
-        const adx = tx - fx, ady = ty - fy;
-        const alen = Math.sqrt(adx * adx + ady * ady);
-        if (alen > 0.01) {
-          elems.push(<line key={`shot-arrow-${k}`}
-            x1={fx} y1={fy}
-            x2={tx - (adx / alen) * 0.38} y2={ty - (ady / alen) * 0.38}
-            stroke={shotColor} strokeWidth={0.07}
-            markerEnd={arrowMark} strokeLinecap="round" />);
-        }
-
-        // Attack rays from each checking piece to king (not from dest)
-        checkers.forEach((chk, i) => {
-          const cx = chk.col + 0.5, cy = chk.row + 0.5;
-          const rdx = kx - cx, rdy = ky - cy;
-          const rlen = Math.sqrt(rdx * rdx + rdy * rdy);
-          if (rlen > 0.01) {
-            elems.push(<line key={`shot-ray-${k}-${i}`}
-              x1={cx} y1={cy}
-              x2={kx - (rdx / rlen) * 0.43} y2={ky - (rdy / rlen) * 0.43}
-              stroke="rgba(255,50,50,0.75)" strokeWidth={0.06}
-              strokeDasharray="0.13 0.09" strokeLinecap="round" />);
-          }
-        });
-      }
-    }
-
-    layers.push(<g key="king-shot">{elems}</g>);
-  }
-
-  if (layers.length <= 1) return null; // only defs, nothing visible
-  return <svg {...SVG_PROPS}>{layers}</svg>;
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 
 export default function App() {
+  const { settings, setSetting } = useSettings();
+  const [activeView, setActiveView] = useState<ActiveView>('home');
+
+  // ── courses (loaded from public/courses) ──────────────────────────────────────
+  const { catalog, courses } = useCourses();
+  const [activeCourseId, setActiveCourseId] = useState('scotch-game');
+  const activeCourse = courses[activeCourseId];
+
+  // ── analysis / create panel toggles ──────────────────────────────────────────
+  const [showEval, setShowEval] = useState(true);
+  const [showBook, setShowBook] = useState(true);
+  const [showTop, setShowTop] = useState(false);
+  const [showBookOptions, setShowBookOptions] = useState(false);
+  const [hoverBookSan, setHoverBookSan] = useState<string | null>(null);
+
   // ── game tree ───────────────────────────────────────────────────────────────
   const [tree, setTree] = useState<GameTree>(() => createGameTree(createInitialState()));
   const [currentNodeId, setCurrentNodeId] = useState<string | null>(null);
   const [selectedPos, setSelectedPos] = useState<Position | null>(null);
   const [animPiece, setAnimPiece] = useState<AnimPiece | null>(null);
+  const [courseTitle, setCourseTitle] = useState('Untitled Course');
+  const [courseSide, setCourseSide] = useState<PieceColor>('white');
+  const [saveState, setSaveState] = useState('ready');
+  const [courseSearch, setCourseSearch] = useState('');
 
   // ── playback ────────────────────────────────────────────────────────────────
   const [isPlaying, setIsPlaying] = useState(false);
@@ -566,15 +314,66 @@ export default function App() {
   const mainLineTip = useMemo(() => getMainLineTip(tree), [tree]);
   const isAnalysisMode = currentNodeId !== mainLineTip;
   const hasAnyMoves = tree.rootChildren.length > 0;
+  const terminalPaths = useMemo(() => collectTerminalPaths(tree), [tree]);
+  const foldedOpeningJson = useMemo(
+    () => buildFoldedOpeningJson(tree, courseTitle, courseSide),
+    [tree, courseTitle, courseSide],
+  );
 
   const displayedState = useMemo(() => getNodeState(tree, currentNodeId), [tree, currentNodeId]);
+  const displayedFen = useMemo(() => toFen(displayedState), [displayedState]);
+
+  // Common Moves (Lichess book, offline fallback).
+  const { rows: bookRows, loading: bookLoading } = useOpeningExplorer(displayedFen, settings.bookSpeeds, settings.bookRatings);
+
+  // ── PV preview (clicking a move in an engine line shows that position) ────────
+  const [preview, setPreview] = useState<{ state: GameState; from: Position; to: Position } | null>(null);
+  useEffect(() => { setPreview(null); }, [currentNodeId, displayedFen]);
+  const boardState = preview?.state ?? displayedState;
+
+  // ── local Stockfish analysis ──────────────────────────────────────────────────
+  const enginePanelOn = settings.engineEnabled && activeView === 'analysis';
+  const engineActive = activeView === 'analysis' && (showEval || enginePanelOn);
+  const engineSnap = useEngine(displayedFen, {
+    enabled: engineActive,
+    multiPv: enginePanelOn ? settings.engineLines : 1,
+    searchMs: enginePanelOn ? SEARCH_LEVELS_MS[settings.engineSearchLevel] : barSearchMs(),
+    hashMb: settings.engineHashMb,
+  });
+  const bestLine = engineSnap.lines[0] ?? null;
+  const barPawns = bestLine ? bestLine.pawns : getEvaluation(displayedState);
+  const barMate = bestLine ? bestLine.mate : null;
+
+  const evalTerminal: 'white' | 'black' | 'draw' | null =
+    displayedState.isCheckmate ? (displayedState.currentTurn === 'white' ? 'black' : 'white')
+    : displayedState.isStalemate ? 'draw'
+    : null;
+
+  // Expand engine PVs to SAN + preview FENs (analysis panel only).
+  const engineLinesExpanded: PanelLine[] = useMemo(() => {
+    if (!enginePanelOn) return [];
+    return engineSnap.lines.map((l) => ({
+      key: `pv${l.multipv}`,
+      pawns: l.pawns,
+      mate: l.mate,
+      moves: expandPv(displayedState, l.pv, 12),
+    }));
+  }, [enginePanelOn, engineSnap, displayedState]);
+
+  const handlePreviewMove = useCallback((m: PvMove) => {
+    const st = parseFen(m.fen);
+    if (st) setPreview({ state: st, from: m.from, to: m.to });
+  }, []);
 
   const displayedLastMove = currentNodeId !== null ? (tree.nodes[currentNodeId]?.move ?? null) : null;
+  const boardLastMove = preview
+    ? { from: preview.from, to: preview.to }
+    : (displayedLastMove ? { from: displayedLastMove.from, to: displayedLastMove.to } : null);
 
-  const displayedCheckSquare = useMemo(() => {
-    if (!displayedState.isCheck) return null;
-    return findKing(displayedState.board, displayedState.currentTurn);
-  }, [displayedState]);
+  const boardCheckSquare = useMemo(() => {
+    if (!boardState.isCheck) return null;
+    return findKing(boardState.board, boardState.currentTurn);
+  }, [boardState]);
 
   // Keep refs in sync
   useEffect(() => { currentNodeIdRef.current = currentNodeId; });
@@ -584,17 +383,87 @@ export default function App() {
   // ── promotion picker ────────────────────────────────────────────────────────
   const [pendingPromotion, setPendingPromotion] = useState<{ from: Position; to: Position } | null>(null);
 
-  // ── spotting modes (multi-select) ───────────────────────────────────────────
-  const [spottingModes, setSpottingModes] = useState<Set<SpottingMode>>(new Set());
+  // ── spotting modes (multi-select, persisted across views) ────────────────────
+  const [spottingModes, setSpottingModesState] = useState<Set<SpottingMode>>(
+    () => new Set(settings.spotModes),
+  );
+  const setSpottingModes = useCallback((modes: Set<SpottingMode>) => {
+    setSpottingModesState(modes);
+    setSetting('spotModes', [...modes]);
+  }, [setSetting]);
 
   const spottingOverlay = useMemo(
-    () => buildSpottingOverlay(spottingModes, displayedState),
-    [spottingModes, displayedState],
+    () => buildSpottingOverlay(spottingModes, boardState),
+    [spottingModes, boardState],
   );
 
+  // ── Top-3 book arrows (Create view) ───────────────────────────────────────────
+  const topArrows = useMemo(
+    () => (showTop ? computeTopArrows(displayedState, bookRows) : []),
+    [showTop, displayedState, bookRows],
+  );
+
+  // ── Engine PV arrows (Analysis view) — one per line, ranked by colour ─────────
+  const ENGINE_ARROW_COLORS = ['rgba(0,255,136,0.92)', 'rgba(255,217,61,0.8)', 'rgba(255,159,67,0.72)', 'rgba(255,0,255,0.62)', 'rgba(120,140,255,0.55)'];
+  const engineArrows = useMemo(() => {
+    if (!enginePanelOn || !settings.engineArrows) return [];
+    return engineLinesExpanded
+      .filter(l => l.moves.length > 0)
+      .map((l, i) => ({
+        from: l.moves[0].from, to: l.moves[0].to,
+        color: ENGINE_ARROW_COLORS[Math.min(i, ENGINE_ARROW_COLORS.length - 1)],
+        width: i === 0 ? 3 : 2,
+      }));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enginePanelOn, settings.engineArrows, engineLinesExpanded]);
+
+  // ── Hover arrow from Common Moves ─────────────────────────────────────────────
+  const hoverBookArrow = useMemo(() => {
+    if (!hoverBookSan) return null;
+    const resolved = resolveSan(displayedState, hoverBookSan);
+    if (!resolved) return null;
+    return { from: resolved.from, to: resolved.to, color: 'rgba(255,255,255,0.82)', width: 2.8 };
+  }, [hoverBookSan, displayedState]);
+
+  const boardArrows = useMemo(() => {
+    const base = activeView === 'analysis' ? engineArrows : topArrows;
+    if (!hoverBookArrow) return base;
+    const deduped = base.filter(a =>
+      !(a.from.row === hoverBookArrow.from.row && a.from.col === hoverBookArrow.from.col &&
+        a.to.row === hoverBookArrow.to.row && a.to.col === hoverBookArrow.to.col)
+    );
+    return [hoverBookArrow, ...deduped];
+  }, [activeView, engineArrows, topArrows, hoverBookArrow]);
+
   // ── board size ───────────────────────────────────────────────────────────────
-  const [boardSize, setBoardSize] = useState(900);
+  const [boardSize, setBoardSize] = useState(560);
   const BOARD_MIN = 240, BOARD_STEP = 60;
+
+  // Auto-size for Analysis: fill viewport height/width, no manual controls needed.
+  useEffect(() => {
+    if (activeView !== 'analysis') return;
+    const SIDEBAR = 210;
+    const PANEL = 420;
+    const PAGE_PAD_H = 40;   // 20px left + 20px right
+    const PAGE_PAD_V = 16 + 40; // top + bottom
+    const GRID_GAP = 12;
+    const SPOTTING = 148;    // SpottingPanel fixed width
+    const EVAL_W = showEval ? 26 + 12 : 0; // EvalBar + its gap
+    const ROW_GAP = 12;      // gap between SpottingPanel and Board wrapper
+    const SLACK = 24;        // breathing room
+
+    const compute = () => {
+      const availW = window.innerWidth - SIDEBAR - PANEL - PAGE_PAD_H - GRID_GAP - SPOTTING - EVAL_W - ROW_GAP;
+      const availH = window.innerHeight - PAGE_PAD_V - SLACK;
+      const raw = Math.min(availW, availH);
+      // Snap to nearest 8px so each square is whole pixels
+      setBoardSize(Math.max(BOARD_MIN, Math.floor(raw / 8) * 8));
+    };
+
+    compute();
+    window.addEventListener('resize', compute);
+    return () => window.removeEventListener('resize', compute);
+  }, [activeView, showEval]);
 
   // ── modal states ────────────────────────────────────────────────────────────
   const [showNewGame, setShowNewGame] = useState(false);
@@ -703,7 +572,14 @@ export default function App() {
     setCurrentNodeId(nodeId);
   }
 
+  // Play a book row's SAN on the current position (Common Moves click).
+  const playBookMove = (san: string) => {
+    const resolved = resolveSan(displayedState, san);
+    if (resolved) doTreeMove(resolved.from, resolved.to, resolved.promotionPiece);
+  };
+
   const handleSquareClick = useCallback((pos: Position) => {
+    if (preview) { setPreview(null); return; } // dismiss PV preview, act on next click
     if (displayedState.isCheckmate || displayedState.isStalemate) return;
     if (pendingPromotion) return;
     if (selectedPos && validMoves.some(m => m.row === pos.row && m.col === pos.col)) {
@@ -748,6 +624,17 @@ export default function App() {
 
   const startFresh = () => { applyNewTree(createGameTree(createInitialState()), null); setShowNewGame(false); };
 
+  const openTrainerCourse = (courseId: string) => {
+    setActiveCourseId(courseId);
+    setActiveView('trainer');
+  };
+
+  // Analysis → handoff: load a position from another view into a fresh tree.
+  const openAnalysisFromState = (state: GameState) => {
+    applyNewTree(createGameTree(parseFen(toFen(state)) ?? state), null);
+    setActiveView('analysis');
+  };
+
   const loadFromFen = () => {
     const trimmed = fenInput.trim();
     if (!trimmed) { setFenError('FEN cannot be empty'); return; }
@@ -773,6 +660,8 @@ export default function App() {
   // ── export ──────────────────────────────────────────────────────────────────
   const currentFen = toFen(displayedState);
   const currentPgn = exportPgn(treeToPgnGame(tree));
+  const activePath = useMemo(() => getPathToNode(tree, currentNodeId), [tree, currentNodeId]);
+  const activeLineText = lineSans(activePath, tree);
 
   const copyFen = () => navigator.clipboard.writeText(currentFen).then(() => {
     setCopyFenMsg('Copied!'); setTimeout(() => setCopyFenMsg(''), 2000);
@@ -780,6 +669,13 @@ export default function App() {
   const copyPgn = () => navigator.clipboard.writeText(currentPgn).then(() => {
     setCopyPgnMsg('Copied!'); setTimeout(() => setCopyPgnMsg(''), 2000);
   });
+
+  const downloadFoldedOpening = () => {
+    const filename = `${slugify(courseTitle)}.json`;
+    downloadBlob(JSON.stringify(foldedOpeningJson, null, 2), filename);
+    setSaveState(`downloaded ${filename}`);
+    setTimeout(() => setSaveState('ready'), 2500);
+  };
 
   // ── status ───────────────────────────────────────────────────────────────────
   const statusText = displayedState.isCheckmate
@@ -801,178 +697,441 @@ export default function App() {
 
   const SPEED_OPTIONS = [{ label: '1s', ms: 1000 }, { label: '5s', ms: 5000 }, { label: '15s', ms: 15000 }];
 
+  // ── course catalog (loaded "ready" courses + static "planned" cards) ──────────
+  type DisplayCard = {
+    id: string; name: string; tag: string; tagClass?: string; desc: string;
+    fen: string; ready: boolean; lines: number; learned: number;
+  };
+  const readyCards: DisplayCard[] = catalog.map((meta: CourseCardMeta) => {
+    const c = courses[meta.id];
+    const total = c?.lines.length ?? 0;
+    const prog = loadProgress(meta.id);
+    const learned = c ? c.lines.filter(l => prog.learn[l.id]).length : 0;
+    return {
+      id: meta.id, name: meta.name, tag: meta.tag, tagClass: meta.tagClass,
+      desc: meta.desc, fen: meta.fen, ready: true, lines: total, learned,
+    };
+  });
+  const plannedCards: DisplayCard[] = COURSES
+    .filter(c => !c.ready && !catalog.some(m => m.id === c.id))
+    .map(c => ({ id: c.id, name: c.name, tag: c.tag, tagClass: c.tagClass, desc: c.desc, fen: c.fen, ready: false, lines: c.lines, learned: 0 }));
+  const allCards = [...readyCards, ...plannedCards];
+  const filteredCourses = allCards.filter(course => course.name.toLowerCase().includes(courseSearch.trim().toLowerCase()));
+  const totalLines = allCards.reduce((sum, c) => sum + c.lines, 0);
+  const readyLines = readyCards.reduce((sum, c) => sum + c.lines, 0);
+
+  // Scotch progress for Home "continue training".
+  const scotchCourse = courses['scotch-game'];
+  const scotchProgress = loadProgress('scotch-game');
+  const scotchTotal = scotchCourse?.lines.length ?? 0;
+  const scotchLearned = scotchCourse ? scotchCourse.lines.filter(l => scotchProgress.learn[l.id]).length : 0;
+
   // ── render ──────────────────────────────────────────────────────────────────
   return (
-    <div style={{
-      minHeight: '100vh', display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      background: 'linear-gradient(180deg, #0a0a1a 0%, #0d1117 40%, #0a1628 100%)',
-      fontFamily: "'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif",
-      color: '#e0e0e0', padding: 16, position: 'relative', overflow: 'hidden',
-    }}>
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(rgba(0,255,255,0.03) 1px, transparent 1px),linear-gradient(90deg, rgba(0,255,255,0.03) 1px, transparent 1px)`, backgroundSize: '40px 40px', pointerEvents: 'none' }} />
-      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,255,0.01) 2px, rgba(0,255,255,0.01) 4px)', pointerEvents: 'none' }} />
+    <div className="laion-app">
+      <div className="bg-grid" />
+      <div className="bg-scan" />
 
-      <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14 }}>
+      <div className="page-shell">
 
-        {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: 4 }}>
-          <h1 style={{
-            fontSize: 36, fontWeight: 800, letterSpacing: 6, margin: 0,
-            background: 'linear-gradient(90deg, #00ffff, #00ff88, #ff00ff, #00ffff)',
-            backgroundSize: '200% 100%',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            textTransform: 'uppercase', filter: 'drop-shadow(0 0 10px rgba(0,255,255,0.3))',
-          }}>Laion Chess</h1>
-          <div style={{ width: 200, height: 2, background: 'linear-gradient(90deg, transparent, #00ffff, transparent)', margin: '4px auto 0' }} />
-        </div>
-
-        {/* Status */}
-        <div className={statusClass} style={{
-          fontSize: 18, fontWeight: 700, padding: '8px 28px', borderRadius: 6,
-          backgroundColor: statusColor, color: statusColor === '#fff' || statusColor === '#0ff' ? '#000' : '#fff',
-          boxShadow: `0 0 20px ${statusColor}40, 0 2px 8px rgba(0,0,0,0.4)`,
-          letterSpacing: 1, textTransform: 'uppercase',
-        }}>{statusText}</div>
-
-        {/* Board row: SpottingPanel | Board | MoveList */}
-        <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center' }}>
-
-          <SpottingPanel modes={spottingModes} onChange={setSpottingModes} />
-
-          {/* Board + history overlay */}
-          <div style={{ position: 'relative' }}>
-            <Board
-              board={displayedState.board}
-              selectedPos={selectedPos}
-              validMoves={validMoves}
-              lastMove={displayedLastMove ? { from: displayedLastMove.from, to: displayedLastMove.to } : null}
-              checkSquare={displayedCheckSquare}
-              enPassantTarget={displayedState.enPassantTarget}
-              whiteCanCastleKingside={displayedState.whiteCanCastleKingside}
-              whiteCanCastleQueenside={displayedState.whiteCanCastleQueenside}
-              blackCanCastleKingside={displayedState.blackCanCastleKingside}
-              blackCanCastleQueenside={displayedState.blackCanCastleQueenside}
-              isCheck={displayedState.isCheck}
-              isCheckmate={displayedState.isCheckmate}
-              isStalemate={displayedState.isStalemate}
-              currentTurn={displayedState.currentTurn}
-              onSquareClick={handleSquareClick}
-              onResize={setBoardSize}
-              overlay={spottingOverlay}
-              interactiveOverlay={pendingPromotion ? (
-                <PromotionPicker
-                  color={displayedState.currentTurn}
-                  col={pendingPromotion.to.col}
-                  isWhitePromotion={displayedState.currentTurn === 'white'}
-                  squarePx={Math.round(boardSize / 8)}
-                  onSelect={handlePromotionSelect}
-                  onCancel={handlePromotionCancel}
-                />
-              ) : undefined}
-              boardSize={boardSize}
-              hidePieceAt={animPiece?.to ?? null}
-              animOverlay={animPiece ? (
-                <AnimatedPiece
-                  anim={animPiece}
-                  boardSize={boardSize}
-                  onDone={() => setAnimPiece(null)}
-                />
-              ) : undefined}
-            />
-            {isAnalysisMode && (
-              <div style={{
-                position: 'absolute', inset: 0,
-                backgroundColor: 'rgba(200,200,255,0.06)',
-                border: '2px solid rgba(255,160,50,0.22)',
-                borderRadius: 4, pointerEvents: 'none', zIndex: 20,
-                boxSizing: 'border-box',
-              }} />
-            )}
+        {/* Sidebar nav */}
+        <nav className="side-nav">
+          <button className="wordmark" type="button" onClick={() => setActiveView('home')}>
+            <span className="knight">♞</span>
+            <span className="name">LaionChess</span>
+          </button>
+          <nav className="main-nav">
+            <button type="button" className={activeView === 'home' ? 'active' : ''} onClick={() => setActiveView('home')}><span>⌂</span>Home</button>
+            <button type="button" className={activeView === 'analysis' ? 'active' : ''} onClick={() => setActiveView('analysis')}><span>☷</span>Analysis</button>
+            <button type="button" className={activeView === 'openings' || activeView === 'trainer' ? 'active' : ''} onClick={() => setActiveView('openings')}><span>♘</span>Openings</button>
+            <button type="button" className={activeView === 'create' ? 'active' : ''} onClick={() => setActiveView('create')}><span>⚙</span>Create</button>
+            <button type="button" className={activeView === 'master' ? 'active' : ''} onClick={() => setActiveView('master')}><span>☰</span>Master Plan</button>
+          </nav>
+          <div className="side-nav-footer">
+            <button className="btn btn-magenta" type="button" onClick={openNewGame}>⟳ New / Import</button>
+            <button className="btn btn-green" type="button" onClick={() => setShowExport(true)}>↑ Export</button>
+            <SettingsMenu />
           </div>
+        </nav>
 
-          {hasAnyMoves && (
-            <MoveList
-              tree={tree}
-              currentNodeId={currentNodeId}
-              onNavigate={(id: string | null) => { setIsPlaying(false); setSelectedPos(null); setCurrentNodeId(id); }}
-              boardSize={boardSize}
-            />
-          )}
-        </div>
+        {/* Main scrollable content */}
+        <div className="page-content">
 
-        {/* Navigation controls */}
-        {hasAnyMoves && (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-            <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</Btn>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</Btn>
-              <button onClick={() => {
-                if (isPlaying) { setIsPlaying(false); return; }
-                if (currentNodeId === mainLineTip) setCurrentNodeId(null);
-                setIsPlaying(true);
-              }} style={{
-                padding: '8px 20px', fontSize: 13, fontWeight: 700,
-                border: `1px solid ${isPlaying ? '#ff9f43' : '#00ff88'}60`,
-                borderRadius: 6, cursor: 'pointer',
-                backgroundColor: isPlaying ? '#1a0e00' : '#001a0a',
-                color: isPlaying ? '#ff9f43' : '#00ff88', letterSpacing: 1,
-              }}>{isPlaying ? '⏸ Pause' : '▶ Play'}</button>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</Btn>
-              <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</Btn>
-              <div style={{ display: 'flex', gap: 3, marginLeft: 8 }}>
-                {SPEED_OPTIONS.map(({ label, ms }) => (
-                  <button key={ms} onClick={() => setPlaySpeed(ms)} style={{
-                    padding: '6px 10px', fontSize: 11, fontWeight: 600,
-                    border: `1px solid ${playSpeed === ms ? '#00ff8880' : '#333'}`,
-                    borderRadius: 4, cursor: 'pointer',
-                    backgroundColor: playSpeed === ms ? '#001a0a' : 'transparent',
-                    color: playSpeed === ms ? '#00ff88' : '#555', letterSpacing: 1,
-                  }}>{label}</button>
-                ))}
+        {activeView === 'home' && (
+          <main className="home-view">
+            <section className="hero">
+              <span className="kicker">Practice &gt; Playing Bots</span>
+              <h1 className="h-display">LaionChess</h1>
+              <hr className="divider-glow" />
+              <p className="tagline">Analyze your games. Drill your openings.<br />Deliberate practice, move by move.</p>
+              <div className="cta-row">
+                <button className="btn btn-cyan" type="button" onClick={() => openTrainerCourse('scotch-game')}>♞ Train Openings</button>
+                <button className="btn btn-ghost" type="button" onClick={() => setActiveView('analysis')}>Open Analysis Board →</button>
               </div>
-            </div>
-            {isAnalysisMode && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 12, color: '#ff9f43' }}>
-                <span style={{ letterSpacing: 1 }}>Analysis — moves create variations</span>
-                <button onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} style={{
-                  padding: '4px 12px', fontSize: 11, fontWeight: 600,
-                  border: '1px solid #ff9f4360', borderRadius: 4,
-                  cursor: 'pointer', backgroundColor: '#1a0e00', color: '#ff9f43',
-                }}>Jump to end →</button>
+            </section>
+
+            <section className="feature-grid">
+              <button className="card feature f-cyan" type="button" onClick={() => setActiveView('analysis')}>
+                <div className="ic">☷</div>
+                <h2>Analysis Board</h2>
+                <p>Free analysis with PGN/FEN import, export, variants and the existing Laion spotting modes.</p>
+                <span className="go">Open →</span>
+              </button>
+              <button className="card feature f-green" type="button" onClick={() => setActiveView('openings')}>
+                <div className="ic">♘</div>
+                <h2>Opening Trainer</h2>
+                <p>Ready-made repertoires replayed against the board. Learn mode guides you; Practice mode tests recall.</p>
+                <span className="go">Browse courses →</span>
+              </button>
+              <button className="card feature f-magenta" type="button" onClick={() => setActiveView('create')}>
+                <div className="ic">⚙</div>
+                <h2>Course Creator</h2>
+                <p>Build your repertoire from scratch or import PGN/FEN, then export folded-opening JSON.</p>
+                <span className="go">Start building →</span>
+              </button>
+            </section>
+
+            <section className="card continue-card">
+              <div className="mini"><MiniBoard fen={COURSES[0].fen} /></div>
+              <div className="body">
+                <span className="kicker">Continue training</span>
+                <h3>Scotch Game</h3>
+                <div className="progress-track"><div className="progress-fill" style={{ width: `${scotchTotal ? Math.round((scotchLearned / scotchTotal) * 100) : 0}%` }} /></div>
+                <span className="mono-dim">{scotchLearned}/{scotchTotal} lines learned</span>
               </div>
-            )}
-          </div>
+              <button className="btn btn-green" type="button" onClick={() => openTrainerCourse('scotch-game')}>Resume →</button>
+            </section>
+          </main>
         )}
 
-        {/* Board size control */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: 11, color: '#444', letterSpacing: 1, fontFamily: 'monospace' }}>BOARD</span>
-          <button onClick={() => setBoardSize(s => Math.max(BOARD_MIN, s - BOARD_STEP))} disabled={boardSize <= BOARD_MIN} style={{
-            width: 28, height: 28, fontSize: 16, fontWeight: 700,
-            border: '1px solid #333', borderRadius: 4, cursor: boardSize <= BOARD_MIN ? 'not-allowed' : 'pointer',
-            backgroundColor: 'transparent', color: boardSize <= BOARD_MIN ? '#333' : '#888', lineHeight: 1,
-          }}>−</button>
-          <span style={{ fontSize: 12, color: '#666', fontFamily: 'monospace', minWidth: 40, textAlign: 'center' }}>{boardSize}px</span>
-          <button onClick={() => setBoardSize(s => s + BOARD_STEP)} style={{
-            width: 28, height: 28, fontSize: 16, fontWeight: 700,
-            border: '1px solid #333', borderRadius: 4, cursor: 'pointer',
-            backgroundColor: 'transparent', color: '#888', lineHeight: 1,
-          }}>+</button>
-        </div>
+        {activeView === 'openings' && (
+          <main className="catalog-view">
+            <div className="catalog-head">
+              <span className="kicker">Repertoire Training</span>
+              <h1 className="h-display">Opening Courses</h1>
+              <p>Learn lines move by move, then prove them in Practice.</p>
+              <hr className="divider-glow" />
+            </div>
 
-        {/* Game controls */}
-        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button onClick={handleUndo} disabled={mainLineTip === null} style={{
-            ...BTN, border: '1px solid #00ffff40',
-            backgroundColor: mainLineTip === null ? '#1a1a2e' : '#0d2840',
-            color: mainLineTip === null ? '#555' : '#00ffff',
-            cursor: mainLineTip === null ? 'not-allowed' : 'pointer',
-          }}>↩ Undo</button>
-          <button onClick={openNewGame} style={{ ...BTN, border: '1px solid #ff00ff40', backgroundColor: '#1a0a2e', color: '#ff00ff' }}>⟳ New Game</button>
-          <button onClick={() => setShowExport(true)} style={{ ...BTN, border: '1px solid #00ff8840', backgroundColor: '#0a1a0a', color: '#00ff88' }}>↑ Export</button>
-        </div>
-      </div>
+            <div className="catalog-bar">
+              <div className="search-wrap">
+                <span className="icon">⌕</span>
+                <input className="input" value={courseSearch} onChange={e => setCourseSearch(e.target.value)} placeholder="Search openings..." />
+              </div>
+              <div className="right">
+                <span className="stat">{readyLines}/{totalLines} lines ready</span>
+                <button className="btn btn-magenta" type="button" onClick={() => setActiveView('create')}>⚙ Create a Course</button>
+              </div>
+            </div>
+
+            <div className="course-grid">
+              {filteredCourses.map(course => {
+                const pct = course.ready && course.lines ? Math.round((course.learned / course.lines) * 100) : 0;
+                return (
+                  <button
+                    key={course.id}
+                    type="button"
+                    className={`card course-card ${course.ready ? '' : 'disabled'}`}
+                    onClick={() => course.ready && openTrainerCourse(course.id)}
+                  >
+                    <div className="mini"><MiniBoard fen={course.fen} /></div>
+                    <div className="body">
+                      <div className="ttl"><h2>{course.name}</h2><span className={`tag ${course.tagClass ?? ''}`}>{course.tag}</span></div>
+                      <div className="desc">{course.desc}</div>
+                      <div className="meta">{course.lines} lines total</div>
+                      <div className="progress-track"><div className="progress-fill" style={{ width: `${pct}%` }} /></div>
+                      <div className="foot"><span className="mono-dim">{course.ready ? `${course.learned}/${course.lines} learned` : 'not started'}</span><span className="go">{course.ready ? 'Train →' : 'Coming soon'}</span></div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </main>
+        )}
+
+        {activeView === 'trainer' && (
+          activeCourse ? (
+            <TrainerView
+              course={activeCourse}
+              spottingModes={spottingModes}
+              setSpottingModes={setSpottingModes}
+              boardSize={boardSize}
+              setBoardSize={setBoardSize}
+              onAnalysis={openAnalysisFromState}
+            />
+          ) : (
+            <main className="catalog-view">
+              <div className="catalog-head">
+                <span className="kicker">Opening Trainer</span>
+                <h1 className="h-display">Loading…</h1>
+                <p>Fetching course data. If this persists, check public/courses/manifest.json.</p>
+              </div>
+            </main>
+          )
+        )}
+
+        {(activeView === 'analysis' || activeView === 'create') && (
+          <>
+            {activeView === 'create' && (
+              <div className={statusClass} style={{
+                fontSize: 18, fontWeight: 700, padding: '8px 28px', borderRadius: 6,
+                backgroundColor: statusColor, color: statusColor === '#fff' || statusColor === '#0ff' ? '#000' : '#fff',
+                boxShadow: `0 0 20px ${statusColor}40, 0 2px 8px rgba(0,0,0,0.4)`,
+                letterSpacing: 1, textTransform: 'uppercase',
+              }}>{statusText}</div>
+            )}
+
+            <div className="board-workspace">
+              <div className="board-col">
+                <div className="board-row">
+                  <SpottingPanel modes={spottingModes} onChange={setSpottingModes} />
+                  {showEval && (
+                    <div style={{ paddingTop: 34 }}>
+                      <EvalBar pawns={barPawns} mate={barMate} terminal={evalTerminal} height={boardSize} />
+                    </div>
+                  )}
+                  <div style={{ position: 'relative' }}>
+                    <Board
+                      arrows={boardArrows}
+                      board={boardState.board}
+                      selectedPos={preview ? null : selectedPos}
+                      validMoves={preview ? [] : validMoves}
+                      lastMove={boardLastMove}
+                      checkSquare={boardCheckSquare}
+                      enPassantTarget={boardState.enPassantTarget}
+                      whiteCanCastleKingside={boardState.whiteCanCastleKingside}
+                      whiteCanCastleQueenside={boardState.whiteCanCastleQueenside}
+                      blackCanCastleKingside={boardState.blackCanCastleKingside}
+                      blackCanCastleQueenside={boardState.blackCanCastleQueenside}
+                      isCheck={boardState.isCheck}
+                      isCheckmate={boardState.isCheckmate}
+                      isStalemate={boardState.isStalemate}
+                      currentTurn={boardState.currentTurn}
+                      onSquareClick={handleSquareClick}
+                      onResize={setBoardSize}
+                      overlay={spottingOverlay}
+                      interactiveOverlay={pendingPromotion ? (
+                        <PromotionPicker
+                          color={displayedState.currentTurn}
+                          col={pendingPromotion.to.col}
+                          isWhitePromotion={displayedState.currentTurn === 'white'}
+                          squarePx={Math.round(boardSize / 8)}
+                          onSelect={handlePromotionSelect}
+                          onCancel={handlePromotionCancel}
+                        />
+                      ) : undefined}
+                      boardSize={boardSize}
+                      hidePieceAt={animPiece?.to ?? null}
+                      animOverlay={animPiece ? (
+                        <AnimatedPiece anim={animPiece} boardSize={boardSize} onDone={() => setAnimPiece(null)} />
+                      ) : undefined}
+                    />
+                    {(isAnalysisMode || preview) && <div className="analysis-frame" />}
+                  </div>
+                </div>
+
+                {hasAnyMoves && activeView === 'create' && (
+                  <div className="control-stack">
+                    <div className="control-row">
+                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</Btn>
+                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</Btn>
+                      <button onClick={() => {
+                        if (isPlaying) { setIsPlaying(false); return; }
+                        if (currentNodeId === mainLineTip) setCurrentNodeId(null);
+                        setIsPlaying(true);
+                      }} className={isPlaying ? 'btn btn-yellow' : 'btn btn-green'}>{isPlaying ? '⏸ Pause' : '▶ Play'}</button>
+                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</Btn>
+                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</Btn>
+                      {SPEED_OPTIONS.map(({ label, ms }) => (
+                        <button key={ms} onClick={() => setPlaySpeed(ms)} className={`seg ${playSpeed === ms ? 'active' : ''}`}>{label}</button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {activeView === 'create' && (
+                  <div className="board-size-control">
+                    <span>BOARD</span>
+                    <button onClick={() => setBoardSize(s => Math.max(BOARD_MIN, s - BOARD_STEP))} disabled={boardSize <= BOARD_MIN}>−</button>
+                    <strong>{boardSize}px</strong>
+                    <button onClick={() => setBoardSize(s => s + BOARD_STEP)}>+</button>
+                  </div>
+                )}
+              </div>
+
+              {activeView === 'analysis' && (
+                <aside className="an-panel">
+                  <div className="an-head">
+                    <div className={`an-status ${statusClass}`} style={{
+                      fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 5, flex: 1,
+                      backgroundColor: statusColor, color: statusColor === '#fff' || statusColor === '#0ff' ? '#000' : '#fff',
+                      letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center',
+                      boxShadow: `0 0 10px ${statusColor}30`,
+                    }}>{statusText}</div>
+                    <SettingsMenu />
+                  </div>
+                  <div className="an-toggles">
+                    <PanelToggle on={showEval} label="Evaluation" onClick={() => setShowEval(v => !v)} />
+                    <PanelToggle on={settings.engineEnabled} label="Engine analysis" onClick={() => setSetting('engineEnabled', !settings.engineEnabled)} />
+                  </div>
+
+                  <EnginePanel
+                    enabled={settings.engineEnabled}
+                    onToggle={() => setSetting('engineEnabled', !settings.engineEnabled)}
+                    showArrows={settings.engineArrows}
+                    onToggleArrows={() => setSetting('engineArrows', !settings.engineArrows)}
+                    best={bestLine ? { pawns: bestLine.pawns, mate: bestLine.mate } : null}
+                    depth={engineSnap.depth}
+                    searching={enginePanelOn}
+                    lines={engineLinesExpanded}
+                    startMoveNum={displayedState.fullmoveNumber}
+                    whiteToMove={displayedState.currentTurn === 'white'}
+                    searchLevel={settings.engineSearchLevel}
+                    onSearchLevel={(n) => setSetting('engineSearchLevel', n)}
+                    numLines={settings.engineLines}
+                    onNumLines={(n) => setSetting('engineLines', n)}
+                    hashMb={settings.engineHashMb}
+                    onHashMb={(mb) => setSetting('engineHashMb', mb)}
+                    onPreviewMove={handlePreviewMove}
+                  />
+
+                  {hasAnyMoves && (
+                    <MoveList
+                      tree={tree}
+                      currentNodeId={currentNodeId}
+                      onNavigate={(id: string | null) => { setIsPlaying(false); setSelectedPos(null); setCurrentNodeId(id); }}
+                    />
+                  )}
+
+                  {hasAnyMoves && (
+                    <div className="panel-controls">
+                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</button>
+                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</button>
+                      <button className={`pc-btn pc-play${isPlaying ? ' pc-pause' : ''}`} onClick={() => {
+                        if (isPlaying) { setIsPlaying(false); return; }
+                        if (currentNodeId === mainLineTip) setCurrentNodeId(null);
+                        setIsPlaying(true);
+                      }}>{isPlaying ? '⏸' : '▶'}</button>
+                      <button className="pc-btn" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</button>
+                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</button>
+                      <div className="pc-sep" />
+                      {SPEED_OPTIONS.map(({ label, ms }) => (
+                        <button key={ms} className={`pc-btn pc-seg${playSpeed === ms ? ' active' : ''}`} onClick={() => setPlaySpeed(ms)}>{label}</button>
+                      ))}
+                      {isAnalysisMode && <button className="pc-btn pc-warn" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }}>↩ end</button>}
+                    </div>
+                  )}
+
+                  <div className="sec-block">
+                    <div className="book-sec-head">
+                      <PanelToggle on={showBook} label="Common moves" onClick={() => setShowBook(v => !v)} />
+                      <button
+                        type="button"
+                        className={`btn-book-opts${showBookOptions ? ' active' : ''}`}
+                        onClick={() => setShowBookOptions(v => !v)}
+                        title="Filter options"
+                      >⚙</button>
+                      {showBookOptions && (
+                        <div className="book-opts-popup">
+                          <BookFilters />
+                        </div>
+                      )}
+                    </div>
+                    {showBook && <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />}
+                  </div>
+
+                  <div className="sec-block">
+                    <div className="sec-title">Position</div>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      <button className="btn btn-yellow" type="button" onClick={copyFen}>{copyFenMsg || '📋 FEN'}</button>
+                      <button className="btn btn-green" type="button" onClick={copyPgn}>{copyPgnMsg || '📋 PGN'}</button>
+                      <button className="btn btn-ghost" type="button" onClick={() => setShowExport(true)}>Export…</button>
+                    </div>
+                  </div>
+                </aside>
+              )}
+
+              {activeView === 'create' && (
+                <aside className="side-panel creator-panel">
+                  <div className="course-head">
+                    <div className="course-icon">⚙</div>
+                    <input value={courseTitle} onChange={e => setCourseTitle(e.target.value)} maxLength={60} />
+                    <span>{saveState}</span>
+                    <SettingsMenu />
+                  </div>
+                  <div className="cr-toggles">
+                    <PanelToggle on={showEval} label="Eval" onClick={() => setShowEval(v => !v)} />
+                    <PanelToggle on={showBook} label="Book" onClick={() => setShowBook(v => !v)} />
+                    <PanelToggle on={showTop} label="Top 3" onClick={() => setShowTop(v => !v)} />
+                    <div className="side-seg">
+                      <button type="button" className={courseSide === 'white' ? 'sel' : ''} onClick={() => setCourseSide('white')}>♔ White</button>
+                      <button type="button" className={courseSide === 'black' ? 'sel' : ''} onClick={() => setCourseSide('black')}>♚ Black</button>
+                    </div>
+                  </div>
+                  <div className="current-line">{activeLineText ? activeLineText : <span>No moves yet</span>}</div>
+                  <div className="panel-tools">
+                    <button className="btn btn-cyan" type="button" onClick={handleUndo} disabled={mainLineTip === null}>◀ Undo</button>
+                    <button className="btn btn-ghost" type="button" onClick={startFresh}>↻ Clear</button>
+                    <button className="btn btn-yellow" type="button" onClick={() => openAnalysisFromState(displayedState)}>Analysis →</button>
+                    <button className="btn btn-magenta" type="button" onClick={openNewGame}>Import</button>
+                    <button className="btn btn-green" type="button" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↓ Save JSON</button>
+                  </div>
+
+                  {showBook && (
+                    <div className="sec-block">
+                      <div className="sec-title">Common moves</div>
+                      <BookFilters />
+                      <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
+                    </div>
+                  )}
+
+                  <div className="saved-lines">
+                    <div className="sec-title">Course lines ({terminalPaths.length})</div>
+                    {terminalPaths.length === 0 ? <div className="empty-panel compact">No saved paths</div> : terminalPaths.map((path, index) => (
+                      <button key={path.join('-')} className={`saved-line ${currentNodeId === path[path.length - 1] ? 'current' : ''}`} type="button" onClick={() => setCurrentNodeId(path[path.length - 1])}>
+                        <span>#{index + 1}</span><strong>{lineSans(path, tree)}</strong><em>{path.length} ply</em>
+                      </button>
+                    ))}
+                  </div>
+                  <details className="import-box">
+                    <summary>PGN / FEN import</summary>
+                    <div className="import-actions">
+                      <button className="btn btn-cyan" type="button" onClick={() => { setNgView('pgn'); setPgnText(''); setPgnError(''); setShowNewGame(true); }}>Load PGN</button>
+                      <button className="btn btn-yellow" type="button" onClick={() => { setNgView('fen'); setFenInput(currentFen); setFenError(''); setShowNewGame(true); }}>Load FEN</button>
+                    </div>
+                  </details>
+                  <div className="creator-hint">
+                    Save JSON downloads a <code>laionchess.folded-opening.v1</code> file. Drop it into <code>public/courses/</code> and add an entry to <code>manifest.json</code> to publish it as a lesson on the Openings board.
+                  </div>
+                </aside>
+              )}
+            </div>
+          </>
+        )}
+
+        {activeView === 'master' && (
+          <main className="doc-view">
+            <div className="doc-head">
+              <span className="kicker">Implementation Master Plan</span>
+              <h1 className="h-display">Opening Trainer</h1>
+              <p className="sub">Roadmap and current implementation map for LaionChess: analysis board, opening catalog, trainer, course creator, folded openings and shared theming.</p>
+            </div>
+            {[
+              ['0 · Current state', ['Vite + React + TypeScript app deployed under /LaionChess/.', 'Analysis board with PGN/FEN import/export, game-tree variations and a material eval bar.', 'Spotting modes (Dalmacja / Lucyfer / King Path / King Shot / LaionEye) preserved and persisted across all board screens.']],
+              ['1 · Implemented screens', ['Home, Analysis, Openings, Trainer, Create and Master Plan are React views.', 'Guided Trainer: Learn / Practice with coach notes, hint arrows, mistake flashes, completion banner and per-mode progress.', 'Settings: board themes, four self-hosted piece sets, UI accent and arrows/coords toggles, persisted in localStorage.']],
+              ['2 · Data model', ['Trainable courses load from public/courses (manifest.json + course files).', 'Create exports laionchess.folded-opening.v1; drop it in public/courses + manifest to publish a lesson.', 'Common-Moves book + Top-3 arrows are keyed by board placement + side to move.']],
+              ['3 · Next phases', ['Wire a real engine behind getEvaluation (Stockfish / Lichess cloud).', 'Add SRS Drill / Time trainer modes (the locked tabs).', 'Author more courses beyond Scotch as JSON files.']],
+            ].map(([title, items]) => (
+              <section key={title as string}>
+                <h2>{title as string}</h2>
+                <ul>{(items as string[]).map(item => <li key={item}>{item}</li>)}</ul>
+              </section>
+            ))}
+          </main>
+        )}
+
+        </div>{/* end .page-content */}
+      </div>{/* end .page-shell */}
 
       {/* ── NEW GAME MODAL ── */}
       {showNewGame && (
@@ -980,7 +1139,7 @@ export default function App() {
           <div style={{ ...MODAL_BOX, border: '1px solid #ff00ff30', boxShadow: '0 0 40px rgba(255,0,255,0.15)' }} onClick={e => e.stopPropagation()}>
             {ngView === 'choice' && (
               <>
-                <ModalTitle color="#ff00ff" text="New Game" />
+                <ModalTitle color="#ff00ff" text="New / Import" />
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                   <button onClick={startFresh} style={{ ...BTN, border: '1px solid #ff00ff60', backgroundColor: '#1a001a', color: '#ff00ff', width: '100%', padding: '16px 22px', fontSize: 14 }}>♟ Standard Starting Position</button>
                   <button onClick={() => { setNgView('pgn'); setPgnText(''); setPgnError(''); }} style={{ ...BTN, border: '1px solid #00ffff40', backgroundColor: '#001a1a', color: '#00ffff', width: '100%', padding: '16px 22px', fontSize: 14 }}>📄 Load from PGN</button>
@@ -1045,6 +1204,7 @@ export default function App() {
                 <Btn color="#00ff88" bg="#0a1a0a" border="#00ff8840" onClick={copyPgn}>{copyPgnMsg || '📋 Copy PGN'}</Btn>
                 <Btn color="#00ff88" bg="#0a1a0a" border="#00ff8840" onClick={() => downloadBlob(currentPgn, 'game.pgn')}>↓ Download .pgn</Btn>
                 <Btn color="#ffd93d" bg="#1a1a00" border="#ffd93d40" onClick={() => downloadBlob(currentFen, 'position.fen')}>↓ Download .fen</Btn>
+                <Btn color="#ff00ff" bg="#1a001a" border="#ff00ff40" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↓ Folded JSON</Btn>
               </div>
             </div>
             <div style={{ textAlign: 'right', marginTop: 24 }}>

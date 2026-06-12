@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="cyan">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Openings — LaionChess</title>
+<link rel="stylesheet" href="css/laion.css">
+<link rel="stylesheet" href="css/board.css">
+<style>
+  .catalog-head { text-align: center; padding: 28px 0 8px; }
+  .catalog-head h1 { font-size: clamp(26px, 4.5vw, 40px); }
+  .catalog-head p { color: var(--text-dim); margin-top: 10px; font-size: 15px; }
+
+  .catalog-bar {
+    display: flex; align-items: center; gap: 10px; margin: 26px 0 18px; flex-wrap: wrap;
+  }
+  .search-wrap { position: relative; flex: 1; min-width: 220px; max-width: 420px; }
+  .search-wrap .input { padding-left: 36px; }
+  .search-wrap .icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-faint); font-size: 14px; }
+  .catalog-bar .right { margin-left: auto; display: flex; gap: 8px; align-items: center; }
+  .catalog-bar .stat { font-family: var(--mono); font-size: 11px; letter-spacing: 1px; color: var(--text-faint); }
+
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 18px; }
+  .course-card { display: flex; gap: 16px; padding: 16px; }
+  .course-card .mini { flex: 0 0 148px; width: 148px; align-self: flex-start; }
+  .course-card .body { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .course-card .ttl { display: flex; align-items: center; gap: 10px; }
+  .course-card h2 { font-size: 18px; font-weight: 700; color: var(--text); }
+  .course-card .desc { color: var(--text-dim); font-size: 13px; line-height: 1.55; margin-top: 6px; flex: 1; }
+  .course-card .meta { font-family: var(--mono); font-size: 11px; color: var(--text-faint); margin-top: 12px; text-align: right; }
+  .course-card .progress-track { margin-top: 6px; height: 6px; }
+  .course-card .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; }
+  .course-card .go { font-family: var(--mono); font-size: 12px; letter-spacing: 1px; color: var(--accent); }
+  .course-card.disabled { opacity: 0.55; }
+  .course-card.disabled:hover { border-color: var(--line); box-shadow: none; }
+  .course-card.disabled .go { color: var(--text-faint); }
+
+  @media (max-width: 920px) {
+    .course-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .course-card { flex-direction: column; }
+    .course-card .mini { width: 132px; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-scan"></div>
+<div class="page" data-screen-label="Openings Catalog">
+
+  <header class="site-header menu-host">
+    <a class="wordmark" href="index.html">
+      <span class="knight">&#9822;</span><span class="name">LaionChess</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html">Home</a>
+      <a href="Analysis.html">Analysis</a>
+      <a href="Openings.html" class="active">Openings</a>
+      <a href="Create Course.html">Create</a>
+      <a href="Master Plan.html">Master Plan</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-icon btn-ghost" id="nav-settings" title="Settings" aria-label="Settings">&#9881;</button>
+    </div>
+  </header>
+
+  <div class="catalog-head">
+    <span class="kicker">Repertoire Training</span>
+    <h1 class="h-display">Opening Courses</h1>
+    <p>Learn lines move by move, then prove them in Practice.</p>
+    <hr class="divider-glow" style="width: 220px; margin: 14px auto 0;">
+  </div>
+
+  <div class="catalog-bar">
+    <div class="search-wrap">
+      <span class="icon">&#9906;</span>
+      <input class="input" id="search" type="text" placeholder="Search openings...">
+    </div>
+    <div class="right">
+      <span class="stat" id="lines-learned">&nbsp;</span>
+      <a class="btn btn-magenta" href="Create Course.html">&#9881; Create a Course</a>
+    </div>
+  </div>
+
+  <div class="course-grid" id="grid"></div>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/board.js"></script>
+<script src="js/settings-menu.js"></script>
+<script>
+(function () {
+  var COURSES = [
+    {
+      id: 'scotch-game', name: 'Scotch Game', tag: 'Ready', tagClass: 'tag-green',
+      desc: 'A direct weapon against 1...e5 — open the center on move 3 and develop with tempo. Includes punish lines for lazy defenses.',
+      lines: 6, fen: 'r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R',
+      href: 'Trainer.html',
+    },
+    {
+      id: 'italian-game', name: 'Italian Game', tag: 'Planned', tagClass: '',
+      desc: 'Quiet development, long-term pressure on f7. The classical school in one course.',
+      lines: 12, fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R',
+    },
+    {
+      id: 'sicilian', name: 'Sicilian Defense', tag: 'Planned', tagClass: '',
+      desc: 'Fight for the win as Black from move one. Open Sicilian main lines.',
+      lines: 24, fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR',
+    },
+    {
+      id: 'london', name: 'London System', tag: 'Planned', tagClass: '',
+      desc: 'One setup against everything. Solid structure, clear plans, minimal theory.',
+      lines: 14, fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR',
+    },
+    {
+      id: 'queens-gambit', name: "Queen's Gambit", tag: 'Planned', tagClass: '',
+      desc: 'Offer the c-pawn, take the center. Declined and Accepted main lines.',
+      lines: 18, fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR',
+    },
+    {
+      id: 'caro-kann', name: 'Caro-Kann Defense', tag: 'Planned', tagClass: '',
+      desc: 'The solid answer to 1.e4 — sound structure without giving up activity.',
+      lines: 16, fen: 'rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR',
+    },
+  ];
+
+  function scotchProgress() {
+    try {
+      var p = JSON.parse(localStorage.getItem('laionchess-scotch-progress') || '{}');
+      var n = 0;
+      for (var k in (p.learn || {})) if (p.learn[k]) n++;
+      return n;
+    } catch (e) { return 0; }
+  }
+
+  var grid = document.getElementById('grid');
+
+  function render(filter) {
+    grid.innerHTML = '';
+    var learned = scotchProgress();
+    document.getElementById('lines-learned').textContent =
+      learned + '/' + COURSES.reduce(function (a, c) { return a + c.lines; }, 0) + ' lines learned';
+
+    COURSES.forEach(function (c) {
+      if (filter && c.name.toLowerCase().indexOf(filter) < 0) return;
+      var ready = !!c.href;
+      var card = document.createElement(ready ? 'a' : 'div');
+      card.className = 'card course-card' + (ready ? '' : ' disabled');
+      if (ready) card.href = c.href;
+
+      var mini = document.createElement('div');
+      mini.className = 'mini';
+      var boardEl = document.createElement('div');
+      mini.appendChild(boardEl);
+
+      var body = document.createElement('div');
+      body.className = 'body';
+      var pct = c.id === 'scotch-game' ? Math.round((learned / c.lines) * 100) : 0;
+      body.innerHTML =
+        '<div class="ttl"><h2>' + c.name + '</h2>' +
+        '<span class="tag ' + (c.tagClass || '') + '">' + c.tag + '</span></div>' +
+        '<div class="desc">' + c.desc + '</div>' +
+        '<div class="meta">' + c.lines + ' lines total</div>' +
+        '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
+        '<div class="foot"><span class="mono-dim">' +
+        (c.id === 'scotch-game' ? learned + '/' + c.lines + ' learned' : 'not started') +
+        '</span><span class="go">' + (ready ? 'Train \u2192' : 'Coming soon') + '</span></div>';
+
+      card.appendChild(mini);
+      card.appendChild(body);
+      grid.appendChild(card);
+
+      var b = new LaionBoard(boardEl, { interactive: false, coords: false });
+      b.setFen(c.fen);
+    });
+  }
+
+  document.getElementById('search').addEventListener('input', function (e) {
+    render(e.target.value.trim().toLowerCase());
+  });
+
+  LaionSettingsMenu.attach(document.getElementById('nav-settings'));
+  render('');
+})();
+</script>
+</body>
+</html>

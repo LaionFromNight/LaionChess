@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" data-accent="cyan">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LaionChess — Train Chess, Not Bots</title>
+<link rel="stylesheet" href="css/laion.css">
+<link rel="stylesheet" href="css/board.css">
+<style>
+  .hero { text-align: center; padding: 56px 0 36px; }
+  .hero h1 { font-size: clamp(34px, 6vw, 58px); }
+  .hero .tagline { color: var(--text-dim); font-size: 16px; margin-top: 14px; line-height: 1.6; }
+  .hero .cta-row { display: flex; gap: 12px; justify-content: center; margin-top: 26px; flex-wrap: wrap; }
+  .hero .cta-row .btn { font-size: 13px; padding: 12px 22px; }
+
+  .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 44px; }
+  .feature { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+  .feature .ic {
+    width: 44px; height: 44px; border-radius: 9px; display: flex; align-items: center;
+    justify-content: center; font-size: 22px;
+  }
+  .feature h2 { font-family: var(--mono); font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
+  .feature p { color: var(--text-dim); font-size: 13px; line-height: 1.6; flex: 1; }
+  .feature .go { font-family: var(--mono); font-size: 12px; letter-spacing: 1px; }
+  .f-cyan .ic { background: #051520; border: 1px solid #00ffff30; color: var(--cyan); }
+  .f-cyan h2, .f-cyan .go { color: var(--cyan); }
+  .f-green .ic { background: #001a0a; border: 1px solid #00ff8840; color: var(--green); }
+  .f-green h2, .f-green .go { color: var(--green); }
+  .f-magenta .ic { background: #1a001a; border: 1px solid #ff00ff40; color: var(--magenta); }
+  .f-magenta h2, .f-magenta .go { color: var(--magenta); }
+
+  .continue {
+    margin-top: 44px; display: flex; align-items: center; gap: 20px; padding: 18px 20px;
+  }
+  .continue .mini { flex: 0 0 120px; }
+  .continue .body { flex: 1; min-width: 0; }
+  .continue .kicker { display: block; margin-bottom: 4px; }
+  .continue h3 { font-size: 17px; }
+  .continue .progress-track { margin-top: 10px; height: 6px; max-width: 380px; }
+  .continue .mono-dim { display: block; margin-top: 6px; }
+  .continue .btn { white-space: nowrap; }
+
+  @media (max-width: 860px) {
+    .feature-grid { grid-template-columns: 1fr; }
+    .hero { padding: 36px 0 20px; }
+    .continue { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-scan"></div>
+<div class="page" data-screen-label="Home">
+
+  <header class="site-header menu-host">
+    <a class="wordmark" href="index.html">
+      <span class="knight">&#9822;</span><span class="name">LaionChess</span>
+    </a>
+    <nav class="main-nav">
+      <a href="index.html" class="active">Home</a>
+      <a href="Analysis.html">Analysis</a>
+      <a href="Openings.html">Openings</a>
+      <a href="Create Course.html">Create</a>
+      <a href="Master Plan.html">Master Plan</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn btn-icon btn-ghost" id="nav-settings" title="Settings" aria-label="Settings">&#9881;</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="kicker">Practice &gt; Playing Bots</span>
+    <h1 class="h-display">LaionChess</h1>
+    <hr class="divider-glow" style="width: 200px; margin: 14px auto 0;">
+    <p class="tagline">Analyze your games. Drill your openings.<br>Deliberate practice, move by move.</p>
+    <div class="cta-row">
+      <a class="btn btn-cyan" href="Trainer.html">&#9822; Train Openings</a>
+      <a class="btn btn-ghost" href="Analysis.html">Open Analysis Board &#8594;</a>
+    </div>
+  </section>
+
+  <section class="feature-grid">
+    <a class="card feature f-cyan" href="Analysis.html">
+      <div class="ic">&#9783;</div>
+      <h2>Analysis Board</h2>
+      <p>Free analysis with evaluation bar, common-moves book and PGN/FEN export. Full engine analysis in the live app.</p>
+      <span class="go">Open &#8594;</span>
+    </a>
+    <a class="card feature f-green" href="Openings.html">
+      <div class="ic">&#9816;</div>
+      <h2>Opening Trainer</h2>
+      <p>Ready-made repertoires you replay against the board. Learn mode guides you; Practice mode tests your recall.</p>
+      <span class="go">Browse courses &#8594;</span>
+    </a>
+    <a class="card feature f-magenta" href="Create Course.html">
+      <div class="ic">&#9881;</div>
+      <h2>Course Creator</h2>
+      <p>Build your own repertoire from scratch or import a PGN study — then train it like any other course.</p>
+      <span class="go">Start building &#8594;</span>
+    </a>
+  </section>
+
+  <section class="card continue" id="continue-card" data-screen-label="Continue Training">
+    <div class="mini"><div id="mini-board"></div></div>
+    <div class="body">
+      <span class="kicker">Continue training</span>
+      <h3>Scotch Game</h3>
+      <div class="progress-track"><div class="progress-fill" id="cont-fill"></div></div>
+      <span class="mono-dim" id="cont-label">0/6 lines learned</span>
+    </div>
+    <a class="btn btn-green" href="Trainer.html">Resume &#8594;</a>
+  </section>
+</div>
+
+<script src="js/theme.js"></script>
+<script src="js/board.js"></script>
+<script src="js/settings-menu.js"></script>
+<script>
+(function () {
+  var b = new LaionBoard(document.getElementById('mini-board'), { interactive: false, coords: false });
+  b.setFen('r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R');
+  var learned = 0;
+  try {
+    var p = JSON.parse(localStorage.getItem('laionchess-scotch-progress') || '{}');
+    for (var k in (p.learn || {})) if (p.learn[k]) learned++;
+  } catch (e) {}
+  document.getElementById('cont-fill').style.width = (learned / 6 * 100) + '%';
+  document.getElementById('cont-label').textContent = learned + '/6 lines learned';
+  LaionSettingsMenu.attach(document.getElementById('nav-settings'));
+})();
+</script>
+</body>
+</html>

@@ -1,9 +1,45 @@
 import { useRef } from 'react';
 import { Square, Position } from '../chess/types';
 import SquareComponent from './Square';
+import { useSettings, BOARD_THEMES } from '../settings/useSettings';
 import '../App.css';
 
 const BOARD_MIN_PX = 240;
+
+export interface BoardArrow {
+  from: Position;
+  to: Position;
+  color: string;
+  width: number;
+}
+
+/** Renders board arrows in 0..100 SVG space (mirrors prototype js/board.js addArrow). */
+function ArrowsLayer({ arrows }: { arrows: BoardArrow[] }) {
+  if (arrows.length === 0) return null;
+  return (
+    <svg className="lc-arrows" viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      {arrows.map((a, i) => {
+        const x1 = a.from.col * 12.5 + 6.25, y1 = a.from.row * 12.5 + 6.25;
+        const x2 = a.to.col * 12.5 + 6.25, y2 = a.to.row * 12.5 + 6.25;
+        const dx = x2 - x1, dy = y2 - y1;
+        const len = Math.sqrt(dx * dx + dy * dy) || 1;
+        const ux = dx / len, uy = dy / len;
+        const x2s = x2 - ux * 4.4, y2s = y2 - uy * 4.4;
+        const px = -uy, py = ux;
+        const tipX = x2 - ux * 1.2, tipY = y2 - uy * 1.2;
+        return (
+          <g key={i}>
+            <line x1={x1} y1={y1} x2={x2s} y2={y2s} stroke={a.color} strokeWidth={a.width} strokeLinecap="round" />
+            <polygon
+              points={`${x2s + px * 2.4},${y2s + py * 2.4} ${x2s - px * 2.4},${y2s - py * 2.4} ${tipX},${tipY}`}
+              fill={a.color}
+            />
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
 
 interface BoardProps {
   board: Square[][];
@@ -27,6 +63,7 @@ interface BoardProps {
   interactiveOverlay?: React.ReactNode;
   hidePieceAt?: Position | null;
   boardSize?: number;
+  arrows?: BoardArrow[];
 }
 
 export default function Board({
@@ -51,7 +88,10 @@ export default function Board({
   interactiveOverlay,
   hidePieceAt,
   boardSize,
+  arrows,
 }: BoardProps) {
+  const { settings } = useSettings();
+  const theme = BOARD_THEMES[settings.boardTheme] ?? BOARD_THEMES.classic;
   const dim = boardSize ? `${boardSize}px` : 'min(80vw, 560px)';
   const squarePx = boardSize ? Math.round(boardSize / 8) : undefined;
 
@@ -108,15 +148,13 @@ export default function Board({
       </div>
 
       {/* Board grid */}
-      <div style={{
+      <div className="lc-board-grid" style={{
         width: dim, height: dim,
-        display: 'grid',
-        gridTemplateColumns: 'repeat(8, 1fr)',
-        gridTemplateRows: 'repeat(8, 1fr)',
-        border: '3px solid #5a3a1a',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-        position: 'relative',
-      }}>
+        ['--sq-light' as string]: theme.light,
+        ['--sq-dark' as string]: theme.dark,
+        ['--coord-on-light' as string]: theme.coordL,
+        ['--coord-on-dark' as string]: theme.coordD,
+      } as React.CSSProperties}>
         {board.map((row, rowIdx) =>
           row.map((piece, colIdx) => (
             <SquareComponent
@@ -147,6 +185,9 @@ export default function Board({
             {overlay}
           </div>
         )}
+
+        {/* Arrows overlay (z=6) — Top-3 book moves, trainer hints */}
+        {arrows && arrows.length > 0 && <ArrowsLayer arrows={arrows} />}
 
         {/* Animated piece overlay (z=30) */}
         {animOverlay && (

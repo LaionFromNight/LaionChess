@@ -1,0 +1,69 @@
+/* LaionChess board styles */
+.lc-board {
+  position: relative; width: 100%; aspect-ratio: 1 / 1; user-select: none;
+  container-type: size;
+  border-radius: 6px; overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.lc-squares {
+  position: absolute; inset: 0; display: grid;
+  grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr);
+}
+.lc-sq { position: relative; }
+.lc-sq.light { background: var(--sq-light, #f0d9b5); }
+.lc-sq.dark  { background: var(--sq-dark, #b58863); }
+
+.lc-sq .coord {
+  position: absolute; font-family: var(--mono, monospace); font-weight: 700;
+  font-size: clamp(8px, 1.6cqw, 12px); pointer-events: none; opacity: 0.9;
+}
+.lc-sq .coord.file { right: 4%; bottom: 2%; }
+.lc-sq .coord.rank { left: 5%; top: 3%; }
+.lc-sq.light .coord { color: var(--coord-on-light, #b58863); }
+.lc-sq.dark  .coord { color: var(--coord-on-dark, #f0d9b5); }
+
+/* highlights */
+.lc-sq.hl-select::after, .lc-sq.hl-hint::after, .lc-sq.hl-last::after,
+.lc-sq.hl-wrong::after, .lc-sq.hl-ok::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+}
+.lc-sq.hl-select::after { background: rgba(0, 255, 255, 0.32); box-shadow: inset 0 0 0 3px rgba(0, 255, 255, 0.65); }
+.lc-sq.hl-hint::after   { background: rgba(0, 255, 136, 0.28); }
+.lc-sq.hl-last::after   { background: rgba(255, 217, 61, 0.30); }
+.lc-sq.hl-wrong::after  { background: rgba(255, 0, 64, 0.45); }
+.lc-sq.hl-ok::after     { background: rgba(0, 255, 136, 0.40); }
+.lc-sq.hl-dot::before {
+  content: ''; position: absolute; left: 50%; top: 50%; width: 26%; height: 26%;
+  transform: translate(-50%, -50%); border-radius: 50%;
+  background: rgba(0, 0, 0, 0.22); pointer-events: none; z-index: 2;
+}
+
+@keyframes lcWrongFlash {
+  0%, 100% { background: rgba(255, 0, 64, 0.0); }
+  30% { background: rgba(255, 0, 64, 0.55); }
+}
+.lc-sq.hl-wrong::after { animation: lcWrongFlash 0.45s ease-out; }
+
+/* pieces layer */
+.lc-pieces { position: absolute; inset: 0; pointer-events: none; }
+.lc-piece {
+  position: absolute; width: 12.5%; height: 12.5%; left: 0; top: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform 0.18s ease; will-change: transform; z-index: 3;
+}
+.lc-piece img { width: 92%; height: 92%; display: block; }
+.lc-piece .glyph { font-size: 10.4cqw; line-height: 1; }
+.lc-piece .glyph.w {
+  color: #ffffff;
+  text-shadow: 0 0 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.4);
+}
+.lc-piece .glyph.b {
+  color: #1a1a1a;
+  text-shadow: 0 0 3px rgba(255,255,255,0.5);
+}
+
+/* arrows layer */
+.lc-arrows { position: absolute; inset: 0; pointer-events: none; z-index: 4; }
+
+/* interactive cursor */
+.lc-board.interactive .lc-sq { cursor: pointer; }

@@ -1,0 +1,14 @@
+{
+  "comment": "Trainable opening courses. Drop a course JSON (laionchess.course.v1 OR a Create-exported laionchess.folded-opening.v1) into this folder and add an entry here to publish it as a lesson on the Openings board.",
+  "courses": [
+    {
+      "id": "scotch-game",
+      "file": "scotch-game.json",
+      "name": "Scotch Game",
+      "tag": "Ready",
+      "tagClass": "tag-green",
+      "desc": "A direct weapon against 1...e5. Open the center on move 3 and develop with tempo.",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 4"
+    }
+  ]
+}
