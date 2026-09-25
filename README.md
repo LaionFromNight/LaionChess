@@ -45,6 +45,25 @@ result card appears on the board (Next / Again; `Enter` = next, `R` = again), so
 on mobile there's no need to scroll. Common Moves is hidden while a line is
 being recalled so it can't give answers away.
 
+### Board overlays
+
+The **◎ Overlays** button (under every board) turns on visual aids built on the
+rules players are taught. Old saved choices are migrated automatically.
+
+| Overlay | Principle |
+|---|---|
+| Hanging pieces | Static exchange evaluation: red `−n` = you lose it, green `+n` = you can win it, amber `a:d` = attacked but held |
+| Loose pieces | "Loose pieces drop off" (LPDO): undefended pieces are tactical targets |
+| Checks | Checks, captures, threats — every check for the side to move (safe vs. can be taken) |
+| King safety & pins | Enemy hits on the king zone, escape squares, pinned pieces and their pinners |
+| Square control / White's / Black's control | Who controls each square and by how much |
+| Protection map | Which pieces defend which, and how many times |
+| Pawn structure | Passed, isolated, doubled and backward pawns |
+| Outposts | Pawn-supported squares no enemy pawn can attack |
+| Open files | Open and half-open files — where rooks belong |
+| Opening principles | Undeveloped minors, uncastled king, early queen, centre control |
+| Piece activity | Legal moves per piece, passive pieces and bad bishops |
+
 ### Board controls
 
 - Click or drag pieces to move.

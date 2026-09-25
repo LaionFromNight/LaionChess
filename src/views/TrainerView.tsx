@@ -459,7 +459,7 @@ export default function TrainerView({
   // ── derived render data ───────────────────────────────────────────────────
   const shown = viewIdx !== null ? hist[viewIdx] : hist[ply];
   const boardState = shown.state;
-  const spottingOverlay = useMemo(() => buildSpottingOverlay(spottingModes, boardState), [spottingModes, boardState]);
+  const spottingOverlay = useMemo(() => buildSpottingOverlay(spottingModes, boardState, flipped), [spottingModes, boardState, flipped]);
   const bookFen = useMemo(() => toFen(gameState), [gameState]);
   // Common Moves would give the drill answers away, so it's off until the line ends.
   const bookHidden = mode !== 'learn' && !done;
