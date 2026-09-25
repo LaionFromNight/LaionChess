@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { SpottingMode } from '../chess/analysis';
+import { MAX_OVERLAYS, type SpottingMode } from '../chess/analysis';
 import { OV } from '../board/spottingOverlay';
 
 interface SpottingPanelProps {
@@ -69,7 +69,7 @@ const GROUPS: Array<{ title: string; blurb: string; items: OverlayDef[] }> = [
 ];
 
 const ALL = GROUPS.flatMap(g => g.items);
-export const MAX_ON = 3;
+export const MAX_ON = MAX_OVERLAYS;
 
 /** Board overlays — a toolbar button with a grouped popover and a live legend. */
 export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
@@ -87,7 +87,7 @@ export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
     return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey); };
   }, [open]);
 
-  // Up to MAX_ON overlays at once — more than that turns the board into noise.
+  // Up to MAX_ON overlays at once.
   // Turning on another one drops the oldest.
   const toggle = (key: SpottingMode) => {
     const list = [...modes];
@@ -112,7 +112,7 @@ export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
       {open && (
         <div className="popover spot-popover">
           <div className="spot-head">
-            <span className="popover-title">Board overlays <small className="muted">· up to {MAX_ON} at once</small></span>
+            <span className="popover-title">Board overlays</span>
             {count > 0 && <button type="button" className="link-btn" onClick={() => onChange(new Set())}>Clear all</button>}
           </div>
           {GROUPS.map(g => (

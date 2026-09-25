@@ -86,7 +86,7 @@ rules players are taught. Old saved choices are migrated automatically.
 | Rule of the square | Can the defending king catch a passed pawn? |
 | Key squares & opposition | Pawn endings: squares that force promotion, and who holds the opposition |
 
-Up to three overlays can be on at once (turning on a fourth drops the oldest).
+Up to 16 overlays can be on at once — in practice all of them.
 
 ### Board controls
 
