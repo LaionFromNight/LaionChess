@@ -12,80 +12,124 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
           "note": "Release the tension; your bishop gets f5."
         },
         {
-          "san": "Nxe4"
+          "san": "Nxe4",
+          "from": "c3",
+          "to": "e4"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop outside the pawn chain with tempo on the knight."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e4",
+          "to": "g3"
         },
         {
           "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
           "note": "Keep the bishop on its diagonal, still facing White's pieces."
         },
         {
-          "san": "h4"
+          "san": "h4",
+          "from": "h2",
+          "to": "h4"
         },
         {
           "san": "h6",
+          "from": "h7",
+          "to": "h6",
           "note": "Give the bishop a retreat to h7 so it can't be trapped by h5."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Stop Ne5 and prepare ...Ngf6."
         },
         {
-          "san": "h5"
+          "san": "h5",
+          "from": "h4",
+          "to": "h5"
         },
         {
           "san": "Bh7",
+          "from": "g6",
+          "to": "h7",
           "note": "The bishop retreats but still eyes White's queenside."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Bxd3",
+          "from": "h7",
+          "to": "d3",
           "note": "Trade off White's best attacking bishop."
         },
         {
-          "san": "Qxd3"
+          "san": "Qxd3",
+          "from": "d1",
+          "to": "d3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid structure; next ...Ngf6, ...Be7 or ...Qc7 and castle."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "Ngf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and prepare ...Be7 and castling — the classic Caro-Kann fortress."
         }
       ]
@@ -96,80 +140,124 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
           "note": "Release the tension; your bishop gets f5."
         },
         {
-          "san": "Nxe4"
+          "san": "Nxe4",
+          "from": "c3",
+          "to": "e4"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop outside the pawn chain with tempo on the knight."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e4",
+          "to": "g3"
         },
         {
           "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
           "note": "Keep the bishop on its diagonal, still facing White's pieces."
         },
         {
-          "san": "h4"
+          "san": "h4",
+          "from": "h2",
+          "to": "h4"
         },
         {
           "san": "h6",
+          "from": "h7",
+          "to": "h6",
           "note": "Give the bishop a retreat to h7 so it can't be trapped by h5."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Stop Ne5 and prepare ...Ngf6."
         },
         {
-          "san": "h5"
+          "san": "h5",
+          "from": "h4",
+          "to": "h5"
         },
         {
           "san": "Bh7",
+          "from": "g6",
+          "to": "h7",
           "note": "The bishop retreats but still eyes White's queenside."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Bxd3",
+          "from": "h7",
+          "to": "d3",
           "note": "Trade off White's best attacking bishop."
         },
         {
-          "san": "Qxd3"
+          "san": "Qxd3",
+          "from": "d1",
+          "to": "d3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid structure; next ...Ngf6, ...Be7 or ...Qc7 and castle."
         },
         {
-          "san": "Bf4"
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4"
         },
         {
           "san": "Ngf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop normally; ...Qa5+ and ...Be7 come next."
         }
       ]
@@ -180,73 +268,113 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
           "note": "Release the tension; your bishop gets f5."
         },
         {
-          "san": "Nxe4"
+          "san": "Nxe4",
+          "from": "c3",
+          "to": "e4"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop outside the pawn chain with tempo on the knight."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e4",
+          "to": "g3"
         },
         {
           "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
           "note": "Keep the bishop on its diagonal, still facing White's pieces."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Stop Ne5 and prepare ...Ngf6."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Bxd3",
+          "from": "g6",
+          "to": "d3",
           "note": "Trade off White's attacking bishop."
         },
         {
-          "san": "Qxd3"
+          "san": "Qxd3",
+          "from": "d1",
+          "to": "d3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid pawns on light squares, matching your remaining bishop's absence."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Ngf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and prepare ...Be7 and castling."
         },
         {
-          "san": "c4"
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Solid development; you will castle next with a comfortable game."
         }
       ]
@@ -257,66 +385,102 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Against the Advance, develop the bishop before playing ...e6."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Build the chain and free the f8 bishop."
         },
         {
-          "san": "Be2"
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
         },
         {
           "san": "c5",
+          "from": "c6",
+          "to": "c5",
           "note": "Hit the base of White's chain — the classic French-style counter."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Pressure d4 and develop."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Release the tension to open the c-file."
         },
         {
-          "san": "cxd4"
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
         },
         {
           "san": "Nge7",
+          "from": "g8",
+          "to": "e7",
           "note": "The knight heads for c8-b6 or f5 to pressure d4."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Nc8",
+          "from": "e7",
+          "to": "c8",
           "note": "A typical maneuver: the knight goes to b6, eyeing c4."
         }
       ]
@@ -327,59 +491,91 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Against the Advance, develop the bishop before playing ...e6."
         },
         {
-          "san": "h4"
+          "san": "h4",
+          "from": "h2",
+          "to": "h4"
         },
         {
           "san": "h5",
+          "from": "h7",
+          "to": "h5",
           "note": "Stop h4-h5 and g4 ideas — your bishop must not get trapped."
         },
         {
-          "san": "c4"
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solidify d5 and free the dark-squared bishop."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Ne7",
+          "from": "g8",
+          "to": "e7",
           "note": "Head for f5 or g6 and prepare ...dxc4."
         },
         {
-          "san": "Nge2"
+          "san": "Nge2",
+          "from": "g1",
+          "to": "e2"
         },
         {
           "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
           "note": "Take the pawn, opening lines for your pieces."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e2",
+          "to": "g3"
         },
         {
           "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
           "note": "Keep the bishop — g6 also protects h5."
         }
       ]
@@ -390,80 +586,124 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "cxd5",
+          "from": "c6",
+          "to": "d5",
           "note": "Recapture toward the center; you get a symmetrical but lively structure."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and pressure d4."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Natural development."
         },
         {
-          "san": "Bf4"
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4"
         },
         {
           "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
           "note": "Activate the bishop before playing ...e6."
         },
         {
-          "san": "Qb3"
+          "san": "Qb3",
+          "from": "d1",
+          "to": "b3"
         },
         {
           "san": "Qd7",
+          "from": "d8",
+          "to": "d7",
           "note": "Defend b7 calmly."
         },
         {
-          "san": "Nd2"
+          "san": "Nd2",
+          "from": "b1",
+          "to": "d2"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid structure; the f8 bishop is ready to develop."
         },
         {
-          "san": "Ngf3"
+          "san": "Ngf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Bxf3",
+          "from": "g4",
+          "to": "f3",
           "note": "Trade to exchange a key defender and relieve pressure."
         },
         {
-          "san": "Nxf3"
+          "san": "Nxf3",
+          "from": "d2",
+          "to": "f3"
         },
         {
           "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
           "note": "Challenge White's active bishop."
         },
         {
-          "san": "Bxd6"
+          "san": "Bxd6",
+          "from": "f4",
+          "to": "d6"
         },
         {
           "san": "Qxd6",
+          "from": "d7",
+          "to": "d6",
           "note": "Equal position — plan ...O-O and a minority attack with ...b5-b4."
         }
       ]
@@ -474,73 +714,113 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "cxd5",
+          "from": "c6",
+          "to": "d5",
           "note": "Recapture toward the center; you get a symmetrical but lively structure."
         },
         {
-          "san": "c4"
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Pressure d5 and develop."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid — you will fight White's isolated pawn."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Develop and prepare to castle."
         },
         {
-          "san": "cxd5"
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
         },
         {
           "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
           "note": "Recapture with the knight, blockading in front of the isolated d-pawn."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Pressure d4 — the isolated pawn is your target."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "King to safety."
         },
         {
-          "san": "Re1"
+          "san": "Re1",
+          "from": "f1",
+          "to": "e1"
         },
         {
           "san": "Bf6",
+          "from": "e7",
+          "to": "f6",
           "note": "Pile up on d4 with the bishop."
         }
       ]
@@ -551,52 +831,80 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 immediately."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
           "note": "Pin the knight — you will trade it to weaken White's control of e4."
         },
         {
-          "san": "h3"
+          "san": "h3",
+          "from": "h2",
+          "to": "h3"
         },
         {
           "san": "Bxf3",
+          "from": "g4",
+          "to": "f3",
           "note": "Take the knight; the bishop pair is less important than a sound position."
         },
         {
-          "san": "Qxf3"
+          "san": "Qxf3",
+          "from": "d1",
+          "to": "f3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid central pawns; the queen on f3 is exposed to ...Nf6-d4 ideas."
         },
         {
-          "san": "d3"
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop naturally."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Complete development; ...Bb4 or ...Be7 follows."
         }
       ]
@@ -607,60 +915,227 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge the center immediately."
         },
         {
-          "san": "f3"
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid and simple: hold d5 and let White's f3 look odd."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and pressure e4."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Nfd7",
+          "from": "f6",
+          "to": "d7",
           "note": "Retreat the knight, ready to hit the chain with ...c5."
         },
         {
-          "san": "f4"
+          "san": "f4",
+          "from": "f3",
+          "to": "f4"
         },
         {
           "san": "c5",
+          "from": "c6",
+          "to": "c5",
           "note": "Strike the base of the chain at d4."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Pile up on d4."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
           "note": "Pressure b2 and d4 at the same time."
+        }
+      ]
+    },
+    {
+      "id": "accelerated-panov",
+      "name": "2.c4 d5 — Accelerated Panov",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Hit the center anyway."
+        },
+        {
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
+        },
+        {
+          "san": "cxd5",
+          "from": "c6",
+          "to": "d5",
+          "note": "Recapture."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Regain the pawn with the knight."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Equal and active."
+        }
+      ]
+    },
+    {
+      "id": "kia",
+      "name": "2.d3 d5 3.Nd2 e5 — King's Indian Attack",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Caro-Kann: prepare ...d5 while keeping the light-squared bishop free."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "Nd2",
+          "from": "b1",
+          "to": "d2"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Grab more space."
+        },
+        {
+          "san": "Ngf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
+          "note": "Protect e5."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle — Black has a fine central share."
         }
       ]
     }

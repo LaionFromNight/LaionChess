@@ -1,0 +1,872 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "petroff-defense",
+  "name": "Petroff Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "The Russian Game: answer 2.Nf3 with a counter-attack on e4. Among the most reliable defenses at every level, plus answers to the Four Knights, the Vienna and the Bishop's Opening.",
+  "lines": [
+    {
+      "id": "classical",
+      "name": "Classical — 5.d4 d5 6.Bd3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "First kick the knight — 3...Nxe4? 4.Qe2! is a known trap."
+        },
+        {
+          "san": "Nf3",
+          "from": "e5",
+          "to": "f3"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Now take the pawn back."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d6",
+          "to": "d5",
+          "note": "Support the e4-knight."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Develop."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "Nb4",
+          "from": "c6",
+          "to": "b4",
+          "note": "Hit the d3-bishop."
+        },
+        {
+          "san": "Be2",
+          "from": "d3",
+          "to": "e2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Support the e4-knight — solid and equal."
+        }
+      ]
+    },
+    {
+      "id": "nc3",
+      "name": "5.Nc3 Nxc3 6.dxc3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "First kick the knight — 3...Nxe4? 4.Qe2! is a known trap."
+        },
+        {
+          "san": "Nf3",
+          "from": "e5",
+          "to": "f3"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Now take the pawn back."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nxc3",
+          "from": "e4",
+          "to": "c3",
+          "note": "Trade."
+        },
+        {
+          "san": "dxc3",
+          "from": "d2",
+          "to": "c3"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Develop."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
+        },
+        {
+          "san": "Be6",
+          "from": "c8",
+          "to": "e6",
+          "note": "Develop."
+        },
+        {
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
+        },
+        {
+          "san": "Qd7",
+          "from": "d8",
+          "to": "d7",
+          "note": "Connect and prepare ...O-O-O — both sides castle long."
+        }
+      ]
+    },
+    {
+      "id": "qe2",
+      "name": "5.Qe2 Qe7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "First kick the knight — 3...Nxe4? 4.Qe2! is a known trap."
+        },
+        {
+          "san": "Nf3",
+          "from": "e5",
+          "to": "f3"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Now take the pawn back."
+        },
+        {
+          "san": "Qe2",
+          "from": "d1",
+          "to": "e2"
+        },
+        {
+          "san": "Qe7",
+          "from": "d8",
+          "to": "e7",
+          "note": "Break the pin."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "Nf6",
+          "from": "e4",
+          "to": "f6",
+          "note": "Retreat."
+        },
+        {
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
+        },
+        {
+          "san": "Qxe2+",
+          "from": "e7",
+          "to": "e2",
+          "note": "Trade queens."
+        },
+        {
+          "san": "Bxe2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Equal endgame."
+        }
+      ]
+    },
+    {
+      "id": "d4",
+      "name": "3.d4 Nxe4 4.Bd3 d5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Take the e4-pawn."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Support the knight."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "Nd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Challenge the e5-knight."
+        },
+        {
+          "san": "Nxd7",
+          "from": "e5",
+          "to": "d7"
+        },
+        {
+          "san": "Bxd7",
+          "from": "c8",
+          "to": "d7",
+          "note": "Recapture."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
+          "note": "Develop."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "Solid."
+        }
+      ]
+    },
+    {
+      "id": "four-knights-rubinstein",
+      "name": "Four Knights — 4.Bb5 Nd4 (Rubinstein)",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Four Knights."
+        },
+        {
+          "san": "Bb5",
+          "from": "f1",
+          "to": "b5"
+        },
+        {
+          "san": "Nd4",
+          "from": "c6",
+          "to": "d4",
+          "note": "The Rubinstein: hit the b5-bishop and f3-knight."
+        },
+        {
+          "san": "Ba4",
+          "from": "b5",
+          "to": "a4"
+        },
+        {
+          "san": "Bc5",
+          "from": "f8",
+          "to": "c5",
+          "note": "Develop."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Nd3",
+          "from": "e5",
+          "to": "d3"
+        },
+        {
+          "san": "Bb6",
+          "from": "c5",
+          "to": "b6",
+          "note": "Retreat."
+        },
+        {
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
+        },
+        {
+          "san": "Ne8",
+          "from": "f6",
+          "to": "e8",
+          "note": "Retreat — Black has good play for the pawn."
+        }
+      ]
+    },
+    {
+      "id": "four-knights-scotch",
+      "name": "Four Knights — 4.d4 exd4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Four Knights."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "exd4",
+          "from": "e5",
+          "to": "d4",
+          "note": "Take."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "Pin."
+        },
+        {
+          "san": "Nxc6",
+          "from": "d4",
+          "to": "c6"
+        },
+        {
+          "san": "bxc6",
+          "from": "b7",
+          "to": "c6",
+          "note": "Recapture towards the center."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Strike."
+        }
+      ]
+    },
+    {
+      "id": "four-knights-bc4",
+      "name": "Four Knights — 4.Bc4 Nxe4! fork trick",
+      "tag": "Trap",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "The Petroff: counter-attack e4 instead of defending e5."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Four Knights."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "The fork trick: after 5.Nxe4 d5 the pawn forks bishop and knight."
+        },
+        {
+          "san": "Nxe4",
+          "from": "c3",
+          "to": "e4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Fork — Black wins back the piece with a great center."
+        }
+      ]
+    },
+    {
+      "id": "vienna-f4",
+      "name": "Vienna — 2.Nc3 Nf6 3.f4 d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Hit back in the center."
+        },
+        {
+          "san": "fxe5",
+          "from": "f4",
+          "to": "e5"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Occupy e4."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Develop and castle soon."
+        }
+      ]
+    },
+    {
+      "id": "vienna-bc4",
+      "name": "Vienna — 3.Bc4 Nxe4 4.Qh5 Nd6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "Nxe4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Take — the fork trick again."
+        },
+        {
+          "san": "Qh5",
+          "from": "d1",
+          "to": "h5"
+        },
+        {
+          "san": "Nd6",
+          "from": "e4",
+          "to": "d6",
+          "note": "Defend f7."
+        },
+        {
+          "san": "Bb3",
+          "from": "c4",
+          "to": "b3"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "The safe choice."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle — Black is fine."
+        }
+      ]
+    },
+    {
+      "id": "bishops",
+      "name": "Bishop's Opening — 2.Bc4 Nf6 3.d3 c6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "Take your share of the center."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Hit e4."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "Prepare ...d5."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "Bb3",
+          "from": "c4",
+          "to": "b3"
+        },
+        {
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
+          "note": "Solid."
+        }
+      ]
+    }
+  ]
+}

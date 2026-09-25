@@ -1,0 +1,1267 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "nimzo-indian",
+  "name": "Nimzo-Indian Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "Meet 1.d4 with 1...Nf6 2...e6 and pin the c3-knight with ...Bb4. Rich, principled play against every White system, plus the Queen's Indian against 3.Nf3 and a Catalan answer against 3.g3.",
+  "lines": [
+    {
+      "id": "rubinstein",
+      "name": "Rubinstein — 4.e3 O-O 5.Bd3 d5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle first and keep options open."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Stake a claim in the center."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Hit d4 — the typical Nimzo counter-strike."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Release the tension at the right moment…"
+        },
+        {
+          "san": "Bxc4",
+          "from": "d3",
+          "to": "c4"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "…and develop with pressure on d4."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Ba5",
+          "from": "b4",
+          "to": "a5",
+          "note": "Keep the pin — Black has comfortable, active play against the d4-pawn."
+        }
+      ]
+    },
+    {
+      "id": "classical",
+      "name": "Classical — 4.Qc2 O-O 5.a3 Bxc3+",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "Qc2",
+          "from": "d1",
+          "to": "c2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle; White has avoided doubled pawns, so Black develops quickly."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Bxc3+",
+          "from": "b4",
+          "to": "c3",
+          "note": "Take — White gets the bishop pair but loses time."
+        },
+        {
+          "san": "Qxc3",
+          "from": "c2",
+          "to": "c3"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Fianchetto to control e4 and the long diagonal."
+        },
+        {
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
+        },
+        {
+          "san": "Bb7",
+          "from": "c8",
+          "to": "b7",
+          "note": "The bishop fights for e4."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "h6",
+          "from": "h7",
+          "to": "h6",
+          "note": "Ask the bishop."
+        },
+        {
+          "san": "Bh4",
+          "from": "g5",
+          "to": "h4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Strike in the center while White's king is still in the middle."
+        }
+      ]
+    },
+    {
+      "id": "classical-nf3",
+      "name": "Classical — 4.Qc2 O-O 5.Nf3 c5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "Qc2",
+          "from": "d1",
+          "to": "c2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle; White has avoided doubled pawns, so Black develops quickly."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Hit d4 immediately."
+        },
+        {
+          "san": "dxc5",
+          "from": "d4",
+          "to": "c5"
+        },
+        {
+          "san": "Na6",
+          "from": "b8",
+          "to": "a6",
+          "note": "Regain the pawn with the knight."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Bxc3+",
+          "from": "b4",
+          "to": "c3",
+          "note": "Give the bishop for the knight…"
+        },
+        {
+          "san": "Qxc3",
+          "from": "c2",
+          "to": "c3"
+        },
+        {
+          "san": "Nxc5",
+          "from": "a6",
+          "to": "c5",
+          "note": "…and recapture the pawn with a healthy, easy position."
+        }
+      ]
+    },
+    {
+      "id": "samisch",
+      "name": "Sämisch — 4.a3 Bxc3+ 5.bxc3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Bxc3+",
+          "from": "b4",
+          "to": "c3",
+          "note": "Take — White gets doubled c-pawns."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Fix the doubled pawns and pressure c4."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Pile up on d4 and c4."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Ne2",
+          "from": "g1",
+          "to": "e2"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Prepare ...Ba6 to attack the weak c4-pawn."
+        },
+        {
+          "san": "e4",
+          "from": "e3",
+          "to": "e4"
+        },
+        {
+          "san": "Ne8",
+          "from": "f6",
+          "to": "e8",
+          "note": "Classic idea: sidestep e5 and meet f4 with ...f5 — the c4-pawn remains a long-term target."
+        }
+      ]
+    },
+    {
+      "id": "leningrad",
+      "name": "Leningrad — 4.Bg5 h6 5.Bh4 c5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
+        },
+        {
+          "san": "h6",
+          "from": "h7",
+          "to": "h6",
+          "note": "Ask the bishop immediately."
+        },
+        {
+          "san": "Bh4",
+          "from": "g5",
+          "to": "h4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Strike at d4."
+        },
+        {
+          "san": "d5",
+          "from": "d4",
+          "to": "d5"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "Hold e5 and keep the position compact."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "exd5",
+          "from": "e6",
+          "to": "d5",
+          "note": "Open the e-file."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Develop towards e5 and c5 — solid Benoni-type play without the pin problems."
+        }
+      ]
+    },
+    {
+      "id": "f3",
+      "name": "4.f3 d5 5.a3 Be7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Stop e4 directly."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Be7",
+          "from": "b4",
+          "to": "e7",
+          "note": "Retreat — White's f3 and a3 cost time."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
+          "note": "Take."
+        },
+        {
+          "san": "fxe4",
+          "from": "f3",
+          "to": "e4"
+        },
+        {
+          "san": "e5",
+          "from": "e6",
+          "to": "e5",
+          "note": "Hit back in the center at once."
+        },
+        {
+          "san": "d5",
+          "from": "d4",
+          "to": "d5"
+        },
+        {
+          "san": "Bc5",
+          "from": "e7",
+          "to": "c5",
+          "note": "Active bishop on the a7–g1 diagonal, eyeing White's weakened king."
+        }
+      ]
+    },
+    {
+      "id": "romanishin",
+      "name": "4.Nf3 c5 5.g3 — Romanishin",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Challenge d4 at once."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Central break."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight — equal and active."
+        }
+      ]
+    },
+    {
+      "id": "spielmann",
+      "name": "4.Qb3 c5 — Spielmann",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "Qb3",
+          "from": "d1",
+          "to": "b3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Counter-attack on d4."
+        },
+        {
+          "san": "dxc5",
+          "from": "d4",
+          "to": "c5"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop first, recapture later."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Ne4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Jump into e4 and hit c3 twice."
+        },
+        {
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
+        },
+        {
+          "san": "Nxc5",
+          "from": "e4",
+          "to": "c5",
+          "note": "Win the pawn back with an active knight."
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "name": "4.g3 O-O 5.Bg2 d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "The Nimzo-Indian: pin the knight so White cannot easily play e4."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Blunt the g2-bishop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take the pawn — White needs time to regain it."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and support ...Rb8/...b5 ideas."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Be7",
+          "from": "b4",
+          "to": "e7",
+          "note": "Keep the bishop — Black holds c4 for now and develops smoothly."
+        }
+      ]
+    },
+    {
+      "id": "qid-ba6",
+      "name": "3.Nf3 b6 4.g3 Ba6 — Queen's Indian",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Against 3.Nf3 the Queen's Indian: fianchetto and control e4."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "Ba6",
+          "from": "c8",
+          "to": "a6",
+          "note": "Nimzowitsch's idea: attack c4 at once."
+        },
+        {
+          "san": "b3",
+          "from": "b2",
+          "to": "b3"
+        },
+        {
+          "san": "Bb4+",
+          "from": "f8",
+          "to": "b4",
+          "note": "Check to disrupt White's coordination."
+        },
+        {
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
+        },
+        {
+          "san": "Be7",
+          "from": "b4",
+          "to": "e7",
+          "note": "Retreat — White's d2-bishop now blocks the queen."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "Prepare ...d5 and give the a6-bishop more support."
+        },
+        {
+          "san": "Bc3",
+          "from": "d2",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Classic Queen's Indian — solid and fully equal."
+        }
+      ]
+    },
+    {
+      "id": "qid-petrosian",
+      "name": "3.Nf3 b6 4.a3 — Petrosian",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Against 3.Nf3 the Queen's Indian: fianchetto and control e4."
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
+        },
+        {
+          "san": "Bb7",
+          "from": "c8",
+          "to": "b7",
+          "note": "Control e4."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight."
+        },
+        {
+          "san": "Qc2",
+          "from": "d1",
+          "to": "c2"
+        },
+        {
+          "san": "Nxc3",
+          "from": "d5",
+          "to": "c3",
+          "note": "Trade before e4 comes with tempo."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Develop."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle — then ...c5 attacks White's center."
+        }
+      ]
+    },
+    {
+      "id": "qid-e3",
+      "name": "3.Nf3 b6 4.e3 Bb7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Against 3.Nf3 the Queen's Indian: fianchetto and control e4."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Bb7",
+          "from": "c8",
+          "to": "b7",
+          "note": "Fianchetto."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
+          "note": "Active development, eyeing h2."
+        }
+      ]
+    },
+    {
+      "id": "catalan",
+      "name": "3.g3 d5 4.Bg2 dxc4 — vs Catalan",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "1...Nf6 — flexible development that stops e4."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Prepare ...d5 or ...Bb4 and open the f8-bishop."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Against the Catalan: take the center first."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Grab c4 — the Open Catalan."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and defend c4 indirectly."
+        },
+        {
+          "san": "Qa4",
+          "from": "d1",
+          "to": "a4"
+        },
+        {
+          "san": "Bb4+",
+          "from": "f8",
+          "to": "b4",
+          "note": "Check first."
+        },
+        {
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
+        },
+        {
+          "san": "Nd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Block and cover b4."
+        },
+        {
+          "san": "Bxb4",
+          "from": "d2",
+          "to": "b4"
+        },
+        {
+          "san": "Nxb4",
+          "from": "d5",
+          "to": "b4",
+          "note": "Recapture."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Rb8",
+          "from": "a8",
+          "to": "b8",
+          "note": "Prepare ...b5 to hold the extra pawn."
+        }
+      ]
+    }
+  ]
+}

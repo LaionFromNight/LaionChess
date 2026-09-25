@@ -1,0 +1,1114 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "grunfeld",
+  "name": "Grünfeld Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "A dynamic answer to 1.d4: let White build a big center, then attack it with ...Bg7, ...c5 and ...Nc6. Covers the Exchange, Russian, Bf4 and Bg5 systems plus the anti-Grünfeld lines.",
+  "lines": [
+    {
+      "id": "exchange-rb1",
+      "name": "Exchange — 7.Nf3 c5 8.Rb1",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nxc3",
+          "from": "d5",
+          "to": "c3",
+          "note": "Trade — White's c3-pawn will become a target."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "The Grünfeld bishop hits c3 and d4."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Strike d4 — the key Grünfeld break."
+        },
+        {
+          "san": "Rb1",
+          "from": "a1",
+          "to": "b1"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle; the b7-pawn can be given for activity."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release the tension."
+        },
+        {
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
+        },
+        {
+          "san": "Qa5+",
+          "from": "d8",
+          "to": "a5",
+          "note": "Check and pick up a2."
+        },
+        {
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
+        },
+        {
+          "san": "Qxa2",
+          "from": "a5",
+          "to": "a2",
+          "note": "Take the pawn."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
+          "note": "Develop, hitting f3 — White has comp for the pawn, Black has a passed a-pawn."
+        }
+      ]
+    },
+    {
+      "id": "exchange-bc4",
+      "name": "Exchange — 7.Bc4 Classical",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nxc3",
+          "from": "d5",
+          "to": "c3",
+          "note": "Trade — White's c3-pawn will become a target."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "The Grünfeld bishop hits c3 and d4."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Same idea — hit d4."
+        },
+        {
+          "san": "Ne2",
+          "from": "g1",
+          "to": "e2"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Pile up on d4."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
+          "note": "Pin the e2-knight to increase pressure on d4."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "Na5",
+          "from": "c6",
+          "to": "a5",
+          "note": "Hit the c4-bishop."
+        },
+        {
+          "san": "Bd3",
+          "from": "c4",
+          "to": "d3"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release."
+        },
+        {
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
+        },
+        {
+          "san": "Be6",
+          "from": "g4",
+          "to": "e6",
+          "note": "Blockade d5 — the classical Grünfeld battle: White's center vs Black's pressure."
+        }
+      ]
+    },
+    {
+      "id": "exchange-be3",
+      "name": "Exchange — 7.Be3 c5 8.Qd2",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nxc3",
+          "from": "d5",
+          "to": "c3",
+          "note": "Trade — White's c3-pawn will become a target."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "The Grünfeld bishop hits c3 and d4."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Same central strike."
+        },
+        {
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
+        },
+        {
+          "san": "Qa5",
+          "from": "d8",
+          "to": "a5",
+          "note": "Pin c3 and aim at a2."
+        },
+        {
+          "san": "Rc1",
+          "from": "a1",
+          "to": "c1"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release."
+        },
+        {
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
+        },
+        {
+          "san": "Qxd2+",
+          "from": "a5",
+          "to": "d2",
+          "note": "Trade queens."
+        },
+        {
+          "san": "Kxd2",
+          "from": "e1",
+          "to": "d2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "A healthy endgame — White's center can become a target."
+        }
+      ]
+    },
+    {
+      "id": "russian",
+      "name": "Russian System — 5.Qb3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Qb3",
+          "from": "d1",
+          "to": "b3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take — White's queen gets kicked."
+        },
+        {
+          "san": "Qxc4",
+          "from": "b3",
+          "to": "c4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "a6",
+          "from": "a7",
+          "to": "a6",
+          "note": "The Hungarian: prepare ...b5 with tempo."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "b5",
+          "from": "b7",
+          "to": "b5",
+          "note": "Gain space with tempo on the queen."
+        },
+        {
+          "san": "Qb3",
+          "from": "c4",
+          "to": "b3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Strike the center."
+        },
+        {
+          "san": "dxc5",
+          "from": "d4",
+          "to": "c5"
+        },
+        {
+          "san": "Bb7",
+          "from": "c8",
+          "to": "b7",
+          "note": "Develop, hitting e4 — lively play for Black."
+        }
+      ]
+    },
+    {
+      "id": "bf4",
+      "name": "4.Bf4 Bg7 5.e3 c5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The gambit line — open the center."
+        },
+        {
+          "san": "dxc5",
+          "from": "d4",
+          "to": "c5"
+        },
+        {
+          "san": "Qa5",
+          "from": "d8",
+          "to": "a5",
+          "note": "Pin c3 and prepare to regain c5."
+        },
+        {
+          "san": "Rc1",
+          "from": "a1",
+          "to": "c1"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take."
+        },
+        {
+          "san": "Bxc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Qxc5",
+          "from": "a5",
+          "to": "c5",
+          "note": "Regain the pawn."
+        },
+        {
+          "san": "Bb3",
+          "from": "c4",
+          "to": "b3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Qa5",
+          "from": "c5",
+          "to": "a5",
+          "note": "The queen steps out of the c-file — equal and active."
+        }
+      ]
+    },
+    {
+      "id": "bg5",
+      "name": "4.Bg5 Ne4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
+        },
+        {
+          "san": "Ne4",
+          "from": "f6",
+          "to": "e4",
+          "note": "Hit the bishop and c3."
+        },
+        {
+          "san": "Bf4",
+          "from": "g5",
+          "to": "f4"
+        },
+        {
+          "san": "Nxc3",
+          "from": "e4",
+          "to": "c3",
+          "note": "Trade."
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take the pawn."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Be6",
+          "from": "c8",
+          "to": "e6",
+          "note": "Hold c4 with the bishop."
+        }
+      ]
+    },
+    {
+      "id": "e3",
+      "name": "4.e3 Bg7 5.Nf3 O-O",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Strike d4."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release."
+        },
+        {
+          "san": "exd4",
+          "from": "e3",
+          "to": "d4"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Pressure the isolated d4-pawn."
+        }
+      ]
+    },
+    {
+      "id": "bd2",
+      "name": "4.cxd5 Nxd5 5.Bd2",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Grünfeld: challenge the center at once."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture with the knight."
+        },
+        {
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nb6",
+          "from": "d5",
+          "to": "b6",
+          "note": "Retreat — White's d2-bishop is passive."
+        }
+      ]
+    },
+    {
+      "id": "anti-f3",
+      "name": "Anti-Grünfeld — 3.f3 d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Play ...d5 anyway."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nb6",
+          "from": "d5",
+          "to": "b6",
+          "note": "Retreat."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Pressure d4."
+        }
+      ]
+    },
+    {
+      "id": "anti-g3",
+      "name": "Anti-Grünfeld — 3.g3 Bg7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Flexible development."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Grünfeld-style strike."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Recapture."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "Nb6",
+          "from": "d5",
+          "to": "b6",
+          "note": "Retreat."
+        },
+        {
+          "san": "Ne2",
+          "from": "g1",
+          "to": "e2"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "Hit d4."
+        },
+        {
+          "san": "d5",
+          "from": "d4",
+          "to": "d5"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Undermine the d5-pawn."
+        }
+      ]
+    }
+  ]
+}

@@ -12,80 +12,124 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "The Scandinavian: challenge e4 immediately and force the central question."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Qa5",
+          "from": "d5",
+          "to": "a5",
           "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop the knight and control e4."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop outside the pawn chain before playing ...e6 — the key Scandinavian rule."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solidify the center and open the f8 bishop's diagonal."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "Give the queen a retreat square on c7 or d8 and cover d5 and b5."
         },
         {
-          "san": "Qe2"
+          "san": "Qe2",
+          "from": "d1",
+          "to": "e2"
         },
         {
           "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
           "note": "Pin the knight again and prepare to castle; the bishop adds pressure to c3."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Complete development — the knight supports ...Nb6 or ...Nd5 later."
         },
         {
-          "san": "a3"
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
         },
         {
           "san": "Bxc3",
+          "from": "b4",
+          "to": "c3",
           "note": "Trade before a3-b4 traps the bishop or wins time."
         },
         {
-          "san": "Bxc3"
+          "san": "Bxc3",
+          "from": "d2",
+          "to": "c3"
         },
         {
           "san": "Qc7",
+          "from": "a5",
+          "to": "c7",
           "note": "Tuck the queen away safely; Black is solid and ready for ...O-O or ...b5."
         }
       ]
@@ -96,66 +140,102 @@
       "tag": "Trap",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "The Scandinavian: challenge e4 immediately and force the central question."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Qa5",
+          "from": "d5",
+          "to": "a5",
           "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop the knight and control e4."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop outside the pawn chain before playing ...e6 — the key Scandinavian rule."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solidify the center and open the f8 bishop's diagonal."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "Give the queen a retreat square on c7 or d8 and cover d5 and b5."
         },
         {
-          "san": "Nd5"
+          "san": "Nd5",
+          "from": "c3",
+          "to": "d5"
         },
         {
           "san": "Qd8",
+          "from": "a5",
+          "to": "d8",
           "note": "Don't take! 8...cxd5?? loses the queen to Bxa5 — the knight uncovered the d2 bishop."
         },
         {
-          "san": "Nxf6+"
+          "san": "Nxf6+",
+          "from": "d5",
+          "to": "f6"
         },
         {
           "san": "Qxf6",
+          "from": "d8",
+          "to": "f6",
           "note": "Recapture with the queen; the trick came to nothing and you have an easy game."
         }
       ]
@@ -166,66 +246,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "The Scandinavian: challenge e4 immediately and force the central question."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Qa5",
+          "from": "d5",
+          "to": "a5",
           "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop the knight and control e4."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Bishop out before ...e6, just as in the main line."
         },
         {
-          "san": "d3"
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "Secure d5 and give the queen a retreat square."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid: the f8 bishop is free and your pawns are on light squares."
         },
         {
-          "san": "Nd5"
+          "san": "Nd5",
+          "from": "c3",
+          "to": "d5"
         },
         {
           "san": "Qd8",
+          "from": "a5",
+          "to": "d8",
           "note": "Sidestep the discovered attack from the d2 bishop — never grab the knight with the queen pinned."
         },
         {
-          "san": "Nxf6+"
+          "san": "Nxf6+",
+          "from": "d5",
+          "to": "f6"
         },
         {
           "san": "Qxf6",
+          "from": "d8",
+          "to": "f6",
           "note": "Recapture with the queen; the minor-piece trade eases your position."
         }
       ]
@@ -236,59 +352,91 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "The Scandinavian: challenge e4 immediately and force the central question."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Qa5",
+          "from": "d5",
+          "to": "a5",
           "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and control e4."
         },
         {
-          "san": "d3"
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "Secure d5 and prepare a retreat for the queen."
         },
         {
-          "san": "Bd2"
+          "san": "Bd2",
+          "from": "c1",
+          "to": "d2"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "Develop the bishop to its best diagonal."
         },
         {
-          "san": "Nge2"
+          "san": "Nge2",
+          "from": "g1",
+          "to": "e2"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solidify; the f8 bishop is ready to develop."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e2",
+          "to": "g3"
         },
         {
           "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
           "note": "Keep the bishop — on g6 it stays active and also guards h5."
         }
       ]
@@ -299,66 +447,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 immediately."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
           "note": "White skipped Nc3, so develop the bishop with a pin while the queen stays centralized."
         },
         {
-          "san": "Be2"
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop with tempo pressure on d4 and prepare ...O-O-O."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "O-O-O",
+          "from": "e8",
+          "to": "c8",
           "note": "Castle long: the rook lands on d8 and doubles the pressure on d4."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop the last minor piece."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Qa5",
+          "from": "d5",
+          "to": "a5",
           "note": "The knight kicks the queen, so retreat to its standard safe square."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid center; the f8 bishop can now develop to d6 or b4."
         },
         {
-          "san": "h3"
+          "san": "h3",
+          "from": "h2",
+          "to": "h3"
         },
         {
           "san": "Bh5",
+          "from": "g4",
+          "to": "h5",
           "note": "Keep the pin on f3 — trading on f3 only when it helps you."
         }
       ]
@@ -369,45 +553,69 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 immediately."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
           "note": "White avoided the main lines; develop the bishop before locking it in with ...e6."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Now it's a good Caro-Kann/French structure with your bishop already outside the chain."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Strike the base of White's pawn chain."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Pile up on d4."
         },
         {
-          "san": "Be2"
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
         },
         {
           "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
           "note": "A third attacker on d4, while also hitting b2."
         }
       ]
@@ -418,53 +626,216 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 immediately."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "d4",
+          "from": "d5",
+          "to": "d4",
           "note": "Gain space with tempo on the knight."
         },
         {
-          "san": "Nce2"
+          "san": "Nce2",
+          "from": "c3",
+          "to": "e2"
         },
         {
           "san": "e5",
+          "from": "e7",
+          "to": "e5",
           "note": "Support the advanced d4 pawn and grab central space."
         },
         {
-          "san": "Ng3"
+          "san": "Ng3",
+          "from": "e2",
+          "to": "g3"
         },
         {
           "san": "Be6",
+          "from": "c8",
+          "to": "e6",
           "note": "Develop and control c4 and d5."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Reinforce d4 so c3xd4 cannot undermine your center."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and defend e5."
         },
         {
-          "san": "Bb5"
+          "san": "Bb5",
+          "from": "f1",
+          "to": "b5"
         },
         {
           "san": "f6",
+          "from": "f7",
+          "to": "f6",
           "note": "Defend e5 solidly — the c6 knight is pinned, so e5 needed another guard."
+        }
+      ]
+    },
+    {
+      "id": "d4-early",
+      "name": "3.d4 Nf6 4.Nf3 Bg4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
+        },
+        {
+          "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
+          "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Without Nc3 the queen can stay on d5."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
+          "note": "Develop and pin."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop with pressure on d4."
+        }
+      ]
+    },
+    {
+      "id": "nf3-dxe4",
+      "name": "2.Nf3 dxe4 3.Ng5 Nf6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
+          "note": "Take the pawn."
+        },
+        {
+          "san": "Ng5",
+          "from": "f3",
+          "to": "g5"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Hold e4."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "exd3",
+          "from": "e4",
+          "to": "d3",
+          "note": "Trade."
+        },
+        {
+          "san": "Bxd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "h6",
+          "from": "h7",
+          "to": "h6",
+          "note": "Kick the knight — Black is a pawn up in a sound position."
         }
       ]
     }

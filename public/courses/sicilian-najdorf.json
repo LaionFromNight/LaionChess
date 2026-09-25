@@ -12,80 +12,124 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "e5",
+          "from": "e7",
+          "to": "e5",
           "note": "Kick the d4 knight and grab central space; the d5 hole is covered by your pieces."
         },
         {
-          "san": "Nb3"
+          "san": "Nb3",
+          "from": "d4",
+          "to": "b3"
         },
         {
           "san": "Be6",
+          "from": "c8",
+          "to": "e6",
           "note": "Develop and fight for d5 — that square is the key to the whole structure."
         },
         {
-          "san": "f3"
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Quiet development: the bishop prepares castling and guards the f6 knight."
         },
         {
-          "san": "Qd2"
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle short; White is heading for O-O-O, so a race of pawn storms is coming."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "The knight supports ...b5-b4 and keeps an eye on c5 and e5."
         },
         {
-          "san": "g4"
+          "san": "g4",
+          "from": "g2",
+          "to": "g4"
         },
         {
           "san": "b5",
+          "from": "b7",
+          "to": "b5",
           "note": "Start your queenside storm at once — ...b4 will kick the c3 knight away from d5."
         }
       ]
@@ -96,80 +140,124 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "f3"
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
         },
         {
           "san": "e5",
+          "from": "e7",
+          "to": "e5",
           "note": "Same idea as against 6.Be3: kick the knight and claim e5."
         },
         {
-          "san": "Nb3"
+          "san": "Nb3",
+          "from": "d4",
+          "to": "b3"
         },
         {
           "san": "Be6",
+          "from": "c8",
+          "to": "e6",
           "note": "Develop and fight for d5."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "We have transposed to the English Attack; develop and get ready to castle."
         },
         {
-          "san": "Qd2"
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle short; White is heading for O-O-O, so a race of pawn storms is coming."
         },
         {
-          "san": "g4"
+          "san": "g4",
+          "from": "g2",
+          "to": "g4"
         },
         {
           "san": "b5",
+          "from": "b7",
+          "to": "b5",
           "note": "White delays castling, so strike on the queenside immediately; ...b4 is the threat."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Now bring the knight to d7, heading for b6 or supporting ...b4."
         }
       ]
@@ -180,80 +268,124 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "Bg5"
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid: e6 guards d5 and lets the f8 bishop develop to e7, breaking the pin."
         },
         {
-          "san": "f4"
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Unpin the knight so Bxf6 no longer damages your structure."
         },
         {
-          "san": "Qf3"
+          "san": "Qf3",
+          "from": "d1",
+          "to": "f3"
         },
         {
           "san": "Qc7",
+          "from": "d8",
+          "to": "c7",
           "note": "The queen eyes the c-file and e5, supporting ...Nbd7 and ...b5."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Reinforce f6 and e5 — your knights coordinate before the queenside attack."
         },
         {
-          "san": "g4"
+          "san": "g4",
+          "from": "g2",
+          "to": "g4"
         },
         {
           "san": "b5",
+          "from": "b7",
+          "to": "b5",
           "note": "Counterattack! ...b5-b4 hits the c3 knight that defends e4."
         },
         {
-          "san": "Bxf6"
+          "san": "Bxf6",
+          "from": "g5",
+          "to": "f6"
         },
         {
           "san": "Nxf6",
+          "from": "d7",
+          "to": "f6",
           "note": "Recapture with the knight to keep your pawn structure intact; g5 will kick it to d7."
         }
       ]
@@ -264,73 +396,113 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "Be2"
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
         },
         {
           "san": "e5",
+          "from": "e7",
+          "to": "e5",
           "note": "Against the quiet Be2, grab space with ...e5 and fight for d5."
         },
         {
-          "san": "Nb3"
+          "san": "Nb3",
+          "from": "d4",
+          "to": "b3"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Develop and prepare to castle."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "King to safety; both sides aim at the central squares."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "Be6",
+          "from": "c8",
+          "to": "e6",
           "note": "Challenge d5 again — the bishop is ideally placed on e6."
         },
         {
-          "san": "Qd2"
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
         },
         {
           "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
           "note": "A harmonious setup: next come ...Rc8 or ...b5 with comfortable play."
         }
       ]
@@ -341,80 +513,124 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Blunt the c4 bishop's pressure on f7 and d5."
         },
         {
-          "san": "Bb3"
+          "san": "Bb3",
+          "from": "c4",
+          "to": "b3"
         },
         {
           "san": "b5",
+          "from": "b7",
+          "to": "b5",
           "note": "Grab queenside space and threaten ...b4 against the c3 knight."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Calm development before castling."
         },
         {
-          "san": "Qf3"
+          "san": "Qf3",
+          "from": "d1",
+          "to": "f3"
         },
         {
           "san": "Qc7",
+          "from": "d8",
+          "to": "c7",
           "note": "Defend a8 on the long diagonal and put the queen on the c-file."
         },
         {
-          "san": "Qg3"
+          "san": "Qg3",
+          "from": "f3",
+          "to": "g3"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle — the g7 pawn is defended and your king is safe enough."
         },
         {
-          "san": "Bh6"
+          "san": "Bh6",
+          "from": "c1",
+          "to": "h6"
         },
         {
           "san": "Ne8",
+          "from": "f6",
+          "to": "e8",
           "note": "Retreat the knight to cover g7; the bishop on h6 achieves nothing."
         }
       ]
@@ -425,73 +641,113 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian: fight for d4 from the side and create an unbalanced game."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6 — the Najdorf move order."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade the c-pawn for White's center pawn; you gain a half-open c-file and a central majority."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop with tempo by hitting the e4 pawn, forcing Nc3."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "The Najdorf! a6 keeps White's pieces off b5 and prepares ...e5 or ...b5."
         },
         {
-          "san": "h3"
+          "san": "h3",
+          "from": "h2",
+          "to": "h3"
         },
         {
           "san": "e5",
+          "from": "e7",
+          "to": "e5",
           "note": "Hit the knight — with h3 played White is less ready to fight for d5."
         },
         {
-          "san": "Nde2"
+          "san": "Nde2",
+          "from": "d4",
+          "to": "e2"
         },
         {
           "san": "h5",
+          "from": "h7",
+          "to": "h5",
           "note": "Stop g4, which was the whole point of White's h3."
         },
         {
-          "san": "Bg5"
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
         },
         {
           "san": "Be6",
+          "from": "c8",
+          "to": "e6",
           "note": "Develop and control d5."
         },
         {
-          "san": "Bxf6"
+          "san": "Bxf6",
+          "from": "g5",
+          "to": "f6"
         },
         {
           "san": "Qxf6",
+          "from": "d8",
+          "to": "f6",
           "note": "Recapture with the queen so the pawn structure stays healthy."
         },
         {
-          "san": "Nd5"
+          "san": "Nd5",
+          "from": "c3",
+          "to": "d5"
         },
         {
           "san": "Qd8",
+          "from": "f6",
+          "to": "d8",
           "note": "Retreat; next ...Nd7 and ...Be7 give you a solid position with the bishop pair."
         }
       ]
@@ -502,66 +758,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Keep the Najdorf option: after Nf3 and d4 you are back in familiar territory."
         },
         {
-          "san": "g3"
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "White is going for a closed game; develop the knight to control d4."
         },
         {
-          "san": "Bg2"
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
         },
         {
           "san": "g6",
+          "from": "g7",
+          "to": "g6",
           "note": "Fianchetto — your bishop will fight White's on the long diagonal."
         },
         {
-          "san": "d3"
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
         },
         {
           "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
           "note": "Complete the fianchetto and pressure the queenside."
         },
         {
-          "san": "f4"
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Blunt the g2 bishop and prepare ...Nge7 so the f-pawn stays flexible."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nge7",
+          "from": "g8",
+          "to": "e7",
           "note": "The knight goes to e7, keeping f7-f5 possible and supporting ...Nd4."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle and prepare queenside expansion."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "Nd4",
+          "from": "c6",
+          "to": "d4",
           "note": "Occupy the outpost; if White takes, the pawn on d4 cramps White."
         }
       ]
@@ -572,66 +864,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Attack e4 immediately: c3 took the knight's best square."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Nd5",
+          "from": "f6",
+          "to": "d5",
           "note": "The knight lands on a fine central square."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade in the center before White gets c3-c4 in comfortably."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and pressure d4."
         },
         {
-          "san": "cxd4"
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Undermine e5 — White's pawn chain will become a target."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "Nb6",
+          "from": "d5",
+          "to": "b6",
           "note": "Hit the bishop and gain time."
         },
         {
-          "san": "Bb5"
+          "san": "Bb5",
+          "from": "c4",
+          "to": "b5"
         },
         {
           "san": "dxe5",
+          "from": "d6",
+          "to": "e5",
           "note": "Clear the center now."
         },
         {
-          "san": "Nxe5"
+          "san": "Nxe5",
+          "from": "f3",
+          "to": "e5"
         },
         {
           "san": "Bd7",
+          "from": "c8",
+          "to": "d7",
           "note": "Break the pin on c6 — trades ease your position."
         }
       ]
@@ -642,73 +970,113 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Answer 1.e4 with the Sicilian."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "d6",
+          "from": "d7",
+          "to": "d6",
           "note": "Control e5 and prepare ...Nf6."
         },
         {
-          "san": "Bb5+"
+          "san": "Bb5+",
+          "from": "f1",
+          "to": "b5"
         },
         {
           "san": "Bd7",
+          "from": "c8",
+          "to": "d7",
           "note": "Block with the bishop and offer to trade — White's bishop was the more active piece."
         },
         {
-          "san": "Bxd7+"
+          "san": "Bxd7+",
+          "from": "b5",
+          "to": "d7"
         },
         {
           "san": "Qxd7",
+          "from": "d8",
+          "to": "d7",
           "note": "Recapture with the queen so the b8 knight can go to c6."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and control d4 and e5."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Hit e4 and prepare ...e6."
         },
         {
-          "san": "Re1"
+          "san": "Re1",
+          "from": "f1",
+          "to": "e1"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "Solid: e6 prepares ...Be7 and the central break ...d5."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade pawns before White gets a big center."
         },
         {
-          "san": "cxd4"
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d6",
+          "to": "d5",
           "note": "Strike at once — the central tension favors the better-developed side."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Ne4",
+          "from": "f6",
+          "to": "e4",
           "note": "The knight lands on a strong outpost; Black is comfortable."
         }
       ]
