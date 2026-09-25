@@ -7,6 +7,9 @@ export type SpottingMode =
   | 'protection' | 'pawns' | 'outposts' | 'files' | 'development' | 'activity'
   | 'pawn-square' | 'key-squares';
 
+/** How many overlays can be on at once (turning on one more drops the oldest). */
+export const MAX_OVERLAYS = 16;
+
 /** Old (pre-rename) overlay ids → new ids, so saved settings keep working. */
 export const LEGACY_OVERLAYS: Record<string, SpottingMode> = {
   dalmacja: 'protection',
