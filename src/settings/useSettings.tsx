@@ -29,6 +29,8 @@ export interface UiSettings {
   /** Local engine analysis (Analysis view). */
   engineEnabled: boolean;
   engineArrows: boolean;
+  /** Numbered arrows for the top-3 Common Moves (Analysis + Create). */
+  bookArrows: boolean;
   engineLines: number;       // MultiPV, 1..5
   engineSearchLevel: number; // index into SEARCH_LEVELS_MS
   engineHashMb: number;
@@ -83,6 +85,7 @@ const DEFAULTS: UiSettings = {
   bookRatings: [...EXPLORER_RATINGS],
   engineEnabled: false,
   engineArrows: true,
+  bookArrows: false,
   engineLines: 3,
   engineSearchLevel: 3,
   engineHashMb: 64,

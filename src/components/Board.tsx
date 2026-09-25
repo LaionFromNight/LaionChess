@@ -15,6 +15,10 @@ export interface BoardArrow {
   color: string;
   /** Stroke width in board-percent units (12.5 = one square). */
   width: number;
+  /** Small badge (e.g. rank "1", "2") drawn on the arrow. */
+  label?: string;
+  /** Where the badge sits: inside the arrowhead (default) or at the tail. */
+  labelAt?: 'head' | 'tail';
 }
 
 // ── user-drawn shapes (right-click drag, lichess style) ───────────────────────
@@ -68,66 +72,116 @@ function arrowGeometry(from: Position, to: Position, width: number) {
   const d = corner
     ? `M ${startX} ${startY} L ${corner.x} ${corner.y} L ${shaftX} ${shaftY}`
     : `M ${startX} ${startY} L ${shaftX} ${shaftY}`;
-  const head = `${tipX},${tipY} ${baseX + px * headHalf},${baseY + py * headHalf} ${baseX + ux * headLen * 0.18},${baseY + uy * headLen * 0.18} ${baseX - px * headHalf},${baseY - py * headHalf}`;
-  return { d, head, x1: startX, y1: startY, x2: tipX, y2: tipY };
+  const f = (n: number) => Math.round(n * 10000) / 10000;
+  const headPath = `M ${f(tipX)} ${f(tipY)} L ${f(baseX + px * headHalf)} ${f(baseY + py * headHalf)} `
+    + `L ${f(baseX + ux * headLen * 0.18)} ${f(baseY + uy * headLen * 0.18)} L ${f(baseX - px * headHalf)} ${f(baseY - py * headHalf)} Z`;
+  return {
+    d, headPath, headLen, x1: startX, y1: startY, x2: tipX, y2: tipY,
+    cx: corner ? corner.x : undefined, cy: corner ? corner.y : undefined,
+  };
+}
+
+/** Point `dist` back from the tip along the last leg (or forward from the tail). */
+function pointOnArrow(g: ReturnType<typeof arrowGeometry>, at: 'head' | 'tail', dist: number) {
+  if (at === 'tail') {
+    const ex = g.cx ?? g.x2, ey = g.cy ?? g.y2;
+    const len = Math.hypot(ex - g.x1, ey - g.y1) || 1;
+    const d = Math.min(dist, len * 0.5);
+    return { x: g.x1 + ((ex - g.x1) / len) * d, y: g.y1 + ((ey - g.y1) / len) * d };
+  }
+  const sx = g.cx ?? g.x1, sy = g.cy ?? g.y1;
+  const len = Math.hypot(g.x2 - sx, g.y2 - sy) || 1;
+  const d = Math.min(dist, len * 0.8);
+  return { x: g.x2 - ((g.x2 - sx) / len) * d, y: g.y2 - ((g.y2 - sy) / len) * d };
+}
+
+function inkFor(rgb: string): string {
+  const m = rgb.match(/[\d.]+/g);
+  if (!m) return '#fff';
+  const [r, g, b] = m.map(Number);
+  return 0.299 * r + 0.587 * g + 0.114 * b > 170 ? '#16181c' : '#fff';
 }
 
 /**
  * One arrow: opaque shaft + swept head inside a single group whose opacity
- * carries the colour's alpha (no darker seam where they overlap), a gradient
- * that brightens towards the tip and a soft drop shadow.
+ * carries the colour's alpha (no darker seam where they overlap) and a
+ * gradient that brightens towards the tip. The soft shadow is a CSS
+ * drop-shadow on the whole <svg> — per-element SVG filters get clipped to the
+ * geometry's bounding box in Safari (heads or whole straight arrows vanished).
  */
-function PremiumArrow({ id, from, to, color, width, shadow, ghost }: {
-  id: string; from: Position; to: Position; color: string; width: number; shadow: string; ghost?: boolean;
+function PremiumArrow({ gradId, from, to, color, width, ghost }: {
+  gradId: string; from: Position; to: Position; color: string; width: number; ghost?: boolean;
 }) {
   const { rgb, alpha } = parseColor(color);
   const g = arrowGeometry(from, to, width);
-  const grad = `${id}-g`;
   return (
-    <g className="lc-arrow" opacity={ghost ? alpha * 0.6 : alpha} filter={`url(#${shadow})`}>
-      <defs>
-        <linearGradient id={grad} gradientUnits="userSpaceOnUse" x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2}>
-          <stop offset="0" stopColor={lighten(rgb, 0.12)} stopOpacity={0.55} />
-          <stop offset="0.55" stopColor={rgb} stopOpacity={0.92} />
-          <stop offset="1" stopColor={rgb} stopOpacity={1} />
-        </linearGradient>
-      </defs>
-      <path d={g.d} stroke={`url(#${grad})`} strokeWidth={width} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      <polygon points={g.head} fill={rgb} stroke={rgb} strokeWidth={width * 0.35} strokeLinejoin="round" />
+    <g className="lc-arrow" opacity={ghost ? alpha * 0.6 : alpha}>
+      <path d={g.d} stroke={`url(#${gradId})`} strokeWidth={width} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={g.headPath} fill={rgb} stroke={rgb} strokeWidth={width * 0.35} strokeLinejoin="round" />
     </g>
   );
 }
 
-function ShapesLayer({ arrows, shapes, ghost }: { arrows: BoardArrow[]; shapes: UserShape[]; ghost: UserShape | null }) {
+function arrowGradient(id: string, from: Position, to: Position, color: string, width: number) {
+  const { rgb } = parseColor(color);
+  const g = arrowGeometry(from, to, width);
+  return (
+    <linearGradient key={id} id={id} gradientUnits="userSpaceOnUse" x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2}>
+      <stop offset="0" stopColor={lighten(rgb, 0.12)} stopOpacity={0.55} />
+      <stop offset="0.55" stopColor={rgb} stopOpacity={0.92} />
+      <stop offset="1" stopColor={rgb} stopOpacity={1} />
+    </linearGradient>
+  );
+}
+
+function ShapesLayer({ arrows, shapes, ghost, flipped }: {
+  arrows: BoardArrow[]; shapes: UserShape[]; ghost: UserShape | null; flipped: boolean;
+}) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   if (arrows.length === 0 && shapes.length === 0 && !ghost) return null;
-  const shadow = `lcsh-${uid}`;
   const all = ghost ? [...shapes, ghost] : shapes;
+  const drawn = arrows.filter(a => !samePos(a.from, a.to));
+  const USER_W = 0.18;
   return (
     <svg className="lc-arrows" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <filter id={shadow} x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
-          <feDropShadow dx="0" dy="0.035" stdDeviation="0.045" floodColor="#000" floodOpacity="0.38" />
-        </filter>
+        {drawn.map((a, i) => arrowGradient(`${uid}a${i}`, a.from, a.to, a.color, a.width / 12.5))}
+        {all.map((s, i) => (s.to && !samePos(s.from, s.to)
+          ? arrowGradient(`${uid}s${i}`, s.from, s.to, BRUSH_COLORS[s.brush], USER_W) : null))}
       </defs>
-      {arrows.map((a, i) => {
-        if (samePos(a.from, a.to)) return null;
-        return <PremiumArrow key={`a${i}-${a.from.row}${a.from.col}${a.to.row}${a.to.col}`} id={`${uid}a${i}`}
-          from={a.from} to={a.to} color={a.color} width={a.width / 12.5} shadow={shadow} />;
-      })}
+      {drawn.map((a, i) => (
+        <PremiumArrow key={`a${i}-${a.from.row}${a.from.col}${a.to.row}${a.to.col}`} gradId={`${uid}a${i}`}
+          from={a.from} to={a.to} color={a.color} width={a.width / 12.5} />
+      ))}
       {all.map((s, i) => {
         const color = BRUSH_COLORS[s.brush];
         const isGhost = s === ghost;
         if (!s.to || samePos(s.from, s.to)) {
           const { rgb, alpha } = parseColor(color);
           return (
-            <g key={`s${i}`} className="lc-arrow" opacity={isGhost ? alpha * 0.6 : alpha} filter={`url(#${shadow})`}>
+            <g key={`s${i}`} className="lc-arrow" opacity={isGhost ? alpha * 0.6 : alpha}>
               <circle cx={s.from.col + 0.5} cy={s.from.row + 0.5} r={0.44} fill={rgb} fillOpacity={0.14} stroke={rgb} strokeWidth={0.07} />
             </g>
           );
         }
-        return <PremiumArrow key={`s${i}`} id={`${uid}s${i}`} from={s.from} to={s.to} color={color}
-          width={0.18} shadow={shadow} ghost={isGhost} />;
+        return <PremiumArrow key={`s${i}`} gradId={`${uid}s${i}`} from={s.from} to={s.to} color={color}
+          width={USER_W} ghost={isGhost} />;
+      })}
+      {/* Rank badges on top of every arrow, fully opaque so they stay readable. */}
+      {drawn.map((a, i) => {
+        if (!a.label) return null;
+        const w = a.width / 12.5;
+        const g = arrowGeometry(a.from, a.to, w);
+        const at = a.labelAt ?? 'head';
+        const p = pointOnArrow(g, at, at === 'head' ? g.headLen * 0.52 : 0.12);
+        const { rgb } = parseColor(a.color);
+        return (
+          <g key={`l${i}`} className="lc-arrow-label" transform={flipped ? `rotate(180 ${p.x} ${p.y})` : undefined}>
+            <circle cx={p.x} cy={p.y} r={0.17} fill={rgb} stroke="rgba(255,255,255,0.92)" strokeWidth={0.03} />
+            <text x={p.x} y={p.y} dy="0.075" textAnchor="middle" fontSize="0.21" fontWeight="800"
+              fontFamily="Inter, system-ui, sans-serif" fill={inkFor(rgb)}>{a.label}</text>
+          </g>
+        );
       })}
     </svg>
   );
@@ -346,7 +400,7 @@ export default function Board({
         {overlay && <div className="lc-layer" style={{ zIndex: 5 }}>{overlay}</div>}
 
         {/* Arrows + user shapes (z=6) */}
-        <ShapesLayer arrows={arrows ?? []} shapes={shapes} ghost={drawing} />
+        <ShapesLayer arrows={arrows ?? []} shapes={shapes} ghost={drawing} flipped={flipped} />
 
         {/* Animated piece overlay (z=30) */}
         {animOverlay && <div className="lc-layer" style={{ zIndex: 30 }}>{animOverlay}</div>}
