@@ -244,3 +244,88 @@ export function kingZone(board: Board, color: PieceColor, kingPos: Position, att
   }
   return out;
 }
+
+// ── endgame geometry ─────────────────────────────────────────────────────────────
+
+/** True when only kings and pawns are left (a pure pawn ending). */
+export function isPawnEnding(board: Board): boolean {
+  return board.every(row => row.every(p => !p || p.type === 'pawn' || p.type === 'king'));
+}
+
+export interface PawnSquare {
+  pawn: Position;
+  color: PieceColor;
+  /** Square corners (rows/cols, inclusive) drawn towards the defending king. */
+  top: number; bottom: number; left: number; right: number;
+  caught: boolean;
+}
+
+/**
+ * Rule of the square for every passed pawn: the defending king catches the
+ * pawn if it can step into the square (one rank smaller when the pawn's side
+ * is to move). Pieces other than kings are ignored — it's a pawn-race rule.
+ */
+export function pawnSquares(state: GameState): PawnSquare[] {
+  const out: PawnSquare[] = [];
+  for (const p of pawnStructure(state.board)) {
+    if (!p.flags.includes('passed')) continue;
+    const color = p.color;
+    const promoRow = color === 'white' ? 0 : 7;
+    const startRow = color === 'white' ? 6 : 1;
+    let n = Math.abs(p.pos.row - promoRow);
+    if (p.pos.row === startRow) n -= 1; // double step
+    const defKing = findKingPos(state.board, color === 'white' ? 'black' : 'white');
+    if (!defKing) continue;
+    const size = state.currentTurn === color ? n - 1 : n; // attacker to move → shrink
+    const towardsRight = defKing.col >= p.pos.col;
+    const left = towardsRight ? p.pos.col : Math.max(0, p.pos.col - n);
+    const right = towardsRight ? Math.min(7, p.pos.col + n) : p.pos.col;
+    const top = Math.min(p.pos.row, promoRow), bottom = Math.max(p.pos.row, promoRow);
+    const d = Math.max(Math.abs(defKing.col - p.pos.col), Math.abs(defKing.row - promoRow));
+    out.push({ pawn: p.pos, color, top, bottom, left, right, caught: d <= size });
+  }
+  return out;
+}
+
+function findKingPos(board: Board, color: PieceColor): Position | null {
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const p = board[r][c];
+    if (p?.type === 'king' && p.color === color) return { row: r, col: c };
+  }
+  return null;
+}
+
+/** Key squares of a pawn: reach one with your king and the pawn promotes. */
+export function keySquares(board: Board): Array<{ pawn: Position; color: PieceColor; squares: Position[] }> {
+  const out: Array<{ pawn: Position; color: PieceColor; squares: Position[] }> = [];
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const p = board[r][c];
+    if (p?.type !== 'pawn') continue;
+    const dir = p.color === 'white' ? -1 : 1;
+    const rel = p.color === 'white' ? 8 - r : r + 1; // rank from the pawn's side (2..7)
+    const squares: Position[] = [];
+    const add = (row: number, col: number) => { if (row >= 0 && row <= 7 && col >= 0 && col <= 7) squares.push({ row, col }); };
+    if (c === 0 || c === 7) {
+      // Rook pawn: the squares on the adjacent file at the 7th and 8th ranks.
+      const f = c === 0 ? 1 : 6;
+      add(p.color === 'white' ? 1 : 6, f); add(p.color === 'white' ? 0 : 7, f);
+    } else if (rel <= 4) {
+      for (const f of [c - 1, c, c + 1]) add(r + 2 * dir, f);
+    } else if (rel <= 6) {
+      for (const f of [c - 1, c, c + 1]) { add(r + dir, f); add(r + 2 * dir, f); }
+    }
+    if (squares.length) out.push({ pawn: { row: r, col: c }, color: p.color, squares });
+  }
+  return out;
+}
+
+/** Opposition between the kings (same file/rank, odd number of squares between). */
+export function opposition(state: GameState): { a: Position; b: Position; holder: PieceColor; kind: 'direct' | 'distant' } | null {
+  const w = findKingPos(state.board, 'white'), b = findKingPos(state.board, 'black');
+  if (!w || !b) return null;
+  const dr = Math.abs(w.row - b.row), dc = Math.abs(w.col - b.col);
+  const gap = dr === 0 ? dc - 1 : dc === 0 ? dr - 1 : -1;
+  if (gap < 1 || gap % 2 === 0) return null;
+  // The side NOT to move holds the opposition.
+  return { a: w, b, holder: state.currentTurn === 'white' ? 'black' : 'white', kind: gap === 1 ? 'direct' : 'distant' };
+}

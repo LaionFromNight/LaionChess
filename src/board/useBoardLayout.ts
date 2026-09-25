@@ -28,7 +28,11 @@ export function useFitBoardSize(
     return () => { window.removeEventListener('resize', measure); ro?.disconnect(); };
   }, []);
 
-  const raw = Math.min(preferred, avail.w - reserveWidth, avail.h - reserveHeight);
+  // On phones the preferred size (set with the drag handle, easy to nudge by
+  // accident with a finger) is ignored: the board always fills the column.
+  const narrow = typeof window !== 'undefined' && window.innerWidth < 720;
+  const cap = narrow ? Infinity : preferred;
+  const raw = Math.min(cap, avail.w - reserveWidth, narrow ? Infinity : avail.h - reserveHeight);
   const size = Math.max(min, Math.floor(raw / 8) * 8);
   return { ref, size };
 }
