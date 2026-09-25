@@ -97,7 +97,7 @@ function load(): UiSettings {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULTS };
     const parsed = { ...DEFAULTS, ...JSON.parse(raw) } as UiSettings;
-    parsed.spotModes = normalizeOverlays(parsed.spotModes);
+    parsed.spotModes = normalizeOverlays(parsed.spotModes).slice(-3);
     return parsed;
   } catch {
     return { ...DEFAULTS };

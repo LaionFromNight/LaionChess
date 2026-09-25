@@ -15,11 +15,14 @@ import { useOpeningExplorer } from '../board/lichess';
 import { ARROW } from '../board/arrowPalette';
 import { useBoardKeys, useFitBoardSize } from '../board/useBoardLayout';
 import { toFen } from '../chess/fen';
+import { detectPlan } from '../chess/structures';
+import PlanCardView from '../components/PlanCardView';
 import { renderSanForMoveList } from '../chess/san';
 import type { Course } from '../courses/useCourses';
 import {
   loadProgress, saveProgress, countDone, type Progress, type TrainerMode,
 } from '../courses/progress';
+import { loadSrs, reviewLine, seedLine, dueIds, nextLabel, type SrsState } from '../courses/srs';
 
 interface TrainerViewProps {
   course: Course;
@@ -27,6 +30,12 @@ interface TrainerViewProps {
   setSpottingModes: (m: Set<SpottingMode>) => void;
   onAnalysis: (state: GameState) => void;
   onBack: () => void;
+  /** Play the final position of a finished line out against Stockfish. */
+  onPlayOut?: (state: GameState, you: 'white' | 'black', lineName: string) => void;
+  /** False while the trainer is kept mounted but hidden (keyboard off). */
+  active?: boolean;
+  /** Open straight into this mode (Home's "review due lines" opens Drill). */
+  startMode?: TrainerMode;
 }
 
 interface HistEntry {
@@ -76,7 +85,7 @@ const same = (a: Position | null | undefined, b: Position | null | undefined) =>
   !!a && !!b && a.row === b.row && a.col === b.col;
 
 export default function TrainerView({
-  course, spottingModes, setSpottingModes, onAnalysis, onBack,
+  course, spottingModes, setSpottingModes, onAnalysis, onBack, onPlayOut, active = true, startMode = 'learn',
 }: TrainerViewProps) {
   const { settings, setSetting } = useSettings();
   const userColor = course.playAs === 'w' ? 'white' : 'black';
@@ -84,6 +93,9 @@ export default function TrainerView({
   const [mode, setMode] = useState<TrainerMode>('learn');
   const [lineIdx, setLineIdx] = useState(0);
   const [progress, setProgress] = useState<Progress>(() => loadProgress(course.id));
+  const [srs, setSrs] = useState<SrsState>(() => loadSrs(course.id));
+  const srsRef = useRef(srs);
+  srsRef.current = srs;
   const [flipOverride, setFlipOverride] = useState(false);
   const flipped = (userColor === 'black') !== flipOverride;
 
@@ -164,13 +176,17 @@ export default function TrainerView({
     // Spaced retry: a line you stumbled on comes back a couple of lines later.
     const due = retryRef.current.find(r => r.due <= drillPlayedRef.current && r.idx !== exclude);
     if (due) return due.idx;
+    // Then lines the spaced-repetition schedule says are due.
+    const dueNow = new Set(dueIds(course, srsRef.current));
+    const srsDue = course.lines.map((l, i) => (dueNow.has(l.id) && i !== exclude ? i : -1)).filter(i => i >= 0);
+    if (srsDue.length) return srsDue[Math.floor(Math.random() * srsDue.length)];
     const queued = new Set(retryRef.current.map(r => r.idx));
     const all = course.lines.map((_, i) => i).filter(i => i !== exclude);
     const fresh = all.filter(i => !prog.drill[course.lines[i].id] && !queued.has(i));
     const rest = all.filter(i => !queued.has(i));
     const pool = fresh.length ? fresh : rest.length ? rest : all;
     return pool[Math.floor(Math.random() * pool.length)];
-  }, [course.lines]);
+  }, [course]);
 
   const flashMark = useCallback((pos: Position, ok: boolean) => {
     markSeq.current += 1;
@@ -193,6 +209,7 @@ export default function TrainerView({
       saveProgress(course.id, next);
       return next;
     });
+    setSrs(m === 'learn' ? seedLine(course.id, ln.id) : reviewLine(course.id, ln.id, flawless));
     if (m === 'drill') {
       drillPlayedRef.current += 1;
       const idx = lineIdxRef.current;
@@ -298,10 +315,14 @@ export default function TrainerView({
     retryRef.current = [];
     drillPlayedRef.current = 0;
     setFlipOverride(false);
-    startLine(0, 'learn');
+    const fresh = loadSrs(course.id);
+    setSrs(fresh);
+    srsRef.current = fresh;
+    if (startMode === 'drill') startLine(pickDrillIdx(-1, loadProgress(course.id)), 'drill');
+    else startLine(0, startMode);
     return clearTimers;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [course.id]);
+  }, [course.id, startMode]);
 
   const playUserMove = useCallback((mv: ResolvedMove) => {
     const expected = lineAt(lineIdxRef.current).plies[plyRef.current];
@@ -431,7 +452,7 @@ export default function TrainerView({
 
   // Enter / Space → next line, R → again (only once the line is finished).
   useEffect(() => {
-    if (!done) return;
+    if (!done || !active) return;
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'BUTTON' || t.isContentEditable)) return;
@@ -440,7 +461,7 @@ export default function TrainerView({
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [done, mode, lineIdx, nextIdx, startLine]);
+  }, [done, active, mode, lineIdx, nextIdx, startLine]);
 
   const switchMode = (m: TrainerMode) => {
     if (m === 'drill') startLine(pickDrillIdx(-1, progress), 'drill');
@@ -454,7 +475,7 @@ export default function TrainerView({
     first: () => setViewIdx(ply > 0 ? 0 : null),
     last: () => setViewIdx(null),
     flip: () => setFlipOverride(f => !f),
-  });
+  }, active);
 
   // ── derived render data ───────────────────────────────────────────────────
   const shown = viewIdx !== null ? hist[viewIdx] : hist[ply];
@@ -484,6 +505,7 @@ export default function TrainerView({
   const drillDone = countDone(progress, 'drill');
   const counts: Record<TrainerMode, number> = { learn: learnDone, practice: practiceDone, drill: drillDone };
   const perfect = mistakes === 0 && !hintUsed;
+  const plan = useMemo(() => (done ? detectPlan(gameState.board, userColor) : null), [done, gameState, userColor]);
   const attempts = session.correct + session.wrong;
   const accuracy = attempts ? Math.round((session.correct / attempts) * 100) : null;
   const hideLineName = mode === 'drill' && !done;
@@ -560,6 +582,11 @@ export default function TrainerView({
                 </button>
                 <button className="btn" type="button" onClick={() => startLine(lineIdx, mode)}>↻ Again</button>
               </div>
+              {onPlayOut && (
+                <button type="button" className="link-btn br-play" onClick={() => { setAutoNext(false); onPlayOut(gameState, userColor, line.name); }}>
+                  ▶ Play it out vs Stockfish
+                </button>
+              )}
               {autoAdvancing && (
                 <div className="br-auto">
                   <div className="br-auto-bar" style={{ animationDuration: `${AUTO_NEXT_MS}ms` }} />
@@ -627,6 +654,7 @@ export default function TrainerView({
             <span>Session <strong>{session.clean}/{session.lines}</strong></span>
             {accuracy !== null && <span>Accuracy <strong>{accuracy}%</strong></span>}
             <span>Mastered <strong>{drillDone}/{total}</strong></span>
+            <span>Due <strong>{dueIds(course, srs).length}</strong></span>
           </div>
         )}
 
@@ -640,6 +668,18 @@ export default function TrainerView({
               </button>
               <button className="btn" type="button" onClick={() => startLine(lineIdx, mode)}>↻ Again</button>
             </div>
+          </div>
+        )}
+
+        {done && plan && (
+          <div className="section">
+            <div className="section-head"><span>What next? · middlegame plan</span></div>
+            <PlanCardView plan={plan} />
+            {onPlayOut && (
+              <button className="btn btn-primary" type="button" onClick={() => { setAutoNext(false); onPlayOut(gameState, userColor, line.name); }}>
+                ▶ Play this position out vs Stockfish
+              </button>
+            )}
           </div>
         )}
 
@@ -674,6 +714,7 @@ export default function TrainerView({
                   onClick={() => startLine(i, mode)}>
                   <span className={`st${isDone ? ' done' : ''}`}>{isDone ? '✓' : ''}</span>
                   <span className="nm">{l.name}</span>
+                  {srs[l.id] && <span className={`srs-chip${nextLabel(srs[l.id]) === 'due' ? ' due' : ''}`} title="Next spaced-repetition review">{nextLabel(srs[l.id])}</span>}
                   <span className={`tg tg-${l.tag.toLowerCase()}`}>{l.tag}</span>
                 </button>
               );

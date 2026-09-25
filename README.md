@@ -45,6 +45,26 @@ result card appears on the board (Next / Again; `Enter` = next, `R` = again), so
 on mobile there's no need to scroll. Common Moves is hidden while a line is
 being recalled so it can't give answers away.
 
+### Training tools
+
+- **Board vision** (*Vision*): "find it yourself" quizzes on real positions from
+  the courses — tap every check, capture, threat, hanging / loose piece or pin
+  against the clock, then see what you found, missed or got wrong. Score,
+  streak and best streak are kept.
+- **Play it out**: when a course line ends, play the final position against
+  Stockfish (5 strength levels, hint, take-back). A **middlegame plan card**
+  recognises the pawn structure (IQP, Carlsbad, French chain, closed KID,
+  Maróczy, Open Sicilian, open centre…) and lists plans for both sides plus
+  concrete targets, outposts and files.
+- **Essential endgames** (*Endgames*): 14 Stockfish-verified positions — basic
+  mates, key squares, opposition, rule of the square, rook-pawn fortress,
+  outside passer, Lucena, Philidor, queen vs pawn — each with a goal
+  (checkmate / promote / hold the draw). For ≤ 7 pieces the Lichess tablebase
+  tells you the moment a move spoils the result.
+- **Spaced repetition**: every reviewed line is scheduled (10 min → 1 → 3 → 7 →
+  16 → 35 days). Drill serves due lines first and Home shows what's due.
+- **⚠ Threat** (Analysis): the opponent's best move if it were their turn.
+
 ### Board overlays
 
 The **◎ Overlays** button (under every board) turns on visual aids built on the
@@ -63,6 +83,10 @@ rules players are taught. Old saved choices are migrated automatically.
 | Open files | Open and half-open files — where rooks belong |
 | Opening principles | Undeveloped minors, uncastled king, early queen, centre control |
 | Piece activity | Legal moves per piece, passive pieces and bad bishops |
+| Rule of the square | Can the defending king catch a passed pawn? |
+| Key squares & opposition | Pawn endings: squares that force promotion, and who holds the opposition |
+
+Up to three overlays can be on at once (turning on a fourth drops the oldest).
 
 ### Board controls
 

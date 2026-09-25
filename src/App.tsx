@@ -31,6 +31,7 @@ import { buildSpottingOverlay } from './board/spottingOverlay';
 import { getEvaluation } from './board/evaluation';
 import { computeTopArrows } from './board/topArrows';
 import { ARROW } from './board/arrowPalette';
+import { sparringEngine } from './board/sparringEngine';
 import { useOpeningExplorer } from './board/lichess';
 import { completeLichessLogin, VIEW_KEY } from './board/lichessAuth';
 import { useEngine, barSearchMs, SEARCH_LEVELS_MS } from './board/engine';
@@ -40,6 +41,11 @@ import EnginePanel, { type PanelLine } from './components/EnginePanel';
 import { useCourses, type Course, type CourseCardMeta } from './courses/useCourses';
 import { loadProgress, loadLastCourse, saveLastCourse } from './courses/progress';
 import TrainerView from './views/TrainerView';
+import { dueSummary } from './courses/srs';
+import VisionView from './views/VisionView';
+import EndgamesView, { markEndgameDone } from './views/EndgamesView';
+import SparringView, { type SparringSetup } from './views/SparringView';
+import type { EndgameDef } from './data/endgames';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 
@@ -136,7 +142,7 @@ function buildFoldedOpeningJson(tree: GameTree, title: string, side: PieceColor)
   };
 }
 
-type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master';
+type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master' | 'vision' | 'endgames' | 'sparring';
 
 function MiniBoard({ fen, flipped }: { fen: string; flipped?: boolean }) {
   const { settings } = useSettings();
@@ -194,14 +200,28 @@ export default function App() {
   const [activeCourseId, setActiveCourseId] = useState(() => loadLastCourse() ?? 'scotch-game');
   const activeCourse: Course | undefined = courses[activeCourseId];
 
+  // ── sparring (play a position out vs Stockfish) ─────────────────────────────
+  const [sparring, setSparring] = useState<{ setup: SparringSetup; back: ActiveView; backLabel: string; endgameId?: string } | null>(null);
+  const openSparring = (setup: SparringSetup, back: ActiveView, backLabel: string, endgameId?: string) => {
+    setSparring({ setup, back, backLabel, endgameId });
+    setActiveView('sparring');
+  };
+  const startEndgame = (e: EndgameDef) => openSparring({
+    fen: e.fen, you: e.you, title: e.name, goal: e.goal, lesson: e.lesson, level: 4, surviveMoves: 25,
+  }, 'endgames', 'Endgames', e.id);
+
   // Remember where we are so the Lichess OAuth round-trip returns to this view,
   // and finish that round-trip (?code=…) when we come back from lichess.org.
   useEffect(() => {
     try { sessionStorage.setItem(VIEW_KEY, activeView); } catch { /* ignore */ }
+    // Each view opens at the top (on phones the page itself scrolls, so the old
+    // scroll position would otherwise land you in the middle of the new view).
+    window.scrollTo(0, 0);
+    document.querySelector('.page-content')?.scrollTo(0, 0);
   }, [activeView]);
   useEffect(() => {
     completeLichessLogin().then(back => {
-      if (back && ['home', 'openings', 'analysis', 'create', 'trainer', 'master'].includes(back)) {
+      if (back && ['home', 'openings', 'analysis', 'create', 'trainer', 'master', 'vision', 'endgames'].includes(back)) {
         setActiveView(back as ActiveView);
       }
     });
@@ -352,16 +372,37 @@ export default function App() {
     return { from: resolved.from, to: resolved.to, color: ARROW.sky, width: 2.4 };
   }, [hoverBookSan, displayedState]);
 
+  // ── Opponent's threat: what would they play if it were their move? ───────────
+  const [showThreat, setShowThreat] = useState(false);
+  const [threatArrow, setThreatArrow] = useState<BoardArrow | null>(null);
+  useEffect(() => {
+    setThreatArrow(null);
+    if (!showThreat || !isBoardView || displayedState.isCheck || displayedState.isCheckmate || displayedState.isStalemate) return;
+    // "Null move": same position, other side to move, no en-passant square.
+    const f = toFen(displayedState).split(' ');
+    f[1] = f[1] === 'w' ? 'b' : 'w';
+    f[3] = '-';
+    let cancelled = false;
+    const t = setTimeout(async () => {
+      const uci = await sparringEngine.bestMove(f.join(' '), { label: 'threat', skill: 20, movetime: 600 });
+      if (cancelled || !uci) return;
+      const at = (sq: string) => ({ col: sq.charCodeAt(0) - 97, row: 8 - Number(sq[1]) });
+      setThreatArrow({ from: at(uci.slice(0, 2)), to: at(uci.slice(2, 4)), color: ARROW.red, width: 2.2, label: '!', labelAt: 'head' });
+    }, 200);
+    return () => { cancelled = true; clearTimeout(t); };
+  }, [showThreat, displayedState, isBoardView]);
+
   const boardArrows = useMemo(() => {
-    // Book arrows underneath, engine arrows on top.
-    const base = activeView === 'analysis' ? [...topArrows, ...engineArrows] : topArrows;
+    // Book arrows underneath, engine arrows on top, the opponent's threat last.
+    const base0 = activeView === 'analysis' ? [...topArrows, ...engineArrows] : topArrows;
+    const base = threatArrow ? [...base0, threatArrow] : base0;
     if (!hoverBookArrow) return base;
     const deduped = base.filter(a =>
       !(a.from.row === hoverBookArrow.from.row && a.from.col === hoverBookArrow.from.col &&
         a.to.row === hoverBookArrow.to.row && a.to.col === hoverBookArrow.to.col)
     );
     return [hoverBookArrow, ...deduped];
-  }, [activeView, engineArrows, topArrows, hoverBookArrow]);
+  }, [activeView, engineArrows, topArrows, hoverBookArrow, threatArrow]);
 
   // ── board size: fit the column, capped by the user's preferred size ─────────
   const { ref: fitRef, size: boardSize } = useFitBoardSize(settings.boardMax, {
@@ -555,11 +596,15 @@ export default function App() {
 
   const startFresh = () => { applyNewTree(createGameTree(createInitialState()), null); setShowNewGame(false); };
 
-  const openTrainerCourse = (courseId: string) => {
+  const [trainerMode, setTrainerMode] = useState<'learn' | 'drill'>('learn');
+  const openTrainerCourse = (courseId: string, mode: 'learn' | 'drill' = 'learn') => {
     setActiveCourseId(courseId);
+    setTrainerMode(mode);
     saveLastCourse(courseId);
     setActiveView('trainer');
   };
+  // Spaced-repetition lines due now (re-read whenever Home is shown).
+  const due = useMemo(() => (activeView === 'home' ? dueSummary(courses) : { total: 0, top: [] }), [activeView, courses]);
 
   // Analysis → handoff: load a position from another view into a fresh tree.
   const openAnalysisFromState = (state: GameState) => {
@@ -666,6 +711,8 @@ export default function App() {
     { view: 'home', label: 'Home', icon: '⌂' },
     { view: 'openings', label: 'Openings', icon: '♘' },
     { view: 'analysis', label: 'Analysis', icon: '♟' },
+    { view: 'vision', label: 'Vision', icon: '◉' },
+    { view: 'endgames', label: 'Endgames', icon: '♚' },
     { view: 'create', label: 'Create', icon: '✎' },
     { view: 'master', label: 'Roadmap', icon: '☰' },
   ];
@@ -714,6 +761,23 @@ export default function App() {
                 <button className="btn btn-lg" type="button" onClick={() => setActiveView('analysis')}>Analysis board</button>
               </div>
             </section>
+
+            {due.total > 0 && (
+              <section className="due-card">
+                <div className="due-ic">↻</div>
+                <div className="due-body">
+                  <h3>{due.total} line{due.total > 1 ? 's' : ''} due for review</h3>
+                  <p className="muted">Spaced repetition: review them now and they come back after longer and longer breaks.</p>
+                  <div className="btn-row">
+                    {due.top.slice(0, 4).map(d => (
+                      <button key={d.course.id} className="btn btn-sm" type="button" onClick={() => openTrainerCourse(d.course.id, 'drill')}>
+                        {d.course.name} <span className="badge">{d.due}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </section>
+            )}
 
             {lastCard && (
               <section className="continue-card">
@@ -806,15 +870,44 @@ export default function App() {
           </main>
         )}
 
-        {activeView === 'trainer' && (
+        {activeView === 'vision' && (
+          <VisionView courses={courses} onAnalysis={openAnalysisFromState} />
+        )}
+
+        {activeView === 'endgames' && <EndgamesView onStart={startEndgame} />}
+
+        {activeView === 'sparring' && sparring && (
+          <SparringView
+            key={`${sparring.setup.fen}|${sparring.setup.title}`}
+            setup={sparring.setup}
+            spottingModes={spottingModes}
+            setSpottingModes={setSpottingModes}
+            onBack={() => setActiveView(sparring.back)}
+            backLabel={sparring.backLabel}
+            onAnalysis={openAnalysisFromState}
+            onComplete={ok => { if (ok && sparring.endgameId) markEndgameDone(sparring.endgameId); }}
+          />
+        )}
+
+        {/* The trainer stays mounted (hidden) while you play its final position
+            out, so coming back keeps your mode, line and streak. */}
+        {(activeView === 'trainer' || (activeView === 'sparring' && sparring?.back === 'trainer')) && (
           activeCourse ? (
+            <div style={activeView === 'trainer' ? undefined : { display: 'none' }}>
             <TrainerView
               course={activeCourse}
               spottingModes={spottingModes}
               setSpottingModes={setSpottingModes}
               onAnalysis={openAnalysisFromState}
               onBack={() => setActiveView('openings')}
+              active={activeView === 'trainer'}
+              startMode={trainerMode}
+              onPlayOut={(state, you, lineName) => openSparring({
+                fen: toFen(state), you, title: activeCourse.name, subtitle: `${lineName} · play it out vs Stockfish`,
+                goal: 'play', showPlan: true, level: 1,
+              }, 'trainer', 'Back to the course')}
             />
+            </div>
           ) : (
             <main className="catalog-view">
               <div className="empty-state">{coursesLoading ? 'Loading course…' : 'Course not found. Check public/courses/manifest.json.'}</div>
@@ -871,6 +964,8 @@ export default function App() {
                 {playbackControls}
                 <span className="tb-spacer" />
                 <SpottingPanel modes={spottingModes} onChange={setSpottingModes} />
+                <button type="button" className={`tool-btn${showThreat ? ' on' : ''}`} onClick={() => setShowThreat(v => !v)}
+                  title="Show the opponent's threat: their best move if it were their turn">⚠ Threat</button>
                 <button type="button" className="tool-btn" onClick={() => setFlipped(f => !f)} title="Flip board (F)">⇅ Flip</button>
               </div>
             </div>

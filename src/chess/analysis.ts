@@ -4,7 +4,8 @@ import { Board, PieceColor, PieceType, Position } from './types';
 export type SpottingMode =
   | 'hanging' | 'loose' | 'checks' | 'king-safety'
   | 'control-white' | 'control-black' | 'control-balance'
-  | 'protection' | 'pawns' | 'outposts' | 'files' | 'development' | 'activity';
+  | 'protection' | 'pawns' | 'outposts' | 'files' | 'development' | 'activity'
+  | 'pawn-square' | 'key-squares';
 
 /** Old (pre-rename) overlay ids → new ids, so saved settings keep working. */
 export const LEGACY_OVERLAYS: Record<string, SpottingMode> = {

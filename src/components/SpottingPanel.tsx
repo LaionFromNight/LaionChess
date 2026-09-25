@@ -56,9 +56,20 @@ const GROUPS: Array<{ title: string; blurb: string; items: OverlayDef[] }> = [
         legend: [[OV.good, 'active'], [OV.warn, 'average'], [OV.bad, 'passive (≤2 moves)'], [OV.violet, 'bad bishop']] },
     ],
   },
+  {
+    title: 'Endgame',
+    blurb: 'King-and-pawn geometry every player should see at a glance.',
+    items: [
+      { key: 'pawn-square', label: 'Rule of the square', icon: '▢', hint: 'Can the king catch the passed pawn? Step into the square and it can',
+        legend: [[OV.good, 'king catches it'], [OV.bad, 'pawn runs through']] },
+      { key: 'key-squares', label: 'Key squares & opposition', icon: '⚿', hint: 'Pawn endings: the king squares that force promotion, and who holds the opposition',
+        legend: [[OV.white, 'White key square / opposition'], [OV.black, 'Black key square / opposition']] },
+    ],
+  },
 ];
 
 const ALL = GROUPS.flatMap(g => g.items);
+export const MAX_ON = 3;
 
 /** Board overlays — a toolbar button with a grouped popover and a live legend. */
 export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
@@ -76,10 +87,12 @@ export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
     return () => { document.removeEventListener('mousedown', onDoc); document.removeEventListener('keydown', onKey); };
   }, [open]);
 
+  // Up to MAX_ON overlays at once — more than that turns the board into noise.
+  // Turning on another one drops the oldest.
   const toggle = (key: SpottingMode) => {
-    const next = new Set(modes);
-    if (next.has(key)) next.delete(key); else next.add(key);
-    onChange(next);
+    const list = [...modes];
+    if (modes.has(key)) { onChange(new Set(list.filter(k => k !== key))); return; }
+    onChange(new Set([...list, key].slice(-MAX_ON)));
   };
 
   const active = ALL.filter(o => modes.has(o.key));
@@ -99,7 +112,7 @@ export default function SpottingPanel({ modes, onChange }: SpottingPanelProps) {
       {open && (
         <div className="popover spot-popover">
           <div className="spot-head">
-            <span className="popover-title">Board overlays</span>
+            <span className="popover-title">Board overlays <small className="muted">· up to {MAX_ON} at once</small></span>
             {count > 0 && <button type="button" className="link-btn" onClick={() => onChange(new Set())}>Clear all</button>}
           </div>
           {GROUPS.map(g => (

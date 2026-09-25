@@ -4,6 +4,7 @@ import type { SpottingMode } from '../chess/analysis';
 import { getAttackedSquares, computeDefenseEdges } from '../chess/analysis';
 import {
   pieceSafety, pawnStructure, outposts, fileKinds, development, activity, kingZone, VALUE,
+  pawnSquares, keySquares, opposition, isPawnEnding,
 } from '../chess/patterns';
 
 // ── palette (matches the arrow palette) ────────────────────────────────────────
@@ -92,8 +93,11 @@ function makeKit(flipped: boolean) {
       <circle key={key} cx={p.col + 0.5} cy={p.row + 0.5} r={r} fill={color} stroke={OV.ink} strokeOpacity={0.4} strokeWidth={0.02} />
     ),
     badge: (key: string, p: Position, corner: Corner, text: string, bg: string, fg: string = OV.ink) => {
-      const { x, y } = at(p, corner);
       const w = Math.max(0.3, 0.13 * text.length + 0.14);
+      const raw = at(p, corner);
+      // Keep edge badges fully on the board.
+      const x = Math.min(8 - w / 2 - 0.02, Math.max(w / 2 + 0.02, raw.x));
+      const y = Math.min(7.84, Math.max(0.16, raw.y));
       return (
         <g key={key} transform={upright(x, y)} className="ov-badge">
           <rect x={x - w / 2} y={y - 0.14} width={w} height={0.28} rx={0.14} fill={bg} stroke="rgba(255,255,255,0.85)" strokeWidth={0.022} />
@@ -361,6 +365,40 @@ export function buildSpottingOverlay(modes: Set<SpottingMode>, state: GameState,
       }
     }
     layers.push(<g key="king">{els}</g>);
+  }
+
+  // ── Endgame: rule of the square ──────────────────────────────────────────────
+  if (modes.has('pawn-square')) {
+    const els: React.ReactNode[] = [];
+    pawnSquares(state).forEach((q, i) => {
+      const color = q.caught ? OV.good : OV.bad;
+      els.push(<rect key={`ps${i}`} x={q.left + 0.06} y={q.top + 0.06} width={q.right - q.left + 0.88} height={q.bottom - q.top + 0.88} rx={0.14}
+        fill={color} fillOpacity={0.1} stroke={color} strokeWidth={0.06} strokeDasharray="0.18 0.1" />);
+      els.push(k.ring(`psr${i}`, q.pawn, side(q.color), { glow: true }));
+      els.push(k.badge(`psb${i}`, q.pawn, 'tl', q.caught ? 'caught' : 'runs!', color, q.caught ? OV.ink : '#fff'));
+    });
+    layers.push(<g key="pawn-square">{els}</g>);
+  }
+
+  // ── Endgame: key squares & opposition (pure pawn endings) ────────────────────
+  if (modes.has('key-squares') && isPawnEnding(board)) {
+    const els: React.ReactNode[] = [];
+    for (const ks of keySquares(board)) {
+      for (const s of ks.squares) {
+        const kk = `${ks.pawn.row}${ks.pawn.col}-${s.row}${s.col}`;
+        els.push(k.tint(`ks${kk}`, s, side(ks.color), 0.22));
+        els.push(k.badge(`ksb${kk}`, s, 'bl', 'key', side(ks.color)));
+      }
+    }
+    const opp = opposition(state);
+    if (opp) {
+      const color = side(opp.holder);
+      els.push(k.line('opp', opp.a, opp.b, color, { dashed: true, width: 0.06, shorten: 0.35 }));
+      const holderKing = opp.holder === 'white' ? opp.a : opp.b;
+      els.push(k.ring('oppr', holderKing, color, { glow: true, width: 0.08 }));
+      els.push(k.badge('oppb', holderKing, 'tr', opp.kind === 'direct' ? 'opp' : 'opp·far', color));
+    }
+    layers.push(<g key="key-squares">{els}</g>);
   }
 
   // ── Checks available to the side to move ─────────────────────────────────────
