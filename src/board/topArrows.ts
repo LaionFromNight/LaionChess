@@ -3,8 +3,9 @@ import { resolveSan } from '../chess/san';
 import { getLegalMoves } from '../chess/logic';
 import type { BoardArrow } from '../components/Board';
 import type { BookRow } from '../data/book';
+import { ARROW } from './arrowPalette';
 
-const COLORS = ['rgba(52,199,120,0.85)', 'rgba(240,190,40,0.78)', 'rgba(170,140,240,0.7)'];
+const COLORS = [ARROW.green, ARROW.gold, ARROW.violet];
 const WIDTHS = [2.8, 2.2, 1.7];
 
 /**

@@ -285,7 +285,20 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
   const [viewMode, setViewMode] = useState<ViewMode>({ type: 'default' });
 
   useEffect(() => {
-    activeRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    // Scroll only the move list's own scroll box — scrollIntoView would also
+    // scroll the page and yank the board out of view (notably on mobile).
+    const el = activeRef.current;
+    if (!el) return;
+    // Innermost move-list scroll box that actually overflows — never the page.
+    let box = el.parentElement?.closest<HTMLElement>('[data-movelist-scroll]') ?? null;
+    while (box && box.scrollHeight <= box.clientHeight) {
+      box = box.parentElement?.closest<HTMLElement>('[data-movelist-scroll]') ?? null;
+    }
+    if (!box) return;
+    const b = box.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.top < b.top) box.scrollBy({ top: r.top - b.top - 4, behavior: 'smooth' });
+    else if (r.bottom > b.bottom) box.scrollBy({ top: r.bottom - b.bottom + 4, behavior: 'smooth' });
   }, [currentNodeId]);
 
   const h0Views = useMemo(() => buildAllH0Views(tree), [tree]);
@@ -373,7 +386,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
     <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
 
       {/* ── Move panel ── */}
-      <div style={{
+      <div data-movelist-scroll style={{
         width: '100%',
         height: panelHeight,
         overflowY: 'auto',
@@ -412,7 +425,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
         </div>
 
         {/* Body */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
+        <div data-movelist-scroll style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
           {rows.length === 0 ? (
             <div style={{ color: 'var(--text-faint)', fontSize: 12, padding: '8px 12px' }}>No moves yet</div>
           ) : rows.map(row => {

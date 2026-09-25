@@ -1,10 +1,13 @@
 import type { BookRow } from '../data/book';
+import type { BookSource } from '../board/lichess';
+import LichessConnect from './LichessConnect';
 
 interface CommonMovesProps {
   rows: BookRow[] | null;
   loading?: boolean;
   onPlay: (san: string) => void;
   onHover?: (san: string | null) => void;
+  source?: BookSource;
 }
 
 function shortName(name: string): string {
@@ -12,7 +15,7 @@ function shortName(name: string): string {
   return colon !== -1 ? name.slice(0, colon).trim() : name;
 }
 
-export default function CommonMoves({ rows, loading, onPlay, onHover }: CommonMovesProps) {
+export default function CommonMoves({ rows, loading, onPlay, onHover, source = null }: CommonMovesProps) {
   return (
     <div className="book">
       <div className="book-head">
@@ -23,7 +26,7 @@ export default function CommonMoves({ rows, loading, onPlay, onHover }: CommonMo
         <span className="bar" style={{ minWidth: 0 }}>Winrate</span>
       </div>
       <div className="book-rows-scroll">
-        {!rows && <div className="book-empty">{loading ? 'Loading from Lichess…' : 'No book data for this position.'}</div>}
+        {!rows && <div className="book-empty">{loading ? 'Loading book…' : 'No book data for this position.'}</div>}
         {rows && rows.map(([san, pct, games, ww, dd, name]) => {
           const bb = 100 - ww - dd;
           const full = name ?? undefined;
@@ -53,6 +56,7 @@ export default function CommonMoves({ rows, loading, onPlay, onHover }: CommonMo
           );
         })}
       </div>
+      <LichessConnect source={source} loading={loading} />
     </div>
   );
 }

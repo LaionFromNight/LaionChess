@@ -30,7 +30,9 @@ import { pieceSrc, pieceCode } from './board/pieceSrc';
 import { buildSpottingOverlay } from './board/spottingOverlay';
 import { getEvaluation } from './board/evaluation';
 import { computeTopArrows } from './board/topArrows';
+import { ARROW } from './board/arrowPalette';
 import { useOpeningExplorer } from './board/lichess';
+import { completeLichessLogin, VIEW_KEY } from './board/lichessAuth';
 import { useEngine, barSearchMs, SEARCH_LEVELS_MS } from './board/engine';
 import { expandPv, type PvMove } from './board/pv';
 import { useBoardKeys, useFitBoardSize } from './board/useBoardLayout';
@@ -192,6 +194,19 @@ export default function App() {
   const [activeCourseId, setActiveCourseId] = useState(() => loadLastCourse() ?? 'scotch-game');
   const activeCourse: Course | undefined = courses[activeCourseId];
 
+  // Remember where we are so the Lichess OAuth round-trip returns to this view,
+  // and finish that round-trip (?code=…) when we come back from lichess.org.
+  useEffect(() => {
+    try { sessionStorage.setItem(VIEW_KEY, activeView); } catch { /* ignore */ }
+  }, [activeView]);
+  useEffect(() => {
+    completeLichessLogin().then(back => {
+      if (back && ['home', 'openings', 'analysis', 'create', 'trainer', 'master'].includes(back)) {
+        setActiveView(back as ActiveView);
+      }
+    });
+  }, []);
+
   // ── analysis / create panel toggles ──────────────────────────────────────────
   const [showEval, setShowEval] = useState(true);
   const [showBook, setShowBook] = useState(true);
@@ -234,7 +249,7 @@ export default function App() {
   const isBoardView = activeView === 'analysis' || activeView === 'create';
 
   // Common Moves (Lichess book, offline fallback).
-  const { rows: bookRows, loading: bookLoading } = useOpeningExplorer(displayedFen, settings.bookSpeeds, settings.bookRatings);
+  const { rows: bookRows, loading: bookLoading, source: bookSource } = useOpeningExplorer(displayedFen, settings.bookSpeeds, settings.bookRatings, isBoardView);
 
   // ── PV preview (clicking a move in an engine line shows that position) ────────
   const [preview, setPreview] = useState<{ state: GameState; from: Position; to: Position } | null>(null);
@@ -316,7 +331,7 @@ export default function App() {
   // ── Engine PV arrows (Analysis view) — one per line, ranked by colour ─────────
   const engineArrows = useMemo(() => {
     if (!enginePanelOn || !settings.engineArrows) return [];
-    const colors = ['rgba(52,199,120,0.88)', 'rgba(240,190,40,0.75)', 'rgba(170,140,240,0.66)', 'rgba(230,110,90,0.58)', 'rgba(110,160,240,0.52)'];
+    const colors = [ARROW.green, ARROW.gold, ARROW.violet, ARROW.coral, ARROW.blue];
     return engineLinesExpanded
       .filter(l => l.moves.length > 0)
       .map((l, i) => ({
@@ -331,7 +346,7 @@ export default function App() {
     if (!hoverBookSan) return null;
     const resolved = resolveSan(displayedState, hoverBookSan);
     if (!resolved) return null;
-    return { from: resolved.from, to: resolved.to, color: 'rgba(92,170,240,0.85)', width: 2.4 };
+    return { from: resolved.from, to: resolved.to, color: ARROW.sky, width: 2.4 };
   }, [hoverBookSan, displayedState]);
 
   const boardArrows = useMemo(() => {
@@ -908,7 +923,7 @@ export default function App() {
                         {showBookOptions && <div className="popover right"><BookFilters /></div>}
                       </div>
                     </div>
-                    <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
+                    <CommonMoves rows={bookRows} loading={bookLoading} source={bookSource} onPlay={playBookMove} onHover={setHoverBookSan} />
                   </div>
                 )}
 
@@ -955,7 +970,7 @@ export default function App() {
                   <div className="section">
                     <div className="section-head"><span>Common moves</span></div>
                     <BookFilters />
-                    <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
+                    <CommonMoves rows={bookRows} loading={bookLoading} source={bookSource} onPlay={playBookMove} onHover={setHoverBookSan} />
                   </div>
                 )}
 

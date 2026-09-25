@@ -30,6 +30,14 @@ so the repertoire stays consistent.
 Trainer modes: **Learn** (guided arrows + notes), **Practice** (recall a chosen
 line) and **Drill** (random lines, no hints, streak counter).
 
+Drill details: wrong move → ✕ badge; 2nd miss highlights the piece that should
+move, 3rd reveals the arrow (the Hint button works the same way: piece first,
+then move). Failed lines come back two lines later (spaced retry). Session
+accuracy, clean lines and a persisted best streak are shown. When a line ends a
+result card appears on the board (Next / Again; `Enter` = next, `R` = again), so
+on mobile there's no need to scroll. Common Moves is hidden while a line is
+being recalled so it can't give answers away.
+
 ### Board controls
 
 - Click or drag pieces to move.
@@ -45,6 +53,12 @@ line) and **Drill** (random lines, no hints, streak counter).
 
 Common Moves are served from a layered source so the app **always works**:
 
+0. **Lichess live, straight from the browser** — click **♞ Connect Lichess**
+   under Common Moves (OAuth PKCE "Login with Lichess", no scopes, no backend).
+   The explorer rejects anonymous calls, but accepts the resulting token, so
+   live stats work on GitHub Pages too. The token stays in the browser's
+   localStorage; you can also paste a personal token instead. A badge shows
+   where the rows came from (Live · Lichess / Local book server / Offline snapshot).
 1. **Local book server** (dev only) — serves a persistent offline DB and, in
    online mode, fills gaps from the Lichess Opening Explorer and saves them.
 2. **Bundled offline DB** — `public/book/explorer.json`, shipped in the build.
