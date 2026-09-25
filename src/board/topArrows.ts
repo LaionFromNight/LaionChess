@@ -1,9 +1,10 @@
 import type { GameState, Position, PieceType } from '../chess/types';
 import { resolveSan } from '../chess/san';
+import { getLegalMoves } from '../chess/logic';
 import type { BoardArrow } from '../components/Board';
 import type { BookRow } from '../data/book';
 
-const COLORS = ['rgba(0,255,136,0.9)', 'rgba(255,217,61,0.8)', 'rgba(255,0,255,0.7)'];
+const COLORS = ['rgba(52,199,120,0.85)', 'rgba(240,190,40,0.78)', 'rgba(170,140,240,0.7)'];
 const WIDTHS = [2.8, 2.2, 1.7];
 
 /**
@@ -31,6 +32,16 @@ export function algebraicToPos(sq: string): Position | null {
   return { row, col };
 }
 
+function isLegal(state: GameState, from: Position, to: Position): boolean {
+  const piece = state.board[from.row]?.[from.col];
+  if (!piece || piece.color !== state.currentTurn) return false;
+  return getLegalMoves(
+    state.board, from, state.enPassantTarget,
+    state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
+    state.blackCanCastleKingside, state.blackCanCastleQueenside,
+  ).some(m => m.row === to.row && m.col === to.col);
+}
+
 export interface ResolvedMove { from: Position; to: Position; promotionPiece?: PieceType }
 
 /**
@@ -46,7 +57,7 @@ export function resolvePly(
   if (bySan) return bySan;
   const from = ply.from ? algebraicToPos(ply.from) : null;
   const to = ply.to ? algebraicToPos(ply.to) : null;
-  if (from && to) {
+  if (from && to && isLegal(state, from, to)) {
     const promo = ply.promo
       ? ({ q: 'queen', r: 'rook', b: 'bishop', n: 'knight' }[ply.promo.toLowerCase()] as PieceType | undefined)
       : undefined;

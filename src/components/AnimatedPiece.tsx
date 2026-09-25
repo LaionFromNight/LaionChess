@@ -6,8 +6,12 @@ import { pieceSrc, pieceCode } from '../board/pieceSrc';
 
 export type AnimPiece = { piece: Piece; from: Position; to: Position };
 
-export default function AnimatedPiece({ anim, boardSize, onDone }: {
-  anim: AnimPiece; boardSize: number; onDone: () => void;
+/**
+ * Slides a piece from `from` to `to`. Rendered inside the board's rotating
+ * layer, so geometry is in logical squares; `flipped` only keeps the glyph upright.
+ */
+export default function AnimatedPiece({ anim, boardSize, flipped, onDone }: {
+  anim: AnimPiece; boardSize: number; flipped?: boolean; onDone: () => void;
 }) {
   const { settings } = useSettings();
   const divRef = useRef<HTMLDivElement>(null);
@@ -20,16 +24,14 @@ export default function AnimatedPiece({ anim, boardSize, onDone }: {
       requestAnimationFrame(() => {
         const el = divRef.current;
         if (!el) return;
-        el.style.transition = 'transform 0.3s cubic-bezier(0, 0, 0.2, 1)';
+        el.style.transition = 'transform 0.22s cubic-bezier(0.2, 0, 0.2, 1)';
         el.style.transform = 'translate(0px, 0px)';
       });
     });
-    const timer = setTimeout(onDone, 340);
+    const timer = setTimeout(onDone, 250);
     return () => { cancelAnimationFrame(id); clearTimeout(timer); };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fontSize = Math.round(squarePx * 0.70);
-  const isWhite = anim.piece.color === 'white';
   const src = pieceSrc(settings.pieceSet, anim.piece.color, anim.piece.type);
 
   return (
@@ -45,24 +47,16 @@ export default function AnimatedPiece({ anim, boardSize, onDone }: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      fontSize,
+      fontSize: Math.round(squarePx * 0.72),
       userSelect: 'none',
     }}>
-      {src ? (
-        <img src={src} alt={pieceCode(anim.piece.color, anim.piece.type)} draggable={false}
-          style={{ width: '92%', height: '92%', display: 'block' }} />
-      ) : (
-        <span style={{
-          lineHeight: 1,
-          color: isWhite ? '#ffffff' : '#1a1a1a',
-          textShadow: isWhite
-            ? '0 0 3px rgba(0,0,0,0.8), 0 0 6px rgba(0,0,0,0.4)'
-            : '0 0 3px rgba(255,255,255,0.5)',
-          filter: isWhite ? 'drop-shadow(0 0 1px rgba(0,0,0,0.9))' : 'none',
-        }}>
-          {getPieceLabel(anim.piece)}
-        </span>
-      )}
+      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', transform: flipped ? 'rotate(180deg)' : undefined }}>
+        {src ? (
+          <img className="lc-piece-img" src={src} alt={pieceCode(anim.piece.color, anim.piece.type)} draggable={false} />
+        ) : (
+          <span className={`glyph ${anim.piece.color}`}>{getPieceLabel(anim.piece)}</span>
+        )}
+      </div>
     </div>
   );
 }

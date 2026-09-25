@@ -9,6 +9,87 @@
       "tagClass": "tag-green",
       "desc": "A direct weapon against 1...e5. Open the center on move 3 and develop with tempo.",
       "fen": "r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 4"
+    },
+    {
+      "id": "italian-game",
+      "file": "italian-game.json",
+      "name": "Italian Game",
+      "desc": "Aim the bishop at f7 and build slowly with c3 and d3 in the Giuoco Pianissimo, with answers to the Two Knights, Hungarian and Paris defenses.",
+      "fen": "r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQ1RK1 w - - 2 7",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "ruy-lopez",
+      "file": "ruy-lopez.json",
+      "name": "Ruy Lopez",
+      "desc": "The Spanish Game: steady pressure on e5, with the Closed main line, the Open Spanish, the Anti-Berlin and sound answers to every sideline.",
+      "fen": "r1bq1rk1/2p1bppp/p1np1n2/1p2p3/4P3/1BP2N1P/PP1P1PP1/RNBQR1K1 b - - 0 9",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "queens-gambit",
+      "file": "queens-gambit.json",
+      "name": "Queen's Gambit",
+      "desc": "The classical 1.d4 d5 2.c4, covering the QGD, QGA and Slav, plus ways to punish the Albin, Chigorin and Baltic.",
+      "fen": "rnbq1rk1/ppp1bppp/4pn2/3p2B1/2PP4/2N1PN2/PP3PPP/R2QKB1R b KQ - 2 6",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "london-system",
+      "file": "london-system.json",
+      "name": "London System",
+      "desc": "A reliable Bf4, e3 and c3 setup against almost everything, with clear plans against ...c5, ...Qb6, the King's Indian and the Dutch.",
+      "fen": "r1bq1rk1/pp3ppp/2nbpn2/2pp4/3P4/2PBPNB1/PP1N1PPP/R2QK2R b KQ - 6 8",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "sicilian-najdorf",
+      "file": "sicilian-najdorf.json",
+      "name": "Sicilian Najdorf",
+      "desc": "The most combative answer to 1.e4: a flexible ...a6 system with queenside and central counterplay.",
+      "fen": "rnbqkb1r/1p2pppp/p2p1n2/8/3NP3/2N5/PPP2PPP/R1BQKB1R w KQkq - 0 6",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "caro-kann",
+      "file": "caro-kann.json",
+      "name": "Caro-Kann Defense",
+      "desc": "A rock-solid reply to 1.e4 with a sound pawn structure and an active light-squared bishop.",
+      "fen": "rn1qkbnr/pp2pppp/2p5/5b2/3PN3/8/PPP2PPP/R1BQKBNR w KQkq - 1 5",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "french-defense",
+      "file": "french-defense.json",
+      "name": "French Defense",
+      "desc": "Lock the center against 1.e4, then undermine White's pawn chain with ...c5 and ...Qb6.",
+      "fen": "r1b1kbnr/pp3ppp/1qn1p3/2ppP3/3P4/2P2N2/PP3PPP/RNBQKB1R w KQkq - 3 6",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "scandinavian",
+      "file": "scandinavian.json",
+      "name": "Scandinavian Defense",
+      "desc": "Challenge 1.e4 at once with 1...d5 and ...Qa5: a clear, solid system with quick development.",
+      "fen": "rnb1kbnr/ppp1pppp/8/q7/8/2N5/PPPP1PPP/R1BQKBNR w KQkq - 2 4",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "kings-indian",
+      "file": "kings-indian.json",
+      "name": "King's Indian Defense",
+      "desc": "Let White build a big center against 1.d4, then strike back with ...e5 or ...c5 and attack the king.",
+      "fen": "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ - 0 7",
+      "tag": "New",
+      "tagClass": "tag-green"
     }
   ]
 }

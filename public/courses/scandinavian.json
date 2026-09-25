@@ -1,0 +1,472 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "scandinavian",
+  "name": "Scandinavian Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "Challenge 1.e4 right away with 1...d5 — a clear, solid system with quick development and few surprises.",
+  "lines": [
+    {
+      "id": "main-qe2",
+      "name": "Main Line — 8.Qe2 Bb4",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Qxd5",
+          "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Qa5",
+          "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
+        },
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and control e4."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Bf5",
+          "note": "Develop the bishop outside the pawn chain before playing ...e6 — the key Scandinavian rule."
+        },
+        {
+          "san": "Bc4"
+        },
+        {
+          "san": "e6",
+          "note": "Solidify the center and open the f8 bishop's diagonal."
+        },
+        {
+          "san": "Bd2"
+        },
+        {
+          "san": "c6",
+          "note": "Give the queen a retreat square on c7 or d8 and cover d5 and b5."
+        },
+        {
+          "san": "Qe2"
+        },
+        {
+          "san": "Bb4",
+          "note": "Pin the knight again and prepare to castle; the bishop adds pressure to c3."
+        },
+        {
+          "san": "O-O-O"
+        },
+        {
+          "san": "Nbd7",
+          "note": "Complete development — the knight supports ...Nb6 or ...Nd5 later."
+        },
+        {
+          "san": "a3"
+        },
+        {
+          "san": "Bxc3",
+          "note": "Trade before a3-b4 traps the bishop or wins time."
+        },
+        {
+          "san": "Bxc3"
+        },
+        {
+          "san": "Qc7",
+          "note": "Tuck the queen away safely; Black is solid and ready for ...O-O or ...b5."
+        }
+      ]
+    },
+    {
+      "id": "main-nd5-trap",
+      "name": "Main Line — 8.Nd5 trick",
+      "tag": "Trap",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Qxd5",
+          "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Qa5",
+          "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
+        },
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and control e4."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Bf5",
+          "note": "Develop the bishop outside the pawn chain before playing ...e6 — the key Scandinavian rule."
+        },
+        {
+          "san": "Bc4"
+        },
+        {
+          "san": "e6",
+          "note": "Solidify the center and open the f8 bishop's diagonal."
+        },
+        {
+          "san": "Bd2"
+        },
+        {
+          "san": "c6",
+          "note": "Give the queen a retreat square on c7 or d8 and cover d5 and b5."
+        },
+        {
+          "san": "Nd5"
+        },
+        {
+          "san": "Qd8",
+          "note": "Don't take! 8...cxd5?? loses the queen to Bxa5 — the knight uncovered the d2 bishop."
+        },
+        {
+          "san": "Nxf6+"
+        },
+        {
+          "san": "Qxf6",
+          "note": "Recapture with the queen; the trick came to nothing and you have an easy game."
+        }
+      ]
+    },
+    {
+      "id": "nf3-bc4",
+      "name": "4.Nf3 Nf6 5.Bc4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Qxd5",
+          "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Qa5",
+          "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and control e4."
+        },
+        {
+          "san": "Bc4"
+        },
+        {
+          "san": "Bf5",
+          "note": "Bishop out before ...e6, just as in the main line."
+        },
+        {
+          "san": "d3"
+        },
+        {
+          "san": "c6",
+          "note": "Secure d5 and give the queen a retreat square."
+        },
+        {
+          "san": "Bd2"
+        },
+        {
+          "san": "e6",
+          "note": "Solid: the f8 bishop is free and your pawns are on light squares."
+        },
+        {
+          "san": "Nd5"
+        },
+        {
+          "san": "Qd8",
+          "note": "Sidestep the discovered attack from the d2 bishop — never grab the knight with the queen pinned."
+        },
+        {
+          "san": "Nxf6+"
+        },
+        {
+          "san": "Qxf6",
+          "note": "Recapture with the queen; the minor-piece trade eases your position."
+        }
+      ]
+    },
+    {
+      "id": "bc4",
+      "name": "4.Bc4 Nf6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "The Scandinavian: challenge e4 immediately and force the central question."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Qxd5",
+          "note": "Recapture with the queen — you lose a tempo, but gain quick, easy development."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Qa5",
+          "note": "The main line: on a5 the queen is safe from attack and pins the c3 knight along the diagonal."
+        },
+        {
+          "san": "Bc4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop and control e4."
+        },
+        {
+          "san": "d3"
+        },
+        {
+          "san": "c6",
+          "note": "Secure d5 and prepare a retreat for the queen."
+        },
+        {
+          "san": "Bd2"
+        },
+        {
+          "san": "Bf5",
+          "note": "Develop the bishop to its best diagonal."
+        },
+        {
+          "san": "Nge2"
+        },
+        {
+          "san": "e6",
+          "note": "Solidify; the f8 bishop is ready to develop."
+        },
+        {
+          "san": "Ng3"
+        },
+        {
+          "san": "Bg6",
+          "note": "Keep the bishop — on g6 it stays active and also guards h5."
+        }
+      ]
+    },
+    {
+      "id": "nf3-bg4",
+      "name": "3.Nf3 Bg4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "Challenge e4 immediately."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Qxd5",
+          "note": "Recapture with the queen."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Bg4",
+          "note": "White skipped Nc3, so develop the bishop with a pin while the queen stays centralized."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "Nc6",
+          "note": "Develop with tempo pressure on d4 and prepare ...O-O-O."
+        },
+        {
+          "san": "d4"
+        },
+        {
+          "san": "O-O-O",
+          "note": "Castle long: the rook lands on d8 and doubles the pressure on d4."
+        },
+        {
+          "san": "Be3"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the last minor piece."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Qa5",
+          "note": "The knight kicks the queen, so retreat to its standard safe square."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "e6",
+          "note": "Solid center; the f8 bishop can now develop to d6 or b4."
+        },
+        {
+          "san": "h3"
+        },
+        {
+          "san": "Bh5",
+          "note": "Keep the pin on f3 — trading on f3 only when it helps you."
+        }
+      ]
+    },
+    {
+      "id": "advance",
+      "name": "Advance — 2.e5 Bf5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "Challenge e4 immediately."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Bf5",
+          "note": "White avoided the main lines; develop the bishop before locking it in with ...e6."
+        },
+        {
+          "san": "d4"
+        },
+        {
+          "san": "e6",
+          "note": "Now it's a good Caro-Kann/French structure with your bishop already outside the chain."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "c5",
+          "note": "Strike the base of White's pawn chain."
+        },
+        {
+          "san": "c3"
+        },
+        {
+          "san": "Nc6",
+          "note": "Pile up on d4."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "Qb6",
+          "note": "A third attacker on d4, while also hitting b2."
+        }
+      ]
+    },
+    {
+      "id": "nc3-d4",
+      "name": "2.Nc3 d4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d5",
+          "note": "Challenge e4 immediately."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "d4",
+          "note": "Gain space with tempo on the knight."
+        },
+        {
+          "san": "Nce2"
+        },
+        {
+          "san": "e5",
+          "note": "Support the advanced d4 pawn and grab central space."
+        },
+        {
+          "san": "Ng3"
+        },
+        {
+          "san": "Be6",
+          "note": "Develop and control c4 and d5."
+        },
+        {
+          "san": "c3"
+        },
+        {
+          "san": "c5",
+          "note": "Reinforce d4 so c3xd4 cannot undermine your center."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Nc6",
+          "note": "Develop and defend e5."
+        },
+        {
+          "san": "Bb5"
+        },
+        {
+          "san": "f6",
+          "note": "Defend e5 solidly — the c6 knight is pinned, so e5 needed another guard."
+        }
+      ]
+    }
+  ]
+}

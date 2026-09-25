@@ -1,0 +1,539 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "italian-game",
+  "name": "Italian Game",
+  "author": "LaionChess",
+  "playAs": "w",
+  "description": "A classical weapon against 1...e5 — aim the bishop at f7, build slowly with c3 and d3, and outplay Black in the middlegame.",
+  "lines": [
+    {
+      "id": "giuoco-pianissimo",
+      "name": "Giuoco Pianissimo — 4.c3 Nf6 5.d3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare a later d4 and give the bishop a retreat square on c2 or b3."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "d3",
+          "note": "The Giuoco Pianissimo: defend e4 calmly and keep the tension for a slow buildup."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Re1",
+          "note": "The rook supports e4 and prepares Nbd2–f1–g3, the classic Italian knight route."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Bb3",
+          "note": "Tuck the bishop away on b3, out of reach of ...b5 and ...Na5 while still eyeing f7."
+        },
+        {
+          "san": "Ba7"
+        },
+        {
+          "san": "Nbd2",
+          "note": "Now the knight starts its journey via f1 to g3 or e3. White has a flexible, healthy position."
+        }
+      ]
+    },
+    {
+      "id": "giuoco-d6",
+      "name": "Giuoco Piano with ...d6 — 4...d6 5.d3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare a later d4 and give the bishop a retreat square on c2 or b3."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "d3",
+          "note": "Same slow plan: d3 supports e4 and keeps all our pieces flexible."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Re1",
+          "note": "We've transposed to the main Pianissimo — the rook lands on e1 to back up e4."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Bb3",
+          "note": "Retreat before ...b5 or ...Na5 can hit the bishop."
+        },
+        {
+          "san": "Ba7"
+        },
+        {
+          "san": "Nbd2",
+          "note": "Knight heads for f1 and g3 — the standard Italian regroup."
+        }
+      ]
+    },
+    {
+      "id": "two-knights-d3-bc5",
+      "name": "Two Knights — 4.d3 Bc5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "d3",
+          "note": "Against the Two Knights we play the solid 4.d3: e4 is defended and there's no need for sharp Ng5 lines."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare d4 and a retreat square for the bishop — it's a Giuoco Pianissimo by transposition."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Re1",
+          "note": "The rook supports e4 and clears f1 for the knight maneuver."
+        },
+        {
+          "san": "Ba7"
+        },
+        {
+          "san": "Bb3",
+          "note": "Keep the bishop safe from ...b5 while it continues to eye f7."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Nbd2",
+          "note": "Nbd2–f1–g3 is the typical plan. Same structure as the main line."
+        }
+      ]
+    },
+    {
+      "id": "two-knights-d3-be7",
+      "name": "Two Knights — 4.d3 Be7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "d3",
+          "note": "Our consistent answer: protect e4 and develop quietly."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Re1",
+          "note": "Rook to e1 supports the e4 pawn and prepares the knight maneuver."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "c3",
+          "note": "Build the center and give the bishop room to retreat."
+        },
+        {
+          "san": "Na5"
+        },
+        {
+          "san": "Bb5",
+          "note": "The bishop steps aside to b5, preparing to drop back to c2 — a Spanish-style regroup."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Ba4",
+          "note": "Keep the bishop on the long diagonal; it will settle on c2."
+        },
+        {
+          "san": "b5"
+        },
+        {
+          "san": "Bc2",
+          "note": "The bishop is safe on c2, supporting e4 and a later d4."
+        },
+        {
+          "san": "c5"
+        },
+        {
+          "san": "Nbd2",
+          "note": "Knight to f1 and g3 next. White has a comfortable Ruy Lopez-like position."
+        }
+      ]
+    },
+    {
+      "id": "hungarian-be7",
+      "name": "Hungarian Defense — 3...Be7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "d4",
+          "note": "Black's passive bishop gives us time to strike in the center immediately with d4."
+        },
+        {
+          "san": "exd4"
+        },
+        {
+          "san": "Nxd4",
+          "note": "Recapture with the knight — White enjoys more space and easy development."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "Nc3",
+          "note": "Develop and defend e4 at the same time."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "h3",
+          "note": "A useful prophylactic move: no ...Ng4 or ...Bg4 annoying our pieces."
+        },
+        {
+          "san": "Re8"
+        },
+        {
+          "san": "Re1",
+          "note": "Protect e4 once more. White has a pleasant space advantage."
+        }
+      ]
+    },
+    {
+      "id": "paris-d6",
+      "name": "Paris Defense — 3...d6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "c3",
+          "note": "Against the passive ...d6 we still build with c3, keeping d4 in reserve."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "d3",
+          "note": "Solid: defend e4 and keep the structure flexible."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Re1",
+          "note": "Rook to e1 supports e4 and prepares Nbd2–f1."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Bb3",
+          "note": "Step back before ...b5 comes with tempo."
+        },
+        {
+          "san": "Na5"
+        },
+        {
+          "san": "Bc2",
+          "note": "Keep the bishop on the b1–h7 diagonal instead of letting it be traded."
+        },
+        {
+          "san": "c5"
+        },
+        {
+          "san": "Nbd2",
+          "note": "The knight joins via f1. White has a harmonious setup."
+        }
+      ]
+    },
+    {
+      "id": "paris-bg4-qb3",
+      "name": "Punishing an early ...Bg4 — 5.Qb3!",
+      "tag": "Punish",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The Italian bishop! It develops actively and aims straight at f7, Black's weakest square."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "c3",
+          "note": "Build with c3 — this also opens the d1–b3 diagonal for the queen."
+        },
+        {
+          "san": "Bg4"
+        },
+        {
+          "san": "Qb3",
+          "note": "The bishop left the queenside! Qb3 hits both f7 and b7 at once."
+        },
+        {
+          "san": "Qd7"
+        },
+        {
+          "san": "Qxb7",
+          "note": "Grab the b7 pawn — the queen is safe and Black's queenside is weakened."
+        },
+        {
+          "san": "Rb8"
+        },
+        {
+          "san": "Qa6",
+          "note": "Retreat to a6, keeping an eye on c6 and a7. White is a clean pawn up."
+        }
+      ]
+    },
+    {
+      "id": "legal-trap",
+      "name": "Légal Trap — vs 2...d6 3...Bg4",
+      "tag": "Trap",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "Bc4",
+          "note": "Against the Philidor we still develop the bishop toward f7."
+        },
+        {
+          "san": "Bg4"
+        },
+        {
+          "san": "Nc3",
+          "note": "Develop and cover d5 — the knight will be important in a moment."
+        },
+        {
+          "san": "g6"
+        },
+        {
+          "san": "Nxe5",
+          "note": "The Légal sacrifice! If ...dxe5 we win the bishop with Qxg4; if Black takes the queen, it's mate."
+        },
+        {
+          "san": "Bxd1"
+        },
+        {
+          "san": "Bxf7+",
+          "note": "Check! The king must step forward."
+        },
+        {
+          "san": "Ke7"
+        },
+        {
+          "san": "Nd5#",
+          "note": "Checkmate with three minor pieces — the famous Légal mate."
+        }
+      ]
+    }
+  ]
+}

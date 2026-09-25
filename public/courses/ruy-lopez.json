@@ -1,0 +1,669 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "ruy-lopez",
+  "name": "Ruy Lopez",
+  "author": "LaionChess",
+  "playAs": "w",
+  "description": "The Spanish Game — steady pressure on e5, a flexible center with c3 and d4, and sound answers to every Black defense.",
+  "lines": [
+    {
+      "id": "closed-main",
+      "name": "Closed Ruy Lopez — 9.h3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Ba4",
+          "note": "Keep the pin on the c6 knight — the bishop retreats but keeps the pressure."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle first: e4 is indirectly protected because ...Nxe4 runs into Re1 or d4 ideas."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "Re1",
+          "note": "Now e4 is under threat, so the rook protects it and threatens Bxc6 winning e5."
+        },
+        {
+          "san": "b5"
+        },
+        {
+          "san": "Bb3",
+          "note": "Retreat to b3, where the bishop eyes f7 along the a2–g8 diagonal."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare d4 and create a retreat square on c2 for the bishop."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "h3",
+          "note": "The key prophylactic move: it stops ...Bg4 pinning our knight before we play d4."
+        },
+        {
+          "san": "Na5"
+        },
+        {
+          "san": "Bc2",
+          "note": "The bishop retreats to c2 — it stays alive and supports e4."
+        },
+        {
+          "san": "c5"
+        },
+        {
+          "san": "d4",
+          "note": "Finally the central break! White has space and a lasting initiative."
+        }
+      ]
+    },
+    {
+      "id": "open-spanish",
+      "name": "Open Spanish — 5...Nxe4 6.d4",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Ba4",
+          "note": "Keep the pin on the c6 knight — the bishop retreats but keeps the pressure."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle first: e4 is indirectly protected because ...Nxe4 runs into Re1 or d4 ideas."
+        },
+        {
+          "san": "Nxe4"
+        },
+        {
+          "san": "d4",
+          "note": "Open the center while Black's king is still in the middle — this is stronger than winning the pawn back at once."
+        },
+        {
+          "san": "b5"
+        },
+        {
+          "san": "Bb3",
+          "note": "The bishop retreats and keeps the pressure on d5 and f7."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "dxe5",
+          "note": "Win the pawn back and gain space. The e5 pawn cramps Black."
+        },
+        {
+          "san": "Be6"
+        },
+        {
+          "san": "c3",
+          "note": "Give the bishop a home on c2 and keep the d4 square under control."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "Nbd2",
+          "note": "Challenge the strong e4 knight."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Bc2",
+          "note": "Pressure e4 again — Black's centralized knight is running out of support."
+        }
+      ]
+    },
+    {
+      "id": "berlin-anti",
+      "name": "Berlin Defense — 4.d3 Anti-Berlin",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "d3",
+          "note": "The Anti-Berlin: simply protect e4 and avoid the drawish Berlin endgame."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare d4 and give our bishop a retreat square."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "h3",
+          "note": "Prevent ...Bg4 and prepare to keep the knight on f3."
+        },
+        {
+          "san": "a6"
+        },
+        {
+          "san": "Ba4",
+          "note": "Keep the bishop — it will be useful on the a2–g8 or b1–h7 diagonal."
+        },
+        {
+          "san": "b5"
+        },
+        {
+          "san": "Bb3",
+          "note": "A great diagonal: the bishop presses on f7 while White slowly builds up."
+        }
+      ]
+    },
+    {
+      "id": "classical-bc5",
+      "name": "Classical Defense — 3...Bc5 4.c3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "Bc5"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare d4 with tempo on the c5 bishop."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "d4",
+          "note": "Strike now — the center attacks the bishop."
+        },
+        {
+          "san": "Bb6"
+        },
+        {
+          "san": "Bg5",
+          "note": "Pin the f6 knight, adding pressure on e5."
+        },
+        {
+          "san": "h6"
+        },
+        {
+          "san": "Bh4",
+          "note": "Keep the pin."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "a4",
+          "note": "Gain queenside space and threaten a5, hitting the b6 bishop."
+        }
+      ]
+    },
+    {
+      "id": "schliemann-nc3",
+      "name": "Schliemann Gambit — 3...f5 4.Nc3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "f5"
+        },
+        {
+          "san": "Nc3",
+          "note": "The principled answer: develop and add pressure to e4."
+        },
+        {
+          "san": "fxe4"
+        },
+        {
+          "san": "Nxe4",
+          "note": "Recapture and centralize the knight."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "Nxe5",
+          "note": "A counterattack! The knight hits c6 and f7 while Black's king is still in the center."
+        },
+        {
+          "san": "dxe4"
+        },
+        {
+          "san": "Nxc6",
+          "note": "Take on c6 — the bishop pin makes this very strong."
+        },
+        {
+          "san": "Qg5"
+        },
+        {
+          "san": "Qe2",
+          "note": "The main move: the queen pressures e4 along the e-file, and if Black grabs g2 our pieces become very active."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "f4",
+          "note": "Deflect the queen from the g-file."
+        },
+        {
+          "san": "Qxf4"
+        },
+        {
+          "san": "Ne5+",
+          "note": "Discovered check from the b5 bishop!"
+        },
+        {
+          "san": "c6"
+        },
+        {
+          "san": "d4",
+          "note": "Hit the queen and open the c1 bishop. White has a powerful initiative."
+        }
+      ]
+    },
+    {
+      "id": "cozio-nge7",
+      "name": "Cozio Defense — 3...Nge7",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "Nge7"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle quickly — Black's setup is slow and our king should be safe before the center opens."
+        },
+        {
+          "san": "g6"
+        },
+        {
+          "san": "c3",
+          "note": "Prepare d4 to build a big center."
+        },
+        {
+          "san": "Bg7"
+        },
+        {
+          "san": "d4",
+          "note": "Take the center with d4."
+        },
+        {
+          "san": "exd4"
+        },
+        {
+          "san": "cxd4",
+          "note": "Recapture with the pawn for an ideal center."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "exd5",
+          "note": "Open the e-file while Black's king is still uncastled."
+        },
+        {
+          "san": "Nxd5"
+        },
+        {
+          "san": "Re1+",
+          "note": "Check on the open file — Black must block and White keeps a nice initiative."
+        }
+      ]
+    },
+    {
+      "id": "bird-nd4",
+      "name": "Bird's Defense — 3...Nd4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "Nd4"
+        },
+        {
+          "san": "Nxd4",
+          "note": "Trade knights — Black's pawn on d4 becomes a target."
+        },
+        {
+          "san": "exd4"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle and prepare Re1 and c3."
+        },
+        {
+          "san": "c6"
+        },
+        {
+          "san": "Bc4",
+          "note": "The bishop moves to its best diagonal, aiming at f7."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "Re1",
+          "note": "Protect e4 and prepare e5."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "c3",
+          "note": "Undermine the d4 pawn — White gets a strong center."
+        }
+      ]
+    },
+    {
+      "id": "steinitz-d6",
+      "name": "Steinitz Defense — 3...d6 4.d4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "d4",
+          "note": "Against the passive ...d6 we strike the center immediately."
+        },
+        {
+          "san": "Bd7"
+        },
+        {
+          "san": "Nc3",
+          "note": "Develop and protect e4."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "Re1",
+          "note": "Protect e4 so that Bxc6 and dxe5 become a real threat."
+        },
+        {
+          "san": "exd4"
+        },
+        {
+          "san": "Nxd4",
+          "note": "Black gives up the center; White has more space."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Bxc6",
+          "note": "Trade to damage Black's pawns."
+        },
+        {
+          "san": "bxc6"
+        },
+        {
+          "san": "Bg5",
+          "note": "Pin the knight and develop the last minor piece. White is clearly better."
+        }
+      ]
+    },
+    {
+      "id": "tarrasch-trap",
+      "name": "Tarrasch Trap — 7...O-O?",
+      "tag": "Trap",
+      "plies": [
+        {
+          "san": "e4",
+          "note": "Start with 1.e4 — grab the center and open lines for the queen and bishop."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "Nf3",
+          "note": "Develop the knight with tempo by attacking the e5 pawn."
+        },
+        {
+          "san": "Nc6"
+        },
+        {
+          "san": "Bb5",
+          "note": "The Spanish bishop pressures c6, the knight that defends e5."
+        },
+        {
+          "san": "d6"
+        },
+        {
+          "san": "d4",
+          "note": "Hit the center right away."
+        },
+        {
+          "san": "Bd7"
+        },
+        {
+          "san": "Nc3",
+          "note": "Develop and protect e4."
+        },
+        {
+          "san": "Nf6"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle early — king safety first, then the rook joins the center."
+        },
+        {
+          "san": "Be7"
+        },
+        {
+          "san": "Re1",
+          "note": "Now Bxc6 and dxe5 is a real threat."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Bxc6",
+          "note": "Black castled too early! Remove the defender of e5."
+        },
+        {
+          "san": "Bxc6"
+        },
+        {
+          "san": "dxe5",
+          "note": "Open the d-file with tempo."
+        },
+        {
+          "san": "dxe5"
+        },
+        {
+          "san": "Qxd8",
+          "note": "Trade queens to clear the way."
+        },
+        {
+          "san": "Raxd8"
+        },
+        {
+          "san": "Nxe5",
+          "note": "White wins a pawn. If ...Bxe4 Nxe4 Nxe4, then Nd3 and f3 trap Black's pieces."
+        }
+      ]
+    }
+  ]
+}

@@ -7,9 +7,11 @@ interface EvalBarProps {
   terminal?: 'white' | 'black' | 'draw' | null;
   /** Bar height in px (matches the board). */
   height?: number;
+  /** Board shown from Black's side: Black's share sits at the bottom. */
+  flipped?: boolean;
 }
 
-export default function EvalBar({ pawns, mate, terminal, height }: EvalBarProps) {
+export default function EvalBar({ pawns, mate, terminal, height, flipped }: EvalBarProps) {
   let pct: number;        // white's share of the bar height
   let label: string;
   let whiteAhead: boolean;
@@ -38,11 +40,9 @@ export default function EvalBar({ pawns, mate, terminal, height }: EvalBarProps)
   }
 
   return (
-    <div className="eval-bar" title={title} style={height ? { height } : undefined}>
+    <div className={`eval-bar${flipped ? ' flipped' : ''}`} title={title} style={height ? { height } : undefined}>
       <div className="white-share" style={{ height: `${pct}%` }} />
-      {whiteAhead
-        ? <span className="val bottom">{label}</span>
-        : <span className="val top">{label}</span>}
+      <span className={`val ${whiteAhead !== !!flipped ? 'bottom' : 'top'} ${whiteAhead ? 'on-white' : 'on-black'}`}>{label}</span>
     </div>
   );
 }

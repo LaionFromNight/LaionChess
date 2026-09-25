@@ -246,8 +246,8 @@ function VarContent({
         style={{
           cursor: 'pointer',
           fontWeight: isActive ? 700 : 400,
-          color: isActive ? '#00ff88' : color === 'w' ? '#bdbdbd' : '#6cc5c8',
-          backgroundColor: isActive ? 'rgba(0,255,136,0.12)' : 'transparent',
+          color: isActive ? 'var(--accent)' : 'var(--text-dim)',
+          backgroundColor: isActive ? 'var(--accent-soft)' : 'transparent',
           borderRadius: 2,
           padding: '0 2px',
         }}
@@ -333,10 +333,10 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
       borderRadius: 3,
       cursor: 'pointer',
       fontSize: 13,
-      fontWeight: isActive ? 700 : 400,
-      color: isActive ? '#00ff88' : color === 'w' ? '#e0e0e0' : '#00ffff',
-      backgroundColor: isActive ? 'rgba(0,255,136,0.15)' : 'transparent',
-      outline: isActive ? '1px solid rgba(0,255,136,0.35)' : 'none',
+      fontWeight: isActive ? 700 : 500,
+      color: isActive ? 'var(--accent-ink)' : color === 'w' ? 'var(--text)' : 'var(--text-dim)',
+      backgroundColor: isActive ? 'var(--accent)' : 'transparent',
+      outline: 'none',
       whiteSpace: 'nowrap',
       transition: 'background 0.12s',
     };
@@ -344,7 +344,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
 
   const hoverOn = (e: React.MouseEvent<HTMLSpanElement>, nodeId: string) => {
     if (nodeId !== currentNodeId)
-      (e.currentTarget as HTMLSpanElement).style.backgroundColor = 'rgba(255,255,255,0.06)';
+      (e.currentTarget as HTMLSpanElement).style.backgroundColor = 'rgba(255,255,255,0.07)';
   };
   const hoverOff = (e: React.MouseEvent<HTMLSpanElement>, nodeId: string) => {
     if (nodeId !== currentNodeId)
@@ -377,20 +377,20 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
         width: '100%',
         height: panelHeight,
         overflowY: 'auto',
-        backgroundColor: '#0d1117',
-        border: '1px solid #00ffff20',
-        borderRadius: 8,
-        fontFamily: "'Segoe UI', monospace",
+        backgroundColor: 'var(--surface-2)',
+        border: '1px solid var(--line)',
+        borderRadius: 10,
+        fontFamily: 'var(--sans)',
         display: 'flex',
         flexDirection: 'column',
       }}>
         {/* Header */}
         <div style={{
           padding: '8px 12px',
-          borderBottom: '1px solid #00ffff20',
-          color: '#00ffff',
+          borderBottom: '1px solid var(--line)',
+          color: 'var(--text-faint)',
           fontSize: 11,
-          letterSpacing: 2,
+          letterSpacing: 1,
           textTransform: 'uppercase',
           fontWeight: 700,
           flexShrink: 0,
@@ -402,7 +402,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
           <span>Moves</span>
           {effectiveViewMode.type === 'variation' && (
             <span style={{
-              fontSize: 9, color: '#ff9f43', fontWeight: 700,
+              fontSize: 9, color: 'var(--accent)', fontWeight: 700,
               letterSpacing: 0.5, textTransform: 'none', fontFamily: 'monospace',
               maxWidth: 110, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
             }}>
@@ -414,7 +414,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
         {/* Body */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '4px 0' }}>
           {rows.length === 0 ? (
-            <div style={{ color: '#333', fontSize: 12, padding: '8px 12px' }}>No moves yet</div>
+            <div style={{ color: 'var(--text-faint)', fontSize: 12, padding: '8px 12px' }}>No moves yet</div>
           ) : rows.map(row => {
             const allVars = [...row.afterWhiteVars, ...row.afterBlackVars];
             const rowKey = `${row.moveNum}-${row.whiteId ?? 'b'}`;
@@ -425,7 +425,7 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
                 {/* N. white  black */}
                 <div style={{ display: 'flex', alignItems: 'center', padding: '1px 8px', gap: 2 }}>
                   <span style={{
-                    color: '#444', fontSize: 11, userSelect: 'none',
+                    color: 'var(--text-faint)', fontSize: 11, userSelect: 'none',
                     minWidth: 24, textAlign: 'right', flexShrink: 0, paddingRight: 3,
                   }}>
                     {row.moveNum}.
@@ -465,10 +465,10 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
                     style={{
                       margin: '1px 8px 2px 36px',
                       paddingLeft: 6,
-                      borderLeft: '2px solid rgba(255,160,50,0.30)',
+                      borderLeft: '2px solid var(--accent-border)',
                       fontSize: 11,
                       lineHeight: 1.7,
-                      color: '#888',
+                      color: 'var(--text-dim)',
                       wordBreak: 'break-word',
                     }}
                   >
@@ -517,15 +517,15 @@ export default function MoveList({ tree, currentNodeId, onNavigate, boardSize }:
                   fontSize: 10,
                   fontWeight: isActiveBtn ? 700 : 400,
                   border: `1px solid ${isActiveBtn
-                    ? (isDefault ? '#00ff8870' : '#88cc4470')
-                    : '#2a2a3a'}`,
+                    ? 'var(--accent-border)'
+                    : 'var(--line)'}`,
                   borderRadius: 4,
                   cursor: 'pointer',
                   backgroundColor: isActiveBtn
-                    ? (isDefault ? 'rgba(0,255,136,0.12)' : 'rgba(136,204,68,0.12)')
+                    ? 'var(--accent-soft)'
                     : 'transparent',
                   color: isActiveBtn
-                    ? (isDefault ? '#00ff88' : '#88cc44')
+                    ? 'var(--accent)'
                     : '#555',
                   letterSpacing: 0.5,
                   fontFamily: 'monospace',

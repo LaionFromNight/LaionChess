@@ -113,9 +113,11 @@
         { "san": "Bc5", "from": "b4", "to": "c5" },
         { "san": "Be3", "from": "c1", "to": "e3", "note": "Be3, same recipe: defend d4, question the bishop." },
         { "san": "Bb6", "from": "c5", "to": "b6" },
-        { "san": "Nc3", "from": "b1", "to": "c3", "note": "Develop the queenside knight." },
-        { "san": "Nf6", "from": "g8", "to": "f6" },
-        { "san": "Be2", "from": "f1", "to": "e2", "note": "Be2 and castle — a pleasant, risk-free edge." }
+        { "san": "Bc4", "note": "Develop the bishop to its best diagonal — c4 eyes f7 and supports the d4 knight's outposts." },
+        { "san": "Nf6" },
+        { "san": "Nd2", "note": "Nd2 protects e4 without blocking the c-pawn — c3 is already taken." },
+        { "san": "O-O" },
+        { "san": "O-O", "note": "Castle. White has a free, harmonious position with a strong knight on d4." }
       ]
     },
     {
