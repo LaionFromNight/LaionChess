@@ -1,0 +1,703 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "kings-indian",
+  "name": "King's Indian Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "A dynamic hypermodern reply to 1.d4 — let White build a center, then strike back with ...e5 or ...c5 and attack the king.",
+  "lines": [
+    {
+      "id": "classical-mar-del-plata",
+      "name": "Classical — Mar del Plata 9.Ne1",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "O-O",
+          "note": "King to safety first — your counterattack comes after castling."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "e5",
+          "note": "The classic strike at d4; this is the central break the whole setup is built for."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Nc6",
+          "note": "Add pressure to d4 and provoke White into closing the center."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "Ne7",
+          "note": "With the center locked, reroute the knight toward the kingside where you will attack."
+        },
+        {
+          "san": "Ne1"
+        },
+        {
+          "san": "Nd7",
+          "note": "Clear the way for the f-pawn: ...f5 is Black's main attacking lever."
+        },
+        {
+          "san": "Nd3"
+        },
+        {
+          "san": "f5",
+          "note": "Launch the kingside storm — White attacks on the queenside, you go for the king."
+        },
+        {
+          "san": "Bd2"
+        },
+        {
+          "san": "Nf6",
+          "note": "The knight returns to support ...f4 and ...g5-g4 in the attack."
+        }
+      ]
+    },
+    {
+      "id": "bayonet",
+      "name": "Bayonet Attack — 9.b4",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "O-O",
+          "note": "King to safety first — your counterattack comes after castling."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "e5",
+          "note": "The classic strike at d4; this is the central break the whole setup is built for."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Nc6",
+          "note": "Add pressure to d4 and provoke White into closing the center."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "Ne7",
+          "note": "With the center locked, reroute the knight toward the kingside where you will attack."
+        },
+        {
+          "san": "b4"
+        },
+        {
+          "san": "Nh5",
+          "note": "Free the f-pawn and eye f4 — ...f5 comes next."
+        },
+        {
+          "san": "Re1"
+        },
+        {
+          "san": "f5",
+          "note": "Counterattack on the kingside without delay; speed matters in the KID."
+        },
+        {
+          "san": "Ng5"
+        },
+        {
+          "san": "Nf6",
+          "note": "Retreat to keep control of e4 and stop Ne6 ideas."
+        }
+      ]
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange — 7.dxe5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "O-O",
+          "note": "King to safety first — your counterattack comes after castling."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "e5",
+          "note": "The classic strike at d4; this is the central break the whole setup is built for."
+        },
+        {
+          "san": "dxe5"
+        },
+        {
+          "san": "dxe5",
+          "note": "Recapture with the pawn; the symmetrical structure is completely equal."
+        },
+        {
+          "san": "Qxd8"
+        },
+        {
+          "san": "Rxd8",
+          "note": "Take back with the rook, which lands on the open d-file."
+        },
+        {
+          "san": "Bg5"
+        },
+        {
+          "san": "Re8",
+          "note": "Break the pin and protect e5 — no need to fear the queenless middlegame."
+        },
+        {
+          "san": "Nd5"
+        },
+        {
+          "san": "Nxd5",
+          "note": "Trade off White's active knight before it hits c7."
+        },
+        {
+          "san": "cxd5"
+        },
+        {
+          "san": "c6",
+          "note": "Undermine d5 at once to free your queenside pieces."
+        }
+      ]
+    },
+    {
+      "id": "petrosian",
+      "name": "Petrosian — 7.d5 a5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "O-O",
+          "note": "King to safety first — your counterattack comes after castling."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "e5",
+          "note": "The classic strike at d4; this is the central break the whole setup is built for."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "a5",
+          "note": "Stop b4 and secure c5 for your knight."
+        },
+        {
+          "san": "Bg5"
+        },
+        {
+          "san": "h6",
+          "note": "Ask the bishop a question before it pins you uncomfortably."
+        },
+        {
+          "san": "Bh4"
+        },
+        {
+          "san": "Na6",
+          "note": "The knight heads for c5, its ideal outpost."
+        },
+        {
+          "san": "Nd2"
+        },
+        {
+          "san": "Qe8",
+          "note": "Break the annoying pin on f6 and prepare ...Nh7 and ...f5."
+        }
+      ]
+    },
+    {
+      "id": "samisch",
+      "name": "Sämisch — 5.f3 O-O 6.Be3 e5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "f3"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle first; White's f3 keeps your knight out of g4, but costs a tempo."
+        },
+        {
+          "san": "Be3"
+        },
+        {
+          "san": "e5",
+          "note": "Strike the center before White completes development."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "Nh5",
+          "note": "The center is closed, so prepare ...f5 to open the kingside."
+        },
+        {
+          "san": "Qd2"
+        },
+        {
+          "san": "f5",
+          "note": "Hit e4 and open the f-file for your rook."
+        },
+        {
+          "san": "O-O-O"
+        },
+        {
+          "san": "Nd7",
+          "note": "Develop and support ...Nf6 or ...Ndf6 to keep pressure on e4."
+        }
+      ]
+    },
+    {
+      "id": "four-pawns",
+      "name": "Four Pawns Attack — 5.f4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "f4"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle first and wait for White to overextend."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "c5",
+          "note": "Strike the big center from the side before it rolls forward."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "e6",
+          "note": "Open the e-file to attack White's loose center."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "exd5",
+          "note": "Trade to open lines."
+        },
+        {
+          "san": "cxd5"
+        },
+        {
+          "san": "Re8",
+          "note": "Pressure e4 — White's center is now a target."
+        },
+        {
+          "san": "e5"
+        },
+        {
+          "san": "dxe5",
+          "note": "Take the pawn; White's center is dissolving."
+        },
+        {
+          "san": "fxe5"
+        },
+        {
+          "san": "Ng4",
+          "note": "Attack e5 — White's pawn will fall or need awkward defense."
+        }
+      ]
+    },
+    {
+      "id": "averbakh",
+      "name": "Averbakh — 5.Be2 O-O 6.Bg5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop the knight and stop White from playing e4 for free."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto — the g7 bishop will be the soul of your position."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto; the bishop aims straight at d4 and the queenside."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "d6",
+          "note": "The King's Indian: let White build a big center, then hit it with ...e5 or ...c5."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle first; ...Nf3 would transpose to the Classical."
+        },
+        {
+          "san": "Bg5"
+        },
+        {
+          "san": "c5",
+          "note": "Against the pin, strike at d4 with the c-pawn."
+        },
+        {
+          "san": "d5"
+        },
+        {
+          "san": "h6",
+          "note": "Ask the bishop to declare its intentions."
+        },
+        {
+          "san": "Be3"
+        },
+        {
+          "san": "e6",
+          "note": "Open lines in the center."
+        },
+        {
+          "san": "Qd2"
+        },
+        {
+          "san": "exd5",
+          "note": "Trade to open the e-file."
+        },
+        {
+          "san": "exd5"
+        },
+        {
+          "san": "Kh7",
+          "note": "Protect h6 so the h-pawn is no longer a target for Bxh6."
+        }
+      ]
+    },
+    {
+      "id": "fianchetto",
+      "name": "Fianchetto — 3.Nf3 and g3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop and control e4."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "g6",
+          "note": "Prepare the fianchetto."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto."
+        },
+        {
+          "san": "g3"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle quickly; White's plan is slow and positional."
+        },
+        {
+          "san": "Bg2"
+        },
+        {
+          "san": "d6",
+          "note": "Prepare ...e5."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Nbd7",
+          "note": "Support the ...e5 break with the knight."
+        },
+        {
+          "san": "Nc3"
+        },
+        {
+          "san": "e5",
+          "note": "Strike the center."
+        },
+        {
+          "san": "e4"
+        },
+        {
+          "san": "c6",
+          "note": "Control d5 and prepare ...Qb6 to pressure d4."
+        },
+        {
+          "san": "h3"
+        },
+        {
+          "san": "Qb6",
+          "note": "Pressure d4 and b2, pinning White to defense."
+        }
+      ]
+    },
+    {
+      "id": "london",
+      "name": "London System — 2.Nf3 g6 3.Bf4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4"
+        },
+        {
+          "san": "Nf6",
+          "note": "Develop and control e4."
+        },
+        {
+          "san": "Nf3"
+        },
+        {
+          "san": "g6",
+          "note": "The King's Indian setup works against almost anything."
+        },
+        {
+          "san": "Bf4"
+        },
+        {
+          "san": "Bg7",
+          "note": "Complete the fianchetto."
+        },
+        {
+          "san": "e3"
+        },
+        {
+          "san": "d6",
+          "note": "Prepare ...e5 to challenge the f4 bishop."
+        },
+        {
+          "san": "h3"
+        },
+        {
+          "san": "O-O",
+          "note": "Castle; there's no need to hurry."
+        },
+        {
+          "san": "Be2"
+        },
+        {
+          "san": "Nbd7",
+          "note": "Support the ...e5 break."
+        },
+        {
+          "san": "O-O"
+        },
+        {
+          "san": "Qe8",
+          "note": "Add support to e5 so the break works tactically."
+        },
+        {
+          "san": "c4"
+        },
+        {
+          "san": "e5",
+          "note": "Strike the center — e5 is now defended three times."
+        }
+      ]
+    }
+  ]
+}

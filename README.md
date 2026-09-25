@@ -18,6 +18,26 @@ The React Compiler is not enabled on this template because of its impact on dev 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
 
 
+## Opening courses
+
+`public/courses/manifest.json` lists the trainable courses (10 openings, 81 lines):
+Scotch, Italian, Ruy Lopez, Queen's Gambit, London (White) and Sicilian Najdorf,
+Caro-Kann, French, Scandinavian, King's Indian (Black). Each course is a
+`laionchess.course.v1` JSON file; every line starts from move 1 and every move of
+the trained side carries a coach note. Lines branch only on the opponent's moves,
+so the repertoire stays consistent.
+
+Trainer modes: **Learn** (guided arrows + notes), **Practice** (recall a chosen
+line) and **Drill** (random lines, no hints, streak counter).
+
+### Board controls
+
+- Click or drag pieces to move.
+- Right-click drag draws arrows, right-click a square draws a circle
+  (Shift = red, Alt/Ctrl = blue, Shift+Alt = yellow). Left-click clears them.
+- `←` / `→` step through moves, `↑` / `↓` jump to start / end, `F` flips the board.
+  Shortcuts are ignored while typing in a field.
+
 ## Github Page
 [Under](https://laionfromnight.github.io/LaionChess/)
 

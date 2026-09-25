@@ -34,7 +34,7 @@ export default function SettingsMenu({
     <div className="menu-host" ref={hostRef} style={{ position: 'relative' }}>
       <button
         type="button"
-        className="btn btn-icon btn-ghost"
+        className="tool-btn icon"
         title="Settings"
         aria-haspopup="true"
         aria-expanded={open}
@@ -94,15 +94,16 @@ export default function SettingsMenu({
           {sections.includes('toggles') && (
             <>
               <hr className="menu-hr" />
-              <div className="menu-section">Trainer</div>
+              <div className="menu-section">Board</div>
               <button type="button" className="menu-item" onClick={() => setSetting('arrows', !settings.arrows)}>
-                <span>Training arrows</span>
+                <span>Hint arrows in Learn mode</span>
                 <Check on={settings.arrows} />
               </button>
               <button type="button" className="menu-item" onClick={() => setSetting('coords', !settings.coords)}>
                 <span>Coordinates</span>
                 <Check on={settings.coords} />
               </button>
+              <div className="menu-note">Right-click drag draws arrows (Shift / Alt for colours). ← → ↑ ↓ navigate, F flips.</div>
             </>
           )}
         </div>

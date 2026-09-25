@@ -5,7 +5,7 @@ import type { SpottingMode } from '../chess/analysis';
 
 // ── types ───────────────────────────────────────────────────────────────────
 export type Accent = 'cyan' | 'green' | 'magenta' | 'amber';
-export type BoardTheme = 'classic' | 'neon' | 'forest' | 'ice';
+export type BoardTheme = 'classic' | 'neon' | 'forest' | 'ice' | 'slate';
 export type PieceSet = 'classic' | 'merida' | 'alpha' | 'glyph';
 
 export type ExplorerSpeed = 'ultraBullet' | 'bullet' | 'blitz' | 'rapid' | 'classical' | 'correspondence';
@@ -32,6 +32,8 @@ export interface UiSettings {
   engineLines: number;       // MultiPV, 1..5
   engineSearchLevel: number; // index into SEARCH_LEVELS_MS
   engineHashMb: number;
+  /** Preferred board size in px (resize handle); the layout may shrink it to fit. */
+  boardMax: number;
 }
 
 // ── theme + piece-set maps (verbatim from prototype js/theme.js) ──────────────
@@ -40,9 +42,10 @@ export interface BoardThemeDef {
 }
 export const BOARD_THEMES: Record<BoardTheme, BoardThemeDef> = {
   classic: { label: 'Classic Wood', light: '#f0d9b5', dark: '#b58863', coordL: '#b58863', coordD: '#f0d9b5' },
-  neon:    { label: 'Neon Night',   light: '#1e2a44', dark: '#121a30', coordL: '#5fd9d9', coordD: '#5fd9d9' },
+  neon:    { label: 'Midnight',     light: '#8ea2b8', dark: '#4f6378', coordL: '#4f6378', coordD: '#c8d4e0' },
   forest:  { label: 'Forest',       light: '#e6e8c9', dark: '#6a8f4f', coordL: '#6a8f4f', coordD: '#e6e8c9' },
   ice:     { label: 'Ice',          light: '#dee3e6', dark: '#8ca2ad', coordL: '#8ca2ad', coordD: '#dee3e6' },
+  slate:   { label: 'Slate Green',  light: '#eeeed2', dark: '#769656', coordL: '#769656', coordD: '#eeeed2' },
 };
 
 export type PieceSetDef =
@@ -60,10 +63,10 @@ export const PIECE_SETS: Record<PieceSet, PieceSetDef> = {
 };
 
 export const ACCENT_SWATCHES: Array<{ value: Accent; color: string }> = [
-  { value: 'cyan',    color: '#00ffff' },
-  { value: 'green',   color: '#00ff88' },
-  { value: 'magenta', color: '#ff00ff' },
-  { value: 'amber',   color: '#ffd93d' },
+  { value: 'cyan',    color: '#5cc8e8' },
+  { value: 'green',   color: '#4fc98a' },
+  { value: 'magenta', color: '#b99af5' },
+  { value: 'amber',   color: '#e8b64c' },
 ];
 
 // ── persistence ───────────────────────────────────────────────────────────────
@@ -83,6 +86,7 @@ const DEFAULTS: UiSettings = {
   engineLines: 3,
   engineSearchLevel: 3,
   engineHashMb: 64,
+  boardMax: 720,
 };
 
 function load(): UiSettings {

@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react';
-import type { GameState, Position, PieceColor } from './chess/types';
+import type { GameState, Position, PieceColor, PieceType } from './chess/types';
 import {
   createInitialState,
   executeMove,
@@ -33,63 +33,17 @@ import { computeTopArrows } from './board/topArrows';
 import { useOpeningExplorer } from './board/lichess';
 import { useEngine, barSearchMs, SEARCH_LEVELS_MS } from './board/engine';
 import { expandPv, type PvMove } from './board/pv';
+import { useBoardKeys, useFitBoardSize } from './board/useBoardLayout';
 import EnginePanel, { type PanelLine } from './components/EnginePanel';
-import { useCourses, type CourseCardMeta } from './courses/useCourses';
-import { loadProgress, countDone } from './courses/progress';
+import { useCourses, type Course, type CourseCardMeta } from './courses/useCourses';
+import { loadProgress, loadLastCourse, saveLastCourse } from './courses/progress';
 import TrainerView from './views/TrainerView';
 
-// ── shared style helpers ──────────────────────────────────────────────────────
-
-const BTN: React.CSSProperties = {
-  padding: '10px 22px', fontSize: 13, fontWeight: 600,
-  borderRadius: 6, cursor: 'pointer', letterSpacing: 1,
-  textTransform: 'uppercase', transition: 'all 0.2s', border: 'none',
-};
-
-const MODAL_OVERLAY: React.CSSProperties = {
-  position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.85)',
-  display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
-};
-
-const MODAL_BOX: React.CSSProperties = {
-  backgroundColor: '#0d1117', borderRadius: 12, padding: 32,
-  maxWidth: 520, width: '92%',
-};
-
-const TEXTAREA: React.CSSProperties = {
-  width: '100%', backgroundColor: '#0a0a1a', border: '1px solid #2a2a3a',
-  borderRadius: 6, color: '#e0e0e0', padding: 12,
-  fontSize: 12, fontFamily: 'monospace', resize: 'vertical', boxSizing: 'border-box',
-};
-
-function ModalTitle({ color, text }: { color: string; text: string }) {
-  return (
-    <h2 style={{
-      color, fontSize: 18, letterSpacing: 3, textTransform: 'uppercase',
-      margin: '0 0 24px', textAlign: 'center', textShadow: `0 0 10px ${color}44`,
-    }}>{text}</h2>
-  );
-}
-
-function Btn({ color, bg, border, onClick, children, disabled }: {
-  color: string; bg: string; border: string;
-  onClick: () => void; children: React.ReactNode; disabled?: boolean;
-}) {
-  return (
-    <button onClick={onClick} disabled={disabled} style={{
-      padding: '8px 16px', fontSize: 13, fontWeight: 600,
-      border: `1px solid ${border}`, borderRadius: 6,
-      cursor: disabled ? 'not-allowed' : 'pointer',
-      backgroundColor: disabled ? '#111' : bg,
-      color: disabled ? '#444' : color,
-      opacity: disabled ? 0.5 : 1,
-    }}>{children}</button>
-  );
-}
+// ── helpers ───────────────────────────────────────────────────────────────────
 
 function PanelToggle({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
   return (
-    <button type="button" className={`toggle btnish ${on ? 'on' : 'off'}`} onClick={onClick}>
+    <button type="button" className={`toggle ${on ? 'on' : 'off'}`} onClick={onClick} aria-pressed={on}>
       <span className="sw" />
       <span className="lb">{label}</span>
     </button>
@@ -182,89 +136,21 @@ function buildFoldedOpeningJson(tree: GameTree, title: string, side: PieceColor)
 
 type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master';
 
-type CourseCard = {
-  id: string;
-  name: string;
-  tag: string;
-  tagClass?: string;
-  desc: string;
-  lines: number;
-  fen: string;
-  ready: boolean;
-};
-
-const COURSES: CourseCard[] = [
-  {
-    id: 'scotch-game',
-    name: 'Scotch Game',
-    tag: 'Ready',
-    tagClass: 'tag-green',
-    desc: 'A direct weapon against 1...e5. Open the center on move 3 and develop with tempo.',
-    lines: 6,
-    fen: 'r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 4',
-    ready: true,
-  },
-  {
-    id: 'italian-game',
-    name: 'Italian Game',
-    tag: 'Planned',
-    desc: 'Quiet development, long-term pressure on f7. The classical school in one course.',
-    lines: 12,
-    fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
-    ready: false,
-  },
-  {
-    id: 'sicilian',
-    name: 'Sicilian Defense',
-    tag: 'Planned',
-    desc: 'Fight for the win as Black from move one. Open Sicilian main lines.',
-    lines: 24,
-    fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2',
-    ready: false,
-  },
-  {
-    id: 'london',
-    name: 'London System',
-    tag: 'Planned',
-    desc: 'One setup against everything. Solid structure, clear plans, minimal theory.',
-    lines: 14,
-    fen: 'rnbqkbnr/ppp1pppp/8/3p4/3P1B2/8/PPP1PPPP/RN1QKBNR b KQkq - 1 2',
-    ready: false,
-  },
-  {
-    id: 'queens-gambit',
-    name: "Queen's Gambit",
-    tag: 'Planned',
-    desc: 'Offer the c-pawn, take the center. Declined and Accepted main lines.',
-    lines: 18,
-    fen: 'rnbqkbnr/ppp1pppp/8/3p4/2PP4/8/PP2PPPP/RNBQKBNR b KQkq c3 0 2',
-    ready: false,
-  },
-  {
-    id: 'caro-kann',
-    name: 'Caro-Kann Defense',
-    tag: 'Planned',
-    desc: 'The solid answer to 1.e4: sound structure without giving up activity.',
-    lines: 16,
-    fen: 'rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
-    ready: false,
-  },
-];
-
-function MiniBoard({ fen }: { fen: string }) {
+function MiniBoard({ fen, flipped }: { fen: string; flipped?: boolean }) {
   const { settings } = useSettings();
   const theme = BOARD_THEMES[settings.boardTheme] ?? BOARD_THEMES.classic;
   const state = parseFen(fen) ?? createInitialState();
+  const rows = flipped ? [...state.board].reverse().map(r => [...r].reverse()) : state.board;
   return (
     <div className="mini-board" aria-hidden="true">
-      {state.board.map((row, rowIdx) => row.map((piece, colIdx) => {
+      {rows.map((row, rowIdx) => row.map((piece, colIdx) => {
         const light = (rowIdx + colIdx) % 2 === 0;
         const src = piece ? pieceSrc(settings.pieceSet, piece.color, piece.type) : null;
         return (
           <span key={`${rowIdx}-${colIdx}`} style={{ background: light ? theme.light : theme.dark }}>
             {piece && (src
-              ? <img src={src} alt={pieceCode(piece.color, piece.type)} draggable={false} style={{ width: '92%', height: '92%' }} />
-              : <span style={{ color: piece.color === 'white' ? '#fff' : '#111', textShadow: piece.color === 'white' ? '0 0 2px #000' : '0 0 2px #fff' }}>{getPieceLabel(piece)}</span>
+              ? <img src={src} alt={pieceCode(piece.color, piece.type)} draggable={false} />
+              : <span className={`glyph ${piece.color}`}>{getPieceLabel(piece)}</span>
             )}
           </span>
         );
@@ -273,6 +159,27 @@ function MiniBoard({ fen }: { fen: string }) {
   );
 }
 
+type DisplayCard = CourseCardMeta & { playAs: 'w' | 'b'; lines: number; learned: number; practiced: number };
+
+function CourseCard({ card, onOpen }: { card: DisplayCard; onOpen: () => void }) {
+  const pct = card.lines ? Math.round((card.learned / card.lines) * 100) : 0;
+  return (
+    <button type="button" className="course-card" onClick={onOpen}>
+      <div className="mini"><MiniBoard fen={card.fen} flipped={card.playAs === 'b'} /></div>
+      <div className="body">
+        <div className="ttl">
+          <h3>{card.name}</h3>
+          <span className={`side-pill ${card.playAs === 'w' ? 'white' : 'black'}`}>{card.playAs === 'w' ? 'White' : 'Black'}</span>
+        </div>
+        <p className="desc">{card.desc}</p>
+        <div className="foot">
+          <div className="progress-track"><div className="progress-fill" style={{ width: `${pct}%` }} /></div>
+          <span className="muted">{card.learned}/{card.lines} learned</span>
+        </div>
+      </div>
+    </button>
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -281,9 +188,9 @@ export default function App() {
   const [activeView, setActiveView] = useState<ActiveView>('home');
 
   // ── courses (loaded from public/courses) ──────────────────────────────────────
-  const { catalog, courses } = useCourses();
-  const [activeCourseId, setActiveCourseId] = useState('scotch-game');
-  const activeCourse = courses[activeCourseId];
+  const { catalog, courses, loading: coursesLoading } = useCourses();
+  const [activeCourseId, setActiveCourseId] = useState(() => loadLastCourse() ?? 'scotch-game');
+  const activeCourse: Course | undefined = courses[activeCourseId];
 
   // ── analysis / create panel toggles ──────────────────────────────────────────
   const [showEval, setShowEval] = useState(true);
@@ -291,6 +198,7 @@ export default function App() {
   const [showTop, setShowTop] = useState(false);
   const [showBookOptions, setShowBookOptions] = useState(false);
   const [hoverBookSan, setHoverBookSan] = useState<string | null>(null);
+  const [flipped, setFlipped] = useState(false);
 
   // ── game tree ───────────────────────────────────────────────────────────────
   const [tree, setTree] = useState<GameTree>(() => createGameTree(createInitialState()));
@@ -299,8 +207,9 @@ export default function App() {
   const [animPiece, setAnimPiece] = useState<AnimPiece | null>(null);
   const [courseTitle, setCourseTitle] = useState('Untitled Course');
   const [courseSide, setCourseSide] = useState<PieceColor>('white');
-  const [saveState, setSaveState] = useState('ready');
+  const [saveState, setSaveState] = useState('');
   const [courseSearch, setCourseSearch] = useState('');
+  const [sideFilter, setSideFilter] = useState<'all' | 'w' | 'b'>('all');
 
   // ── playback ────────────────────────────────────────────────────────────────
   const [isPlaying, setIsPlaying] = useState(false);
@@ -322,6 +231,7 @@ export default function App() {
 
   const displayedState = useMemo(() => getNodeState(tree, currentNodeId), [tree, currentNodeId]);
   const displayedFen = useMemo(() => toFen(displayedState), [displayedState]);
+  const isBoardView = activeView === 'analysis' || activeView === 'create';
 
   // Common Moves (Lichess book, offline fallback).
   const { rows: bookRows, loading: bookLoading } = useOpeningExplorer(displayedFen, settings.bookSpeeds, settings.bookRatings);
@@ -404,17 +314,16 @@ export default function App() {
   );
 
   // ── Engine PV arrows (Analysis view) — one per line, ranked by colour ─────────
-  const ENGINE_ARROW_COLORS = ['rgba(0,255,136,0.92)', 'rgba(255,217,61,0.8)', 'rgba(255,159,67,0.72)', 'rgba(255,0,255,0.62)', 'rgba(120,140,255,0.55)'];
   const engineArrows = useMemo(() => {
     if (!enginePanelOn || !settings.engineArrows) return [];
+    const colors = ['rgba(52,199,120,0.88)', 'rgba(240,190,40,0.75)', 'rgba(170,140,240,0.66)', 'rgba(230,110,90,0.58)', 'rgba(110,160,240,0.52)'];
     return engineLinesExpanded
       .filter(l => l.moves.length > 0)
       .map((l, i) => ({
         from: l.moves[0].from, to: l.moves[0].to,
-        color: ENGINE_ARROW_COLORS[Math.min(i, ENGINE_ARROW_COLORS.length - 1)],
-        width: i === 0 ? 3 : 2,
+        color: colors[Math.min(i, colors.length - 1)],
+        width: i === 0 ? 2.6 : 1.9,
       }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enginePanelOn, settings.engineArrows, engineLinesExpanded]);
 
   // ── Hover arrow from Common Moves ─────────────────────────────────────────────
@@ -422,7 +331,7 @@ export default function App() {
     if (!hoverBookSan) return null;
     const resolved = resolveSan(displayedState, hoverBookSan);
     if (!resolved) return null;
-    return { from: resolved.from, to: resolved.to, color: 'rgba(255,255,255,0.82)', width: 2.8 };
+    return { from: resolved.from, to: resolved.to, color: 'rgba(92,170,240,0.85)', width: 2.4 };
   }, [hoverBookSan, displayedState]);
 
   const boardArrows = useMemo(() => {
@@ -435,35 +344,11 @@ export default function App() {
     return [hoverBookArrow, ...deduped];
   }, [activeView, engineArrows, topArrows, hoverBookArrow]);
 
-  // ── board size ───────────────────────────────────────────────────────────────
-  const [boardSize, setBoardSize] = useState(560);
-  const BOARD_MIN = 240, BOARD_STEP = 60;
-
-  // Auto-size for Analysis: fill viewport height/width, no manual controls needed.
-  useEffect(() => {
-    if (activeView !== 'analysis') return;
-    const SIDEBAR = 210;
-    const PANEL = 420;
-    const PAGE_PAD_H = 40;   // 20px left + 20px right
-    const PAGE_PAD_V = 16 + 40; // top + bottom
-    const GRID_GAP = 12;
-    const SPOTTING = 148;    // SpottingPanel fixed width
-    const EVAL_W = showEval ? 26 + 12 : 0; // EvalBar + its gap
-    const ROW_GAP = 12;      // gap between SpottingPanel and Board wrapper
-    const SLACK = 24;        // breathing room
-
-    const compute = () => {
-      const availW = window.innerWidth - SIDEBAR - PANEL - PAGE_PAD_H - GRID_GAP - SPOTTING - EVAL_W - ROW_GAP;
-      const availH = window.innerHeight - PAGE_PAD_V - SLACK;
-      const raw = Math.min(availW, availH);
-      // Snap to nearest 8px so each square is whole pixels
-      setBoardSize(Math.max(BOARD_MIN, Math.floor(raw / 8) * 8));
-    };
-
-    compute();
-    window.addEventListener('resize', compute);
-    return () => window.removeEventListener('resize', compute);
-  }, [activeView, showEval]);
+  // ── board size: fit the column, capped by the user's preferred size ─────────
+  const { ref: fitRef, size: boardSize } = useFitBoardSize(settings.boardMax, {
+    reserveWidth: activeView === 'analysis' && showEval ? 40 : 0,
+    reserveHeight: 118,
+  });
 
   // ── modal states ────────────────────────────────────────────────────────────
   const [showNewGame, setShowNewGame] = useState(false);
@@ -476,27 +361,40 @@ export default function App() {
   const [showExport, setShowExport] = useState(false);
   const [copyFenMsg, setCopyFenMsg] = useState('');
   const [copyPgnMsg, setCopyPgnMsg] = useState('');
-  const pgnRef = useRef<HTMLTextAreaElement>(null);
   const anyModalOpen = showNewGame || showExport || pendingPromotion !== null;
 
-  // ── valid moves ─────────────────────────────────────────────────────────────
-  const validMoves = useMemo(() => {
-    if (!selectedPos) return [];
-    return getLegalMoves(
-      displayedState.board, selectedPos,
-      displayedState.enPassantTarget,
-      displayedState.whiteCanCastleKingside, displayedState.whiteCanCastleQueenside,
-      displayedState.blackCanCastleKingside, displayedState.blackCanCastleQueenside,
-    );
-  }, [displayedState, selectedPos]);
+  // Close modals with Escape.
+  useEffect(() => {
+    if (!showNewGame && !showExport) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setShowNewGame(false); setShowExport(false); }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showNewGame, showExport]);
 
-  // ── step-forward with animation ──────────────────────────────────────────────
+  // ── valid moves ─────────────────────────────────────────────────────────────
+  const legalFrom = useCallback((state: GameState, from: Position) => getLegalMoves(
+    state.board, from,
+    state.enPassantTarget,
+    state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
+    state.blackCanCastleKingside, state.blackCanCastleQueenside,
+  ), []);
+
+  const validMoves = useMemo(
+    () => (selectedPos ? legalFrom(displayedState, selectedPos) : []),
+    [displayedState, selectedPos, legalFrom],
+  );
+
+  // ── navigation ────────────────────────────────────────────────────────────────
+  const childrenOf = (t: GameTree, id: string | null) => (id === null ? t.rootChildren : (t.nodes[id]?.children ?? []));
+
   const stepForwardWithAnim = useCallback(() => {
     setIsPlaying(false);
     setSelectedPos(null);
     const t = treeRef.current;
     const curId = currentNodeIdRef.current;
-    const children = curId === null ? t.rootChildren : (t.nodes[curId]?.children ?? []);
+    const children = childrenOf(t, curId);
     if (children.length === 0) return;
     const nextId = children[0];
     const move = t.nodes[nextId]?.move;
@@ -508,25 +406,36 @@ export default function App() {
     setCurrentNodeId(nextId);
   }, []);
 
-  // ── keyboard ────────────────────────────────────────────────────────────────
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (anyModalOpen) return;
-      if ((e.target as HTMLElement)?.tagName === 'TEXTAREA') return;
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        setIsPlaying(false); setSelectedPos(null);
-        const curId = currentNodeIdRef.current;
-        const t = treeRef.current;
-        setCurrentNodeId(curId !== null ? (t.nodes[curId]?.parentId ?? null) : null);
-      } else if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        stepForwardWithAnim();
-      }
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [anyModalOpen, stepForwardWithAnim]);
+  const stepBack = useCallback(() => {
+    setIsPlaying(false); setSelectedPos(null); setAnimPiece(null);
+    const curId = currentNodeIdRef.current;
+    setCurrentNodeId(curId !== null ? (treeRef.current.nodes[curId]?.parentId ?? null) : null);
+  }, []);
+
+  const goStart = useCallback(() => {
+    setIsPlaying(false); setSelectedPos(null); setAnimPiece(null); setCurrentNodeId(null);
+  }, []);
+
+  /** End of the line currently shown (follows first children from here). */
+  const goEnd = useCallback(() => {
+    setIsPlaying(false); setSelectedPos(null); setAnimPiece(null);
+    const t = treeRef.current;
+    let id = currentNodeIdRef.current;
+    for (;;) {
+      const ch = childrenOf(t, id);
+      if (ch.length === 0) break;
+      id = ch[0];
+    }
+    setCurrentNodeId(id);
+  }, []);
+
+  useBoardKeys({
+    prev: stepBack,
+    next: stepForwardWithAnim,
+    first: goStart,
+    last: goEnd,
+    flip: () => setFlipped(f => !f),
+  }, isBoardView && !anyModalOpen);
 
   // ── auto-play ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -534,7 +443,7 @@ export default function App() {
     const id = setInterval(() => {
       const t = treeRef.current;
       const curId = currentNodeIdRef.current;
-      const children = curId === null ? t.rootChildren : (t.nodes[curId]?.children ?? []);
+      const children = childrenOf(t, curId);
       if (children.length === 0) { setIsPlaying(false); return; }
       const nextId = children[0];
       const move = t.nodes[nextId]?.move;
@@ -556,15 +465,14 @@ export default function App() {
     setIsPlaying(false);
   }
 
-  function doTreeMove(from: Position, to: Position, promotion?: import('./chess/types').PieceType) {
+  function doTreeMove(from: Position, to: Position, promotion?: PieceType, animate = true) {
     const movingPiece = displayedState.board[from.row][from.col];
     const existing = findChildByMove(tree, currentNodeId, from, to, promotion);
+    if (animate && movingPiece) setAnimPiece({ piece: movingPiece, from, to });
     if (existing) {
-      if (movingPiece) setAnimPiece({ piece: movingPiece, from, to });
       setCurrentNodeId(existing);
       return;
     }
-    if (movingPiece) setAnimPiece({ piece: movingPiece, from, to });
     const newState = executeMove(displayedState, from, to, promotion);
     const lastMove = newState.moveHistory[newState.moveHistory.length - 1];
     const { tree: newTree, nodeId } = addNode(tree, currentNodeId, lastMove, newState);
@@ -578,35 +486,39 @@ export default function App() {
     if (resolved) doTreeMove(resolved.from, resolved.to, resolved.promotionPiece);
   };
 
-  const handleSquareClick = useCallback((pos: Position) => {
+  /** Shared by click-to-move and drag-and-drop. */
+  const tryMove = (from: Position, to: Position, animate: boolean): boolean => {
+    if (!legalFrom(displayedState, from).some(m => m.row === to.row && m.col === to.col)) return false;
+    const movingPiece = displayedState.board[from.row][from.col];
+    setSelectedPos(null);
+    if (movingPiece?.type === 'pawn' && (to.row === 0 || to.row === 7)) {
+      setPendingPromotion({ from, to });
+      return true;
+    }
+    doTreeMove(from, to, undefined, animate);
+    return true;
+  };
+
+  const handleSquareClick = (pos: Position) => {
     if (preview) { setPreview(null); return; } // dismiss PV preview, act on next click
     if (displayedState.isCheckmate || displayedState.isStalemate) return;
     if (pendingPromotion) return;
-    if (selectedPos && validMoves.some(m => m.row === pos.row && m.col === pos.col)) {
-      const movingPiece = displayedState.board[selectedPos.row][selectedPos.col];
-      const isPromotion = movingPiece?.type === 'pawn' && (pos.row === 0 || pos.row === 7);
-      if (isPromotion) {
-        setPendingPromotion({ from: selectedPos, to: pos });
-        setSelectedPos(null);
-        return;
-      }
-      setSelectedPos(null);
-      doTreeMove(selectedPos, pos);
-      return;
-    }
+    if (selectedPos && tryMove(selectedPos, pos, true)) return;
     const piece = displayedState.board[pos.row][pos.col];
-    setSelectedPos(piece && piece.color === displayedState.currentTurn ? pos : null);
-  }, [displayedState, selectedPos, validMoves, pendingPromotion, tree, currentNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
+    setSelectedPos(piece && piece.color === displayedState.currentTurn && !(selectedPos && selectedPos.row === pos.row && selectedPos.col === pos.col) ? pos : null);
+  };
 
-  const handlePromotionSelect = useCallback((pieceType: import('./chess/types').PieceType) => {
+  const handleDragMove = (from: Position, to: Position) => {
+    if (preview) setPreview(null);
+    if (pendingPromotion || displayedState.isCheckmate || displayedState.isStalemate) return;
+    if (!tryMove(from, to, false)) setSelectedPos(null);
+  };
+
+  const handlePromotionSelect = (pieceType: PieceType) => {
     if (!pendingPromotion) return;
     setPendingPromotion(null);
-    doTreeMove(pendingPromotion.from, pendingPromotion.to, pieceType);
-  }, [pendingPromotion, displayedState, tree, currentNodeId]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const handlePromotionCancel = useCallback(() => {
-    setPendingPromotion(null);
-  }, []);
+    doTreeMove(pendingPromotion.from, pendingPromotion.to, pieceType, false);
+  };
 
   const handleUndo = () => {
     const tip = getMainLineTip(tree);
@@ -626,6 +538,7 @@ export default function App() {
 
   const openTrainerCourse = (courseId: string) => {
     setActiveCourseId(courseId);
+    saveLastCourse(courseId);
     setActiveView('trainer');
   };
 
@@ -673,83 +586,94 @@ export default function App() {
   const downloadFoldedOpening = () => {
     const filename = `${slugify(courseTitle)}.json`;
     downloadBlob(JSON.stringify(foldedOpeningJson, null, 2), filename);
-    setSaveState(`downloaded ${filename}`);
-    setTimeout(() => setSaveState('ready'), 2500);
+    setSaveState(`Saved ${filename}`);
+    setTimeout(() => setSaveState(''), 2500);
   };
 
   // ── status ───────────────────────────────────────────────────────────────────
-  const statusText = displayedState.isCheckmate
-    ? `Checkmate! ${displayedState.currentTurn === 'white' ? 'Black' : 'White'} wins!`
-    : displayedState.isStalemate ? 'Stalemate! Draw.'
-    : displayedState.isCheck
-      ? `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} is in check!`
-      : isAnalysisMode ? 'Analysis'
-      : `${displayedState.currentTurn === 'white' ? 'White' : 'Black'} to move`;
+  const turnName = displayedState.currentTurn === 'white' ? 'White' : 'Black';
+  const status: { text: string; tone: 'white' | 'black' | 'warn' | 'bad' | 'info' } = displayedState.isCheckmate
+    ? { text: `Checkmate — ${displayedState.currentTurn === 'white' ? 'Black' : 'White'} wins`, tone: 'bad' }
+    : displayedState.isStalemate ? { text: 'Stalemate — draw', tone: 'warn' }
+    : displayedState.isCheck ? { text: `${turnName} is in check`, tone: 'warn' }
+    : isAnalysisMode ? { text: `${turnName} to move · exploring`, tone: 'info' }
+    : { text: `${turnName} to move`, tone: displayedState.currentTurn };
 
-  const statusColor = displayedState.isCheckmate ? '#ff0040'
-    : displayedState.isStalemate ? '#ffd93d'
-    : displayedState.isCheck ? '#ff9f43'
-    : isAnalysisMode ? '#ff9f43'
-    : displayedState.currentTurn === 'white' ? '#fff' : '#0ff';
+  const SPEED_OPTIONS = [{ label: '1s', ms: 1000 }, { label: '3s', ms: 3000 }, { label: '5s', ms: 5000 }];
 
-  const statusClass = displayedState.isCheckmate ? 'checkmate-overlay'
-    : displayedState.isCheck ? 'status-slide-in' : '';
-
-  const SPEED_OPTIONS = [{ label: '1s', ms: 1000 }, { label: '5s', ms: 5000 }, { label: '15s', ms: 15000 }];
-
-  // ── course catalog (loaded "ready" courses + static "planned" cards) ──────────
-  type DisplayCard = {
-    id: string; name: string; tag: string; tagClass?: string; desc: string;
-    fen: string; ready: boolean; lines: number; learned: number;
-  };
-  const readyCards: DisplayCard[] = catalog.map((meta: CourseCardMeta) => {
+  // ── course catalog ──────────────────────────────────────────────────────────
+  const allCards: DisplayCard[] = catalog.map((meta: CourseCardMeta) => {
     const c = courses[meta.id];
     const total = c?.lines.length ?? 0;
     const prog = loadProgress(meta.id);
-    const learned = c ? c.lines.filter(l => prog.learn[l.id]).length : 0;
     return {
-      id: meta.id, name: meta.name, tag: meta.tag, tagClass: meta.tagClass,
-      desc: meta.desc, fen: meta.fen, ready: true, lines: total, learned,
+      ...meta,
+      playAs: c?.playAs ?? 'w',
+      lines: total,
+      learned: c ? c.lines.filter(l => prog.learn[l.id]).length : 0,
+      practiced: c ? c.lines.filter(l => prog.practice[l.id]).length : 0,
     };
   });
-  const plannedCards: DisplayCard[] = COURSES
-    .filter(c => !c.ready && !catalog.some(m => m.id === c.id))
-    .map(c => ({ id: c.id, name: c.name, tag: c.tag, tagClass: c.tagClass, desc: c.desc, fen: c.fen, ready: false, lines: c.lines, learned: 0 }));
-  const allCards = [...readyCards, ...plannedCards];
-  const filteredCourses = allCards.filter(course => course.name.toLowerCase().includes(courseSearch.trim().toLowerCase()));
+  const q = courseSearch.trim().toLowerCase();
+  const filteredCourses = allCards.filter(c =>
+    (sideFilter === 'all' || c.playAs === sideFilter) &&
+    (!q || c.name.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)));
   const totalLines = allCards.reduce((sum, c) => sum + c.lines, 0);
-  const readyLines = readyCards.reduce((sum, c) => sum + c.lines, 0);
+  const learnedLines = allCards.reduce((sum, c) => sum + c.learned, 0);
+  const lastCard = allCards.find(c => c.id === activeCourseId) ?? allCards[0];
 
-  // Scotch progress for Home "continue training".
-  const scotchCourse = courses['scotch-game'];
-  const scotchProgress = loadProgress('scotch-game');
-  const scotchTotal = scotchCourse?.lines.length ?? 0;
-  const scotchLearned = scotchCourse ? scotchCourse.lines.filter(l => scotchProgress.learn[l.id]).length : 0;
+  const canStepForward = childrenOf(tree, currentNodeId).length > 0;
+
+  const playbackControls = (
+    <div className="nav-controls">
+      <button type="button" className="tool-btn icon" title="Start (↑)" onClick={goStart} disabled={currentNodeId === null}>⏮</button>
+      <button type="button" className="tool-btn icon" title="Back (←)" onClick={stepBack} disabled={currentNodeId === null}>‹</button>
+      <button type="button" className={`tool-btn icon play${isPlaying ? ' on' : ''}`} title={isPlaying ? 'Pause' : 'Auto-play'} onClick={() => {
+        if (isPlaying) { setIsPlaying(false); return; }
+        if (!canStepForward) setCurrentNodeId(null);
+        setIsPlaying(true);
+      }} disabled={!hasAnyMoves}>{isPlaying ? '❚❚' : '▶'}</button>
+      <button type="button" className="tool-btn icon" title="Forward (→)" onClick={stepForwardWithAnim} disabled={!canStepForward}>›</button>
+      <button type="button" className="tool-btn icon" title="End (↓)" onClick={goEnd} disabled={!canStepForward}>⏭</button>
+      <div className="seg-mini">
+        {SPEED_OPTIONS.map(({ label, ms }) => (
+          <button key={ms} type="button" className={playSpeed === ms ? 'on' : ''} onClick={() => setPlaySpeed(ms)} title="Auto-play speed">{label}</button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const navItems: Array<{ view: ActiveView; label: string; icon: string }> = [
+    { view: 'home', label: 'Home', icon: '⌂' },
+    { view: 'openings', label: 'Openings', icon: '♘' },
+    { view: 'analysis', label: 'Analysis', icon: '♟' },
+    { view: 'create', label: 'Create', icon: '✎' },
+    { view: 'master', label: 'Roadmap', icon: '☰' },
+  ];
 
   // ── render ──────────────────────────────────────────────────────────────────
   return (
     <div className="laion-app">
-      <div className="bg-grid" />
-      <div className="bg-scan" />
-
       <div className="page-shell">
 
         {/* Sidebar nav */}
         <nav className="side-nav">
           <button className="wordmark" type="button" onClick={() => setActiveView('home')}>
             <span className="knight">♞</span>
-            <span className="name">LaionChess</span>
+            <span className="name">Laion<b>Chess</b></span>
           </button>
-          <nav className="main-nav">
-            <button type="button" className={activeView === 'home' ? 'active' : ''} onClick={() => setActiveView('home')}><span>⌂</span>Home</button>
-            <button type="button" className={activeView === 'analysis' ? 'active' : ''} onClick={() => setActiveView('analysis')}><span>☷</span>Analysis</button>
-            <button type="button" className={activeView === 'openings' || activeView === 'trainer' ? 'active' : ''} onClick={() => setActiveView('openings')}><span>♘</span>Openings</button>
-            <button type="button" className={activeView === 'create' ? 'active' : ''} onClick={() => setActiveView('create')}><span>⚙</span>Create</button>
-            <button type="button" className={activeView === 'master' ? 'active' : ''} onClick={() => setActiveView('master')}><span>☰</span>Master Plan</button>
-          </nav>
+          <div className="main-nav">
+            {navItems.map(item => (
+              <button key={item.view} type="button"
+                className={activeView === item.view || (item.view === 'openings' && activeView === 'trainer') ? 'active' : ''}
+                onClick={() => setActiveView(item.view)}>
+                <span className="ic">{item.icon}</span>{item.label}
+              </button>
+            ))}
+          </div>
           <div className="side-nav-footer">
-            <button className="btn btn-magenta" type="button" onClick={openNewGame}>⟳ New / Import</button>
-            <button className="btn btn-green" type="button" onClick={() => setShowExport(true)}>↑ Export</button>
+            <button className="btn btn-block" type="button" onClick={openNewGame}>＋ New / Import</button>
+            <button className="btn btn-block" type="button" onClick={() => setShowExport(true)}>↧ Export</button>
             <SettingsMenu />
           </div>
         </nav>
@@ -760,91 +684,105 @@ export default function App() {
         {activeView === 'home' && (
           <main className="home-view">
             <section className="hero">
-              <span className="kicker">Practice &gt; Playing Bots</span>
-              <h1 className="h-display">LaionChess</h1>
-              <hr className="divider-glow" />
-              <p className="tagline">Analyze your games. Drill your openings.<br />Deliberate practice, move by move.</p>
+              <span className="eyebrow">Opening repertoire trainer</span>
+              <h1>Learn your openings.<br /><span className="accent">Then play them from memory.</span></h1>
+              <p className="lead">
+                {catalog.length} courses · {totalLines} lines with coach notes. Learn each line with guided arrows,
+                recall it in Practice, and prove it in Drill against random variations.
+              </p>
               <div className="cta-row">
-                <button className="btn btn-cyan" type="button" onClick={() => openTrainerCourse('scotch-game')}>♞ Train Openings</button>
-                <button className="btn btn-ghost" type="button" onClick={() => setActiveView('analysis')}>Open Analysis Board →</button>
+                <button className="btn btn-primary btn-lg" type="button" onClick={() => setActiveView('openings')}>Browse openings →</button>
+                <button className="btn btn-lg" type="button" onClick={() => setActiveView('analysis')}>Analysis board</button>
+              </div>
+            </section>
+
+            {lastCard && (
+              <section className="continue-card">
+                <div className="mini"><MiniBoard fen={lastCard.fen} flipped={lastCard.playAs === 'b'} /></div>
+                <div className="body">
+                  <span className="eyebrow">Continue training</span>
+                  <h3>{lastCard.name}</h3>
+                  <div className="progress-track"><div className="progress-fill" style={{ width: `${lastCard.lines ? Math.round((lastCard.learned / lastCard.lines) * 100) : 0}%` }} /></div>
+                  <span className="muted">{lastCard.learned}/{lastCard.lines} lines learned · {lastCard.practiced}/{lastCard.lines} recalled</span>
+                </div>
+                <button className="btn btn-primary" type="button" onClick={() => openTrainerCourse(lastCard.id)}>Resume →</button>
+              </section>
+            )}
+
+            <section className="home-section">
+              <div className="section-row">
+                <h2>Openings</h2>
+                <button type="button" className="link-btn" onClick={() => setActiveView('openings')}>All {catalog.length} courses →</button>
+              </div>
+              <div className="course-grid compact">
+                {allCards.slice(0, 4).map(card => (
+                  <CourseCard key={card.id} card={card} onOpen={() => openTrainerCourse(card.id)} />
+                ))}
               </div>
             </section>
 
             <section className="feature-grid">
-              <button className="card feature f-cyan" type="button" onClick={() => setActiveView('analysis')}>
-                <div className="ic">☷</div>
-                <h2>Analysis Board</h2>
-                <p>Free analysis with PGN/FEN import, export, variants and the existing Laion spotting modes.</p>
-                <span className="go">Open →</span>
-              </button>
-              <button className="card feature f-green" type="button" onClick={() => setActiveView('openings')}>
+              <button className="feature" type="button" onClick={() => setActiveView('openings')}>
                 <div className="ic">♘</div>
-                <h2>Opening Trainer</h2>
-                <p>Ready-made repertoires replayed against the board. Learn mode guides you; Practice mode tests recall.</p>
-                <span className="go">Browse courses →</span>
+                <h3>Opening trainer</h3>
+                <p>Learn · Practice · Drill. The coach explains each move; mistakes flash, hints are one click away.</p>
               </button>
-              <button className="card feature f-magenta" type="button" onClick={() => setActiveView('create')}>
-                <div className="ic">⚙</div>
-                <h2>Course Creator</h2>
-                <p>Build your repertoire from scratch or import PGN/FEN, then export folded-opening JSON.</p>
-                <span className="go">Start building →</span>
+              <button className="feature" type="button" onClick={() => setActiveView('analysis')}>
+                <div className="ic">♟</div>
+                <h3>Analysis board</h3>
+                <p>Stockfish, opening explorer, variations, PGN/FEN import and export, and the Laion spotting overlays.</p>
+              </button>
+              <button className="feature" type="button" onClick={() => setActiveView('create')}>
+                <div className="ic">✎</div>
+                <h3>Course creator</h3>
+                <p>Build a repertoire tree on the board and export it as a trainable course JSON.</p>
               </button>
             </section>
 
-            <section className="card continue-card">
-              <div className="mini"><MiniBoard fen={COURSES[0].fen} /></div>
-              <div className="body">
-                <span className="kicker">Continue training</span>
-                <h3>Scotch Game</h3>
-                <div className="progress-track"><div className="progress-fill" style={{ width: `${scotchTotal ? Math.round((scotchLearned / scotchTotal) * 100) : 0}%` }} /></div>
-                <span className="mono-dim">{scotchLearned}/{scotchTotal} lines learned</span>
-              </div>
-              <button className="btn btn-green" type="button" onClick={() => openTrainerCourse('scotch-game')}>Resume →</button>
+            <section className="shortcuts">
+              <span><kbd>←</kbd><kbd>→</kbd> step through moves</span>
+              <span><kbd>↑</kbd><kbd>↓</kbd> start / end</span>
+              <span><kbd>F</kbd> flip board</span>
+              <span><kbd>Right-click</kbd> drag to draw arrows</span>
             </section>
           </main>
         )}
 
         {activeView === 'openings' && (
           <main className="catalog-view">
-            <div className="catalog-head">
-              <span className="kicker">Repertoire Training</span>
-              <h1 className="h-display">Opening Courses</h1>
-              <p>Learn lines move by move, then prove them in Practice.</p>
-              <hr className="divider-glow" />
+            <div className="page-head">
+              <div>
+                <span className="eyebrow">Repertoire training</span>
+                <h1>Opening courses</h1>
+                <p className="lead">Pick a course, learn the lines move by move, then drill them until they're automatic.</p>
+              </div>
+              <div className="stat-box">
+                <strong>{learnedLines}<span>/{totalLines}</span></strong>
+                <span>lines learned</span>
+              </div>
             </div>
 
             <div className="catalog-bar">
               <div className="search-wrap">
                 <span className="icon">⌕</span>
-                <input className="input" value={courseSearch} onChange={e => setCourseSearch(e.target.value)} placeholder="Search openings..." />
+                <input className="input" value={courseSearch} onChange={e => setCourseSearch(e.target.value)} placeholder="Search openings…" />
               </div>
-              <div className="right">
-                <span className="stat">{readyLines}/{totalLines} lines ready</span>
-                <button className="btn btn-magenta" type="button" onClick={() => setActiveView('create')}>⚙ Create a Course</button>
+              <div className="segmented small">
+                {([['all', 'All'], ['w', 'As White'], ['b', 'As Black']] as const).map(([key, label]) => (
+                  <button key={key} type="button" className={sideFilter === key ? 'on' : ''} onClick={() => setSideFilter(key)}>
+                    <span className="t">{label}</span>
+                  </button>
+                ))}
               </div>
+              <button className="btn" type="button" onClick={() => setActiveView('create')}>✎ Create a course</button>
             </div>
 
+            {coursesLoading && <div className="empty-state">Loading courses…</div>}
+            {!coursesLoading && filteredCourses.length === 0 && <div className="empty-state">No courses match your search.</div>}
             <div className="course-grid">
-              {filteredCourses.map(course => {
-                const pct = course.ready && course.lines ? Math.round((course.learned / course.lines) * 100) : 0;
-                return (
-                  <button
-                    key={course.id}
-                    type="button"
-                    className={`card course-card ${course.ready ? '' : 'disabled'}`}
-                    onClick={() => course.ready && openTrainerCourse(course.id)}
-                  >
-                    <div className="mini"><MiniBoard fen={course.fen} /></div>
-                    <div className="body">
-                      <div className="ttl"><h2>{course.name}</h2><span className={`tag ${course.tagClass ?? ''}`}>{course.tag}</span></div>
-                      <div className="desc">{course.desc}</div>
-                      <div className="meta">{course.lines} lines total</div>
-                      <div className="progress-track"><div className="progress-fill" style={{ width: `${pct}%` }} /></div>
-                      <div className="foot"><span className="mono-dim">{course.ready ? `${course.learned}/${course.lines} learned` : 'not started'}</span><span className="go">{course.ready ? 'Train →' : 'Coming soon'}</span></div>
-                    </div>
-                  </button>
-                );
-              })}
+              {filteredCourses.map(card => (
+                <CourseCard key={card.id} card={card} onOpen={() => openTrainerCourse(card.id)} />
+              ))}
             </div>
           </main>
         )}
@@ -855,126 +793,82 @@ export default function App() {
               course={activeCourse}
               spottingModes={spottingModes}
               setSpottingModes={setSpottingModes}
-              boardSize={boardSize}
-              setBoardSize={setBoardSize}
               onAnalysis={openAnalysisFromState}
+              onBack={() => setActiveView('openings')}
             />
           ) : (
             <main className="catalog-view">
-              <div className="catalog-head">
-                <span className="kicker">Opening Trainer</span>
-                <h1 className="h-display">Loading…</h1>
-                <p>Fetching course data. If this persists, check public/courses/manifest.json.</p>
-              </div>
+              <div className="empty-state">{coursesLoading ? 'Loading course…' : 'Course not found. Check public/courses/manifest.json.'}</div>
             </main>
           )
         )}
 
-        {(activeView === 'analysis' || activeView === 'create') && (
-          <>
-            {activeView === 'create' && (
-              <div className={statusClass} style={{
-                fontSize: 18, fontWeight: 700, padding: '8px 28px', borderRadius: 6,
-                backgroundColor: statusColor, color: statusColor === '#fff' || statusColor === '#0ff' ? '#000' : '#fff',
-                boxShadow: `0 0 20px ${statusColor}40, 0 2px 8px rgba(0,0,0,0.4)`,
-                letterSpacing: 1, textTransform: 'uppercase',
-              }}>{statusText}</div>
-            )}
-
-            <div className="board-workspace">
-              <div className="board-col">
-                <div className="board-row">
-                  <SpottingPanel modes={spottingModes} onChange={setSpottingModes} />
-                  {showEval && (
-                    <div style={{ paddingTop: 34 }}>
-                      <EvalBar pawns={barPawns} mate={barMate} terminal={evalTerminal} height={boardSize} />
-                    </div>
+        {isBoardView && (
+          <div className="board-page">
+            <div className="board-main" ref={fitRef}>
+              <div className="board-row">
+                {activeView === 'analysis' && showEval && (
+                  <EvalBar pawns={barPawns} mate={barMate} terminal={evalTerminal} height={boardSize} flipped={flipped} />
+                )}
+                <div className="board-stage">
+                  <Board
+                    arrows={boardArrows}
+                    board={boardState.board}
+                    selectedPos={preview ? null : selectedPos}
+                    validMoves={preview ? [] : validMoves}
+                    lastMove={boardLastMove}
+                    checkSquare={boardCheckSquare}
+                    isCheckmate={boardState.isCheckmate}
+                    currentTurn={boardState.currentTurn}
+                    onSquareClick={handleSquareClick}
+                    onMove={handleDragMove}
+                    canDrag={pos => !preview && !pendingPromotion && displayedState.board[pos.row][pos.col]?.color === displayedState.currentTurn}
+                    onResize={n => setSetting('boardMax', n)}
+                    overlay={spottingOverlay}
+                    flipped={flipped}
+                    interactiveOverlay={pendingPromotion ? (
+                      <PromotionPicker
+                        color={displayedState.currentTurn}
+                        col={flipped ? 7 - pendingPromotion.to.col : pendingPromotion.to.col}
+                        isWhitePromotion={(displayedState.currentTurn === 'white') !== flipped}
+                        squarePx={boardSize / 8}
+                        onSelect={handlePromotionSelect}
+                        onCancel={() => setPendingPromotion(null)}
+                      />
+                    ) : undefined}
+                    boardSize={boardSize}
+                    hidePieceAt={animPiece?.to ?? null}
+                    animOverlay={animPiece ? (
+                      <AnimatedPiece anim={animPiece} boardSize={boardSize} flipped={flipped} onDone={() => setAnimPiece(null)} />
+                    ) : undefined}
+                  />
+                  {(isAnalysisMode || preview) && <div className="analysis-frame" />}
+                  {preview && (
+                    <button type="button" className="review-chip" onClick={() => setPreview(null)}>Previewing engine line · click to return</button>
                   )}
-                  <div style={{ position: 'relative' }}>
-                    <Board
-                      arrows={boardArrows}
-                      board={boardState.board}
-                      selectedPos={preview ? null : selectedPos}
-                      validMoves={preview ? [] : validMoves}
-                      lastMove={boardLastMove}
-                      checkSquare={boardCheckSquare}
-                      enPassantTarget={boardState.enPassantTarget}
-                      whiteCanCastleKingside={boardState.whiteCanCastleKingside}
-                      whiteCanCastleQueenside={boardState.whiteCanCastleQueenside}
-                      blackCanCastleKingside={boardState.blackCanCastleKingside}
-                      blackCanCastleQueenside={boardState.blackCanCastleQueenside}
-                      isCheck={boardState.isCheck}
-                      isCheckmate={boardState.isCheckmate}
-                      isStalemate={boardState.isStalemate}
-                      currentTurn={boardState.currentTurn}
-                      onSquareClick={handleSquareClick}
-                      onResize={setBoardSize}
-                      overlay={spottingOverlay}
-                      interactiveOverlay={pendingPromotion ? (
-                        <PromotionPicker
-                          color={displayedState.currentTurn}
-                          col={pendingPromotion.to.col}
-                          isWhitePromotion={displayedState.currentTurn === 'white'}
-                          squarePx={Math.round(boardSize / 8)}
-                          onSelect={handlePromotionSelect}
-                          onCancel={handlePromotionCancel}
-                        />
-                      ) : undefined}
-                      boardSize={boardSize}
-                      hidePieceAt={animPiece?.to ?? null}
-                      animOverlay={animPiece ? (
-                        <AnimatedPiece anim={animPiece} boardSize={boardSize} onDone={() => setAnimPiece(null)} />
-                      ) : undefined}
-                    />
-                    {(isAnalysisMode || preview) && <div className="analysis-frame" />}
-                  </div>
+                </div>
+              </div>
+              <div className="board-toolbar" style={{ width: boardSize + (activeView === 'analysis' && showEval ? 40 : 0) }}>
+                {playbackControls}
+                <span className="tb-spacer" />
+                <SpottingPanel modes={spottingModes} onChange={setSpottingModes} />
+                <button type="button" className="tool-btn" onClick={() => setFlipped(f => !f)} title="Flip board (F)">⇅ Flip</button>
+              </div>
+            </div>
+
+            {activeView === 'analysis' && (
+              <aside className="panel an-panel">
+                <div className="panel-head">
+                  <span className={`status-pill tone-${status.tone}`}>{status.text}</span>
+                  <SettingsMenu />
+                </div>
+                <div className="toggle-row">
+                  <PanelToggle on={showEval} label="Eval bar" onClick={() => setShowEval(v => !v)} />
+                  <PanelToggle on={settings.engineEnabled} label="Engine" onClick={() => setSetting('engineEnabled', !settings.engineEnabled)} />
+                  <PanelToggle on={showBook} label="Book" onClick={() => setShowBook(v => !v)} />
                 </div>
 
-                {hasAnyMoves && activeView === 'create' && (
-                  <div className="control-stack">
-                    <div className="control-row">
-                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</Btn>
-                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</Btn>
-                      <button onClick={() => {
-                        if (isPlaying) { setIsPlaying(false); return; }
-                        if (currentNodeId === mainLineTip) setCurrentNodeId(null);
-                        setIsPlaying(true);
-                      }} className={isPlaying ? 'btn btn-yellow' : 'btn btn-green'}>{isPlaying ? '⏸ Pause' : '▶ Play'}</button>
-                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</Btn>
-                      <Btn color="#00ffff" bg="#051520" border="#00ffff30" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</Btn>
-                      {SPEED_OPTIONS.map(({ label, ms }) => (
-                        <button key={ms} onClick={() => setPlaySpeed(ms)} className={`seg ${playSpeed === ms ? 'active' : ''}`}>{label}</button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {activeView === 'create' && (
-                  <div className="board-size-control">
-                    <span>BOARD</span>
-                    <button onClick={() => setBoardSize(s => Math.max(BOARD_MIN, s - BOARD_STEP))} disabled={boardSize <= BOARD_MIN}>−</button>
-                    <strong>{boardSize}px</strong>
-                    <button onClick={() => setBoardSize(s => s + BOARD_STEP)}>+</button>
-                  </div>
-                )}
-              </div>
-
-              {activeView === 'analysis' && (
-                <aside className="an-panel">
-                  <div className="an-head">
-                    <div className={`an-status ${statusClass}`} style={{
-                      fontSize: 12, fontWeight: 700, padding: '5px 10px', borderRadius: 5, flex: 1,
-                      backgroundColor: statusColor, color: statusColor === '#fff' || statusColor === '#0ff' ? '#000' : '#fff',
-                      letterSpacing: 1, textTransform: 'uppercase', textAlign: 'center',
-                      boxShadow: `0 0 10px ${statusColor}30`,
-                    }}>{statusText}</div>
-                    <SettingsMenu />
-                  </div>
-                  <div className="an-toggles">
-                    <PanelToggle on={showEval} label="Evaluation" onClick={() => setShowEval(v => !v)} />
-                    <PanelToggle on={settings.engineEnabled} label="Engine analysis" onClick={() => setSetting('engineEnabled', !settings.engineEnabled)} />
-                  </div>
-
+                {settings.engineEnabled && (
                   <EnginePanel
                     enabled={settings.engineEnabled}
                     onToggle={() => setSetting('engineEnabled', !settings.engineEnabled)}
@@ -994,133 +888,110 @@ export default function App() {
                     onHashMb={(mb) => setSetting('engineHashMb', mb)}
                     onPreviewMove={handlePreviewMove}
                   />
+                )}
 
-                  {hasAnyMoves && (
-                    <MoveList
-                      tree={tree}
-                      currentNodeId={currentNodeId}
-                      onNavigate={(id: string | null) => { setIsPlaying(false); setSelectedPos(null); setCurrentNodeId(id); }}
-                    />
-                  )}
+                <MoveList
+                  tree={tree}
+                  currentNodeId={currentNodeId}
+                  onNavigate={(id: string | null) => { setIsPlaying(false); setSelectedPos(null); setCurrentNodeId(id); }}
+                />
+                {isAnalysisMode && (
+                  <button type="button" className="btn btn-sm" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }}>↩ Back to main line</button>
+                )}
 
-                  {hasAnyMoves && (
-                    <div className="panel-controls">
-                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(null); }} disabled={currentNodeId === null}>⏮</button>
-                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(currentNodeId !== null ? (tree.nodes[currentNodeId]?.parentId ?? null) : null); }} disabled={currentNodeId === null}>◀</button>
-                      <button className={`pc-btn pc-play${isPlaying ? ' pc-pause' : ''}`} onClick={() => {
-                        if (isPlaying) { setIsPlaying(false); return; }
-                        if (currentNodeId === mainLineTip) setCurrentNodeId(null);
-                        setIsPlaying(true);
-                      }}>{isPlaying ? '⏸' : '▶'}</button>
-                      <button className="pc-btn" onClick={stepForwardWithAnim} disabled={!(currentNodeId === null ? tree.rootChildren.length > 0 : (tree.nodes[currentNodeId]?.children.length ?? 0) > 0)}>▶</button>
-                      <button className="pc-btn" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }} disabled={currentNodeId === mainLineTip}>⏭</button>
-                      <div className="pc-sep" />
-                      {SPEED_OPTIONS.map(({ label, ms }) => (
-                        <button key={ms} className={`pc-btn pc-seg${playSpeed === ms ? ' active' : ''}`} onClick={() => setPlaySpeed(ms)}>{label}</button>
-                      ))}
-                      {isAnalysisMode && <button className="pc-btn pc-warn" onClick={() => { setIsPlaying(false); setCurrentNodeId(mainLineTip); }}>↩ end</button>}
+                {showBook && (
+                  <div className="section">
+                    <div className="section-head">
+                      <span>Common moves</span>
+                      <div className="popover-host">
+                        <button type="button" className={`tool-btn icon${showBookOptions ? ' on' : ''}`} onClick={() => setShowBookOptions(v => !v)} title="Filter options">⚙</button>
+                        {showBookOptions && <div className="popover right"><BookFilters /></div>}
+                      </div>
                     </div>
-                  )}
-
-                  <div className="sec-block">
-                    <div className="book-sec-head">
-                      <PanelToggle on={showBook} label="Common moves" onClick={() => setShowBook(v => !v)} />
-                      <button
-                        type="button"
-                        className={`btn-book-opts${showBookOptions ? ' active' : ''}`}
-                        onClick={() => setShowBookOptions(v => !v)}
-                        title="Filter options"
-                      >⚙</button>
-                      {showBookOptions && (
-                        <div className="book-opts-popup">
-                          <BookFilters />
-                        </div>
-                      )}
-                    </div>
-                    {showBook && <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />}
+                    <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
                   </div>
+                )}
 
-                  <div className="sec-block">
-                    <div className="sec-title">Position</div>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      <button className="btn btn-yellow" type="button" onClick={copyFen}>{copyFenMsg || '📋 FEN'}</button>
-                      <button className="btn btn-green" type="button" onClick={copyPgn}>{copyPgnMsg || '📋 PGN'}</button>
-                      <button className="btn btn-ghost" type="button" onClick={() => setShowExport(true)}>Export…</button>
-                    </div>
+                <div className="section">
+                  <div className="section-head"><span>Position</span></div>
+                  <div className="btn-row">
+                    <button className="btn btn-sm" type="button" onClick={copyFen}>{copyFenMsg || 'Copy FEN'}</button>
+                    <button className="btn btn-sm" type="button" onClick={copyPgn}>{copyPgnMsg || 'Copy PGN'}</button>
+                    <button className="btn btn-sm" type="button" onClick={() => setShowExport(true)}>Export…</button>
+                    <button className="btn btn-sm" type="button" onClick={openNewGame}>Import…</button>
                   </div>
-                </aside>
-              )}
+                </div>
+              </aside>
+            )}
 
-              {activeView === 'create' && (
-                <aside className="side-panel creator-panel">
-                  <div className="course-head">
-                    <div className="course-icon">⚙</div>
-                    <input value={courseTitle} onChange={e => setCourseTitle(e.target.value)} maxLength={60} />
-                    <span>{saveState}</span>
-                    <SettingsMenu />
+            {activeView === 'create' && (
+              <aside className="panel creator-panel">
+                <div className="panel-head">
+                  <input className="title-input" value={courseTitle} onChange={e => setCourseTitle(e.target.value)} maxLength={60} aria-label="Course title" />
+                  <SettingsMenu />
+                </div>
+                <div className="toggle-row">
+                  <span className={`status-pill tone-${status.tone}`}>{status.text}</span>
+                  {saveState && <span className="muted">{saveState}</span>}
+                </div>
+                <div className="toggle-row">
+                  <PanelToggle on={showBook} label="Book" onClick={() => setShowBook(v => !v)} />
+                  <PanelToggle on={showTop} label="Top 3 arrows" onClick={() => setShowTop(v => !v)} />
+                  <div className="segmented small push">
+                    <button type="button" className={courseSide === 'white' ? 'on' : ''} onClick={() => setCourseSide('white')}><span className="t">♔ White</span></button>
+                    <button type="button" className={courseSide === 'black' ? 'on' : ''} onClick={() => setCourseSide('black')}><span className="t">♚ Black</span></button>
                   </div>
-                  <div className="cr-toggles">
-                    <PanelToggle on={showEval} label="Eval" onClick={() => setShowEval(v => !v)} />
-                    <PanelToggle on={showBook} label="Book" onClick={() => setShowBook(v => !v)} />
-                    <PanelToggle on={showTop} label="Top 3" onClick={() => setShowTop(v => !v)} />
-                    <div className="side-seg">
-                      <button type="button" className={courseSide === 'white' ? 'sel' : ''} onClick={() => setCourseSide('white')}>♔ White</button>
-                      <button type="button" className={courseSide === 'black' ? 'sel' : ''} onClick={() => setCourseSide('black')}>♚ Black</button>
-                    </div>
-                  </div>
-                  <div className="current-line">{activeLineText ? activeLineText : <span>No moves yet</span>}</div>
-                  <div className="panel-tools">
-                    <button className="btn btn-cyan" type="button" onClick={handleUndo} disabled={mainLineTip === null}>◀ Undo</button>
-                    <button className="btn btn-ghost" type="button" onClick={startFresh}>↻ Clear</button>
-                    <button className="btn btn-yellow" type="button" onClick={() => openAnalysisFromState(displayedState)}>Analysis →</button>
-                    <button className="btn btn-magenta" type="button" onClick={openNewGame}>Import</button>
-                    <button className="btn btn-green" type="button" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↓ Save JSON</button>
-                  </div>
+                </div>
+                <div className="current-line">{activeLineText ? activeLineText : <span>Play moves on the board to build a line.</span>}</div>
+                <div className="btn-row">
+                  <button className="btn btn-sm" type="button" onClick={handleUndo} disabled={mainLineTip === null}>↶ Undo</button>
+                  <button className="btn btn-sm" type="button" onClick={startFresh}>Clear</button>
+                  <button className="btn btn-sm" type="button" onClick={() => openAnalysisFromState(displayedState)}>Analyse →</button>
+                  <button className="btn btn-sm" type="button" onClick={openNewGame}>Import</button>
+                  <button className="btn btn-sm btn-primary" type="button" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↧ Save JSON</button>
+                </div>
 
-                  {showBook && (
-                    <div className="sec-block">
-                      <div className="sec-title">Common moves</div>
-                      <BookFilters />
-                      <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
-                    </div>
-                  )}
+                {showBook && (
+                  <div className="section">
+                    <div className="section-head"><span>Common moves</span></div>
+                    <BookFilters />
+                    <CommonMoves rows={bookRows} loading={bookLoading} onPlay={playBookMove} onHover={setHoverBookSan} />
+                  </div>
+                )}
 
+                <div className="section">
+                  <div className="section-head"><span>Course lines</span><span className="muted">{terminalPaths.length}</span></div>
                   <div className="saved-lines">
-                    <div className="sec-title">Course lines ({terminalPaths.length})</div>
-                    {terminalPaths.length === 0 ? <div className="empty-panel compact">No saved paths</div> : terminalPaths.map((path, index) => (
+                    {terminalPaths.length === 0 ? <div className="empty-panel">No lines yet</div> : terminalPaths.map((path, index) => (
                       <button key={path.join('-')} className={`saved-line ${currentNodeId === path[path.length - 1] ? 'current' : ''}`} type="button" onClick={() => setCurrentNodeId(path[path.length - 1])}>
                         <span>#{index + 1}</span><strong>{lineSans(path, tree)}</strong><em>{path.length} ply</em>
                       </button>
                     ))}
                   </div>
-                  <details className="import-box">
-                    <summary>PGN / FEN import</summary>
-                    <div className="import-actions">
-                      <button className="btn btn-cyan" type="button" onClick={() => { setNgView('pgn'); setPgnText(''); setPgnError(''); setShowNewGame(true); }}>Load PGN</button>
-                      <button className="btn btn-yellow" type="button" onClick={() => { setNgView('fen'); setFenInput(currentFen); setFenError(''); setShowNewGame(true); }}>Load FEN</button>
-                    </div>
-                  </details>
-                  <div className="creator-hint">
-                    Save JSON downloads a <code>laionchess.folded-opening.v1</code> file. Drop it into <code>public/courses/</code> and add an entry to <code>manifest.json</code> to publish it as a lesson on the Openings board.
-                  </div>
-                </aside>
-              )}
-            </div>
-          </>
+                </div>
+                <p className="hint-text">
+                  Save JSON downloads a <code>laionchess.folded-opening.v1</code> file. Drop it into <code>public/courses/</code> and
+                  add an entry to <code>manifest.json</code> to publish it as a course.
+                </p>
+              </aside>
+            )}
+          </div>
         )}
 
         {activeView === 'master' && (
           <main className="doc-view">
-            <div className="doc-head">
-              <span className="kicker">Implementation Master Plan</span>
-              <h1 className="h-display">Opening Trainer</h1>
-              <p className="sub">Roadmap and current implementation map for LaionChess: analysis board, opening catalog, trainer, course creator, folded openings and shared theming.</p>
+            <div className="page-head">
+              <div>
+                <span className="eyebrow">Roadmap</span>
+                <h1>Implementation plan</h1>
+                <p className="lead">What LaionChess does today and what comes next.</p>
+              </div>
             </div>
             {[
-              ['0 · Current state', ['Vite + React + TypeScript app deployed under /LaionChess/.', 'Analysis board with PGN/FEN import/export, game-tree variations and a material eval bar.', 'Spotting modes (Dalmacja / Lucyfer / King Path / King Shot / LaionEye) preserved and persisted across all board screens.']],
-              ['1 · Implemented screens', ['Home, Analysis, Openings, Trainer, Create and Master Plan are React views.', 'Guided Trainer: Learn / Practice with coach notes, hint arrows, mistake flashes, completion banner and per-mode progress.', 'Settings: board themes, four self-hosted piece sets, UI accent and arrows/coords toggles, persisted in localStorage.']],
-              ['2 · Data model', ['Trainable courses load from public/courses (manifest.json + course files).', 'Create exports laionchess.folded-opening.v1; drop it in public/courses + manifest to publish a lesson.', 'Common-Moves book + Top-3 arrows are keyed by board placement + side to move.']],
-              ['3 · Next phases', ['Wire a real engine behind getEvaluation (Stockfish / Lichess cloud).', 'Add SRS Drill / Time trainer modes (the locked tabs).', 'Author more courses beyond Scotch as JSON files.']],
+              ['Current state', ['Vite + React + TypeScript app deployed under /LaionChess/.', 'Analysis board with PGN/FEN import/export, variations, Stockfish and an opening explorer.', 'Spotting overlays (Dalmacja / Lucyfer / King Path / King Shot / Laion Eye) persisted across all board screens.']],
+              ['Trainer', ['Learn / Practice / Drill modes with coach notes, hint arrows, mistake flashes and per-mode progress.', 'Black repertoires are shown from Black\'s side; drag-and-drop or click to move.', `${catalog.length} courses with ${totalLines} lines across 1.e4 and 1.d4 repertoires for both colours.`]],
+              ['Board', ['Right-click drag draws arrows and circles (Shift / Alt change colour); knight arrows bend like the move.', 'Keyboard: ← → step, ↑ ↓ start / end, F flips. Shortcuts are ignored while typing.', 'The board fits the window automatically; the corner handle sets a preferred size.']],
+              ['Next', ['Spaced-repetition scheduling for Drill.', 'Timed mode for fast recall.', 'Import a course directly from the Create view without editing the manifest.']],
             ].map(([title, items]) => (
               <section key={title as string}>
                 <h2>{title as string}</h2>
@@ -1135,49 +1006,49 @@ export default function App() {
 
       {/* ── NEW GAME MODAL ── */}
       {showNewGame && (
-        <div style={MODAL_OVERLAY} onClick={() => setShowNewGame(false)}>
-          <div style={{ ...MODAL_BOX, border: '1px solid #ff00ff30', boxShadow: '0 0 40px rgba(255,0,255,0.15)' }} onClick={e => e.stopPropagation()}>
+        <div className="modal-overlay" onClick={() => setShowNewGame(false)}>
+          <div className="modal" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
             {ngView === 'choice' && (
               <>
-                <ModalTitle color="#ff00ff" text="New / Import" />
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <button onClick={startFresh} style={{ ...BTN, border: '1px solid #ff00ff60', backgroundColor: '#1a001a', color: '#ff00ff', width: '100%', padding: '16px 22px', fontSize: 14 }}>♟ Standard Starting Position</button>
-                  <button onClick={() => { setNgView('pgn'); setPgnText(''); setPgnError(''); }} style={{ ...BTN, border: '1px solid #00ffff40', backgroundColor: '#001a1a', color: '#00ffff', width: '100%', padding: '16px 22px', fontSize: 14 }}>📄 Load from PGN</button>
-                  <button onClick={() => { setNgView('fen'); setFenInput(currentFen); setFenError(''); }} style={{ ...BTN, border: '1px solid #ffd93d40', backgroundColor: '#1a1a00', color: '#ffd93d', width: '100%', padding: '16px 22px', fontSize: 14 }}>⚙ Load from FEN</button>
+                <h2 className="modal-title">New / Import</h2>
+                <div className="choice-list">
+                  <button type="button" className="choice" onClick={startFresh}><span className="ic">♟</span><span><strong>Standard position</strong><small>Start a fresh board</small></span></button>
+                  <button type="button" className="choice" onClick={() => { setNgView('pgn'); setPgnText(''); setPgnError(''); }}><span className="ic">📄</span><span><strong>Load PGN</strong><small>Paste a game or open a .pgn file</small></span></button>
+                  <button type="button" className="choice" onClick={() => { setNgView('fen'); setFenInput(currentFen); setFenError(''); }}><span className="ic">⌗</span><span><strong>Load FEN</strong><small>Set up any position</small></span></button>
                 </div>
-                <div style={{ textAlign: 'right', marginTop: 20 }}>
-                  <Btn color="#666" bg="transparent" border="#444" onClick={() => setShowNewGame(false)}>Cancel</Btn>
+                <div className="modal-actions">
+                  <button className="btn" type="button" onClick={() => setShowNewGame(false)}>Cancel</button>
                 </div>
               </>
             )}
             {ngView === 'pgn' && (
               <>
-                <ModalTitle color="#00ffff" text="Load from PGN" />
-                <textarea value={pgnText} onChange={e => { setPgnText(e.target.value); setPgnError(''); }} placeholder="Paste PGN here..." style={{ ...TEXTAREA, minHeight: 160 }} />
-                <label style={{ display: 'block', marginTop: 8 }}>
-                  <span style={{ fontSize: 12, color: '#666', cursor: 'pointer', textDecoration: 'underline' }}>Or load from .pgn file</span>
-                  <input type="file" accept=".pgn,text/plain" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = ev => setPgnText((ev.target?.result as string) ?? ''); r.readAsText(f); }} />
+                <h2 className="modal-title">Load PGN</h2>
+                <textarea className="textarea" value={pgnText} onChange={e => { setPgnText(e.target.value); setPgnError(''); }} placeholder="Paste PGN here…" style={{ minHeight: 160 }} autoFocus />
+                <label className="file-link">
+                  Or open a .pgn file
+                  <input type="file" accept=".pgn,text/plain" hidden onChange={e => { const f = e.target.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = ev => setPgnText((ev.target?.result as string) ?? ''); r.readAsText(f); }} />
                 </label>
-                {pgnError && <div style={{ color: '#ff4060', fontSize: 13, marginTop: 8 }}>{pgnError}</div>}
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
-                  <Btn color="#666" bg="transparent" border="#444" onClick={() => setNgView('choice')}>← Back</Btn>
-                  <Btn color="#00ffff" bg="#001a1a" border="#00ffff50" onClick={loadFromPgn}>Load Game</Btn>
+                {pgnError && <div className="form-error">{pgnError}</div>}
+                <div className="modal-actions">
+                  <button className="btn" type="button" onClick={() => setNgView('choice')}>← Back</button>
+                  <button className="btn btn-primary" type="button" onClick={loadFromPgn}>Load game</button>
                 </div>
               </>
             )}
             {ngView === 'fen' && (
               <>
-                <ModalTitle color="#ffd93d" text="Load from FEN" />
-                <textarea value={fenInput} onChange={e => { setFenInput(e.target.value); setFenError(''); }} style={{ ...TEXTAREA, minHeight: 64 }} />
-                <div style={{ fontSize: 11, color: '#555', marginTop: 6, lineHeight: 1.5 }}>Format: pieces / turn / castling / en passant / halfmove / fullmove</div>
-                <label style={{ display: 'block', marginTop: 8 }}>
-                  <span style={{ fontSize: 12, color: '#666', cursor: 'pointer', textDecoration: 'underline' }}>Or load from .fen file</span>
-                  <input type="file" accept=".fen,text/plain" style={{ display: 'none' }} onChange={e => { const f = e.target.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = ev => setFenInput(((ev.target?.result as string) ?? '').trim()); r.readAsText(f); }} />
+                <h2 className="modal-title">Load FEN</h2>
+                <textarea className="textarea mono" value={fenInput} onChange={e => { setFenInput(e.target.value); setFenError(''); }} style={{ minHeight: 64 }} autoFocus />
+                <div className="form-note">pieces / turn / castling / en passant / halfmove / fullmove</div>
+                <label className="file-link">
+                  Or open a .fen file
+                  <input type="file" accept=".fen,text/plain" hidden onChange={e => { const f = e.target.files?.[0]; if (!f) return; const r = new FileReader(); r.onload = ev => setFenInput(((ev.target?.result as string) ?? '').trim()); r.readAsText(f); }} />
                 </label>
-                {fenError && <div style={{ color: '#ff4060', fontSize: 13, marginTop: 8 }}>{fenError}</div>}
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 20 }}>
-                  <Btn color="#666" bg="transparent" border="#444" onClick={() => setNgView('choice')}>← Back</Btn>
-                  <Btn color="#ffd93d" bg="#1a1a00" border="#ffd93d50" onClick={loadFromFen}>Load Position</Btn>
+                {fenError && <div className="form-error">{fenError}</div>}
+                <div className="modal-actions">
+                  <button className="btn" type="button" onClick={() => setNgView('choice')}>← Back</button>
+                  <button className="btn btn-primary" type="button" onClick={loadFromFen}>Load position</button>
                 </div>
               </>
             )}
@@ -1187,28 +1058,28 @@ export default function App() {
 
       {/* ── EXPORT MODAL ── */}
       {showExport && (
-        <div style={MODAL_OVERLAY} onClick={() => setShowExport(false)}>
-          <div style={{ ...MODAL_BOX, border: '1px solid #00ff8830', boxShadow: '0 0 40px rgba(0,255,136,0.12)', maxWidth: 560 }} onClick={e => e.stopPropagation()}>
-            <ModalTitle color="#00ff88" text="Export" />
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ fontSize: 11, color: '#00ffff', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>FEN Position</div>
-              <textarea value={currentFen} readOnly style={{ ...TEXTAREA, minHeight: 48, color: '#ffd93d', cursor: 'text' }} />
-              <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-                <Btn color="#ffd93d" bg="#1a1a00" border="#ffd93d40" onClick={copyFen}>{copyFenMsg || '📋 Copy FEN'}</Btn>
+        <div className="modal-overlay" onClick={() => setShowExport(false)}>
+          <div className="modal wide" role="dialog" aria-modal="true" onClick={e => e.stopPropagation()}>
+            <h2 className="modal-title">Export</h2>
+            <div className="field">
+              <div className="field-label">FEN position</div>
+              <textarea className="textarea mono" value={currentFen} readOnly style={{ minHeight: 48 }} />
+              <div className="btn-row">
+                <button className="btn btn-sm" type="button" onClick={copyFen}>{copyFenMsg || 'Copy FEN'}</button>
+                <button className="btn btn-sm" type="button" onClick={() => downloadBlob(currentFen, 'position.fen')}>↧ .fen</button>
               </div>
             </div>
-            <div>
-              <div style={{ fontSize: 11, color: '#00ffff', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 8 }}>PGN Game</div>
-              <textarea ref={pgnRef} value={currentPgn} readOnly style={{ ...TEXTAREA, minHeight: 120, color: '#00ff88', cursor: 'text' }} />
-              <div style={{ display: 'flex', gap: 8, marginTop: 8, flexWrap: 'wrap' }}>
-                <Btn color="#00ff88" bg="#0a1a0a" border="#00ff8840" onClick={copyPgn}>{copyPgnMsg || '📋 Copy PGN'}</Btn>
-                <Btn color="#00ff88" bg="#0a1a0a" border="#00ff8840" onClick={() => downloadBlob(currentPgn, 'game.pgn')}>↓ Download .pgn</Btn>
-                <Btn color="#ffd93d" bg="#1a1a00" border="#ffd93d40" onClick={() => downloadBlob(currentFen, 'position.fen')}>↓ Download .fen</Btn>
-                <Btn color="#ff00ff" bg="#1a001a" border="#ff00ff40" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↓ Folded JSON</Btn>
+            <div className="field">
+              <div className="field-label">PGN game</div>
+              <textarea className="textarea mono" value={currentPgn} readOnly style={{ minHeight: 120 }} />
+              <div className="btn-row">
+                <button className="btn btn-sm" type="button" onClick={copyPgn}>{copyPgnMsg || 'Copy PGN'}</button>
+                <button className="btn btn-sm" type="button" onClick={() => downloadBlob(currentPgn, 'game.pgn')}>↧ .pgn</button>
+                <button className="btn btn-sm" type="button" onClick={downloadFoldedOpening} disabled={terminalPaths.length === 0}>↧ Course JSON</button>
               </div>
             </div>
-            <div style={{ textAlign: 'right', marginTop: 24 }}>
-              <Btn color="#666" bg="transparent" border="#444" onClick={() => setShowExport(false)}>Close</Btn>
+            <div className="modal-actions">
+              <button className="btn" type="button" onClick={() => setShowExport(false)}>Close</button>
             </div>
           </div>
         </div>
