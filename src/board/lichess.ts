@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 import type { BookRow } from '../data/book';
+import { getLichessToken, markLichessTokenInvalid, useLichessAuth } from './lichessAuth';
 
 // ── Common Moves (opening book) ───────────────────────────────────────────────
-// Two-layer data source:
-//   1. Local book server (VITE_BOOK_SERVER) — live Lichess data when running.
-//   2. Bundled offline DB (public/book/explorer.json) — static fallback.
-// If neither has data for a position, null is returned (no hardcoded fallback).
-// A browser can't call Lichess directly (401 on Origin), so live data only comes
-// via the local server (server/book-server.mjs).
+// Three-layer data source:
+//   1. Lichess explorer, live, straight from the browser — when the user has
+//      connected a Lichess account (OAuth PKCE, see lichessAuth.ts). The
+//      explorer rejects anonymous calls (401), but accepts a Bearer token, so
+//      this works on GitHub Pages too — no backend needed.
+//   2. Local book server (VITE_BOOK_SERVER) — live data in local dev.
+//   3. Bundled offline DB (public/book/explorer.json) — static fallback.
+// If none has data for a position, null is returned (no hardcoded fallback).
 const BOOK_SERVER = (import.meta.env.VITE_BOOK_SERVER ?? '').replace(/\/$/, '');
 
 // Kept in sync with server/book-server.mjs and src/settings/useSettings.tsx, so
@@ -62,6 +65,64 @@ async function offlineLookup(fen: string, speeds: string[], ratings: number[]): 
   return broad?.rows?.length ? broad.rows : null;
 }
 
+// ── Lichess explorer, direct (needs a connected account) ─────────────────────
+const EXPLORER = 'https://explorer.lichess.org/lichess';
+const liveCache = new Map<string, BookRow[] | null>();
+let liveBackoffUntil = 0; // after a 429 we pause live calls for a minute
+
+function humanGames(n: number): string {
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(n >= 10_000_000 ? 0 : 1)}M`;
+  if (n >= 1_000) return `${Math.round(n / 1_000)}k`;
+  return String(n);
+}
+
+interface ExplorerMove { san: string; white: number; draws: number; black: number; opening?: { name?: string } | null }
+interface ExplorerResponse { white: number; draws: number; black: number; moves?: ExplorerMove[] }
+
+/** Explorer JSON → BookRow[] (same transform as server/book-server.mjs). */
+function toBookRows(data: ExplorerResponse): BookRow[] {
+  const total = data.white + data.draws + data.black;
+  return (data.moves ?? []).slice(0, 12).map((m): BookRow => {
+    const moveTotal = m.white + m.draws + m.black;
+    const played = total ? Math.round((moveTotal / total) * 100) : 0;
+    const ww = moveTotal ? Math.round((m.white / moveTotal) * 100) : 0;
+    const dd = moveTotal ? Math.round((m.draws / moveTotal) * 100) : 0;
+    return [m.san, played, humanGames(moveTotal), ww, dd, m.opening?.name ?? null];
+  });
+}
+
+/** undefined = live source unavailable (no token / error) → try the next layer. */
+async function fetchLive(
+  fen: string, speeds: string[], ratings: number[], signal: AbortSignal,
+): Promise<BookRow[] | null | undefined> {
+  const token = getLichessToken();
+  if (!token || Date.now() < liveBackoffUntil) return undefined;
+  const key = bookKey(fen, speeds, ratings);
+  if (liveCache.has(key)) return liveCache.get(key) ?? null;
+  const url = new URL(EXPLORER);
+  url.searchParams.set('variant', 'standard');
+  url.searchParams.set('fen', fen);
+  url.searchParams.set('moves', '12');
+  url.searchParams.set('topGames', '0');
+  url.searchParams.set('recentGames', '0');
+  const sp = normList(speeds, ALL_SPEEDS);
+  const ra = normList(ratings, ALL_RATINGS);
+  if (sp) url.searchParams.set('speeds', sp);
+  if (ra) url.searchParams.set('ratings', ra);
+  try {
+    const res = await fetch(url, { signal, headers: { Authorization: `Bearer ${token}` } });
+    if (res.status === 401) { markLichessTokenInvalid(); return undefined; }
+    if (res.status === 429) { liveBackoffUntil = Date.now() + 60_000; return undefined; }
+    if (!res.ok) return undefined;
+    const data = (await res.json()) as ExplorerResponse;
+    const rows = data.moves?.length ? toBookRows(data) : null;
+    liveCache.set(key, rows);
+    return rows;
+  } catch {
+    return undefined; // network / CORS / abort → fall back
+  }
+}
+
 // ── local book server (dev) ───────────────────────────────────────────────────
 const serverCache = new Map<string, BookRow[] | null>();
 // Circuit breaker: if the local server isn't running we stop calling it after a
@@ -98,39 +159,54 @@ async function fetchFromServer(
   }
 }
 
+export type BookSource = 'live' | 'server' | 'offline' | null;
+
 /**
- * Common-Moves rows for a position. Tries the local book server first,
- * falls back to the bundled offline DB. Returns null if neither has data.
+ * Common-Moves rows for a position. Tries Lichess live (connected account),
+ * then the local book server, then the bundled offline DB.
+ * Returns null rows if none has data; `source` says where the rows came from.
  */
 export function useOpeningExplorer(
-  fen: string, speeds: string[] = [], ratings: number[] = [],
-): { rows: BookRow[] | null; loading: boolean } {
+  fen: string, speeds: string[] = [], ratings: number[] = [], enabled = true,
+): { rows: BookRow[] | null; loading: boolean; source: BookSource } {
   const [rows, setRows] = useState<BookRow[] | null>(null);
+  const [source, setSource] = useState<BookSource>(null);
   const [loading, setLoading] = useState(true);
+  const { token } = useLichessAuth();
   const filterKey = `${speeds.join(',')}|${ratings.join(',')}`;
 
   useEffect(() => {
+    if (!enabled) return;
     setRows(null);
+    setSource(null);
     setLoading(true);
     let cancelled = false;
     const ctrl = new AbortController();
+    // Debounced so stepping quickly through moves doesn't hammer the explorer.
     const t = setTimeout(async () => {
+      let resolved: BookRow[] | null = null;
+      let from: BookSource = null;
       try {
-        // Server first (live/cached), then the bundled offline DB on miss/absence.
-        let resolved = await fetchFromServer(fen, speeds, ratings, ctrl.signal);
-        if (resolved === null && !cancelled) resolved = await offlineLookup(fen, speeds, ratings);
-        if (!cancelled) setRows(resolved);
+        const live = await fetchLive(fen, speeds, ratings, ctrl.signal);
+        if (live !== undefined) { resolved = live; from = 'live'; }
+        if (resolved === null && !cancelled) {
+          const srv = await fetchFromServer(fen, speeds, ratings, ctrl.signal);
+          if (srv !== null) { resolved = srv; from = 'server'; }
+        }
+        if (resolved === null && !cancelled) {
+          const off = await offlineLookup(fen, speeds, ratings);
+          if (off !== null) { resolved = off; from = 'offline'; }
+        }
       } catch {
-        if (!cancelled) setRows(null);
-      } finally {
-        if (!cancelled) setLoading(false);
+        resolved = null;
       }
-    }, 50);
+      if (!cancelled) { setRows(resolved); setSource(resolved ? from : null); setLoading(false); }
+    }, token ? 180 : 50);
     return () => { cancelled = true; ctrl.abort(); clearTimeout(t); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fen, filterKey]);
+  }, [fen, filterKey, token, enabled]);
 
-  return { rows, loading };
+  return { rows, loading, source };
 }
 
 // Engine evaluation now comes from the local Stockfish worker — see board/engine.ts.

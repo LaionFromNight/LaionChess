@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { Square, Position } from '../chess/types';
 import SquareComponent from './Square';
 import { useSettings, BOARD_THEMES } from '../settings/useSettings';
 import { pieceSrc, pieceCode } from '../board/pieceSrc';
 import { getPieceLabel } from '../chess/logic';
+import { ARROW, parseColor, lighten } from '../board/arrowPalette';
 import '../App.css';
 
 const BOARD_MIN_PX = 240;
@@ -19,10 +20,10 @@ export interface BoardArrow {
 // ── user-drawn shapes (right-click drag, lichess style) ───────────────────────
 type Brush = 'green' | 'red' | 'blue' | 'yellow';
 const BRUSH_COLORS: Record<Brush, string> = {
-  green: 'rgba(52, 199, 120, 0.82)',
-  red: 'rgba(230, 72, 72, 0.82)',
-  blue: 'rgba(66, 133, 244, 0.82)',
-  yellow: 'rgba(240, 190, 40, 0.85)',
+  green: ARROW.green,
+  red: ARROW.red,
+  blue: ARROW.blue,
+  yellow: ARROW.gold,
 };
 interface UserShape { from: Position; to: Position | null; brush: Brush }
 
@@ -44,8 +45,8 @@ function arrowGeometry(from: Position, to: Position, width: number) {
   const dc = to.col - from.col, dr = to.row - from.row;
   const isKnight = (Math.abs(dc) === 1 && Math.abs(dr) === 2) || (Math.abs(dc) === 2 && Math.abs(dr) === 1);
 
-  const headLen = Math.max(0.34, width * 2.3);
-  const headHalf = Math.max(0.22, width * 1.55);
+  const headLen = Math.max(0.36, width * 2.35);
+  const headHalf = Math.max(0.24, width * 1.6);
   // Knight moves bend: long leg first, then the short leg into the target square.
   const corner = isKnight
     ? (Math.abs(dr) > Math.abs(dc) ? { x: x1, y: y2 } : { x: x2, y: y1 })
@@ -54,44 +55,79 @@ function arrowGeometry(from: Position, to: Position, width: number) {
   const dx = x2 - sx, dy = y2 - sy;
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len, uy = dy / len;
-  const tipX = x2 - ux * 0.08, tipY = y2 - uy * 0.08;
+  const tipX = x2 - ux * 0.1, tipY = y2 - uy * 0.1;
   const baseX = tipX - ux * headLen, baseY = tipY - uy * headLen;
+  // The shaft stops a hair inside the head so the round cap never pokes out.
+  const shaftX = baseX + ux * Math.min(width * 0.5, headLen * 0.3);
+  const shaftY = baseY + uy * Math.min(width * 0.5, headLen * 0.3);
+  // Tail starts slightly off-centre so it doesn't cover the moving piece's face.
+  const tx0 = (corner ? corner.x : x2) - x1, ty0 = (corner ? corner.y : y2) - y1;
+  const tl = Math.hypot(tx0, ty0) || 1;
+  const startX = x1 + (tx0 / tl) * 0.18, startY = y1 + (ty0 / tl) * 0.18;
   const px = -uy, py = ux;
   const d = corner
-    ? `M ${x1} ${y1} L ${corner.x} ${corner.y} L ${baseX} ${baseY}`
-    : `M ${x1} ${y1} L ${baseX} ${baseY}`;
-  const head = `${tipX},${tipY} ${baseX + px * headHalf},${baseY + py * headHalf} ${baseX - px * headHalf},${baseY - py * headHalf}`;
-  return { d, head };
+    ? `M ${startX} ${startY} L ${corner.x} ${corner.y} L ${shaftX} ${shaftY}`
+    : `M ${startX} ${startY} L ${shaftX} ${shaftY}`;
+  const head = `${tipX},${tipY} ${baseX + px * headHalf},${baseY + py * headHalf} ${baseX + ux * headLen * 0.18},${baseY + uy * headLen * 0.18} ${baseX - px * headHalf},${baseY - py * headHalf}`;
+  return { d, head, x1: startX, y1: startY, x2: tipX, y2: tipY };
 }
 
-function ShapesLayer({ arrows, shapes }: { arrows: BoardArrow[]; shapes: UserShape[] }) {
-  if (arrows.length === 0 && shapes.length === 0) return null;
+/**
+ * One arrow: opaque shaft + swept head inside a single group whose opacity
+ * carries the colour's alpha (no darker seam where they overlap), a gradient
+ * that brightens towards the tip and a soft drop shadow.
+ */
+function PremiumArrow({ id, from, to, color, width, shadow, ghost }: {
+  id: string; from: Position; to: Position; color: string; width: number; shadow: string; ghost?: boolean;
+}) {
+  const { rgb, alpha } = parseColor(color);
+  const g = arrowGeometry(from, to, width);
+  const grad = `${id}-g`;
+  return (
+    <g className="lc-arrow" opacity={ghost ? alpha * 0.6 : alpha} filter={`url(#${shadow})`}>
+      <defs>
+        <linearGradient id={grad} gradientUnits="userSpaceOnUse" x1={g.x1} y1={g.y1} x2={g.x2} y2={g.y2}>
+          <stop offset="0" stopColor={lighten(rgb, 0.12)} stopOpacity={0.55} />
+          <stop offset="0.55" stopColor={rgb} stopOpacity={0.92} />
+          <stop offset="1" stopColor={rgb} stopOpacity={1} />
+        </linearGradient>
+      </defs>
+      <path d={g.d} stroke={`url(#${grad})`} strokeWidth={width} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      <polygon points={g.head} fill={rgb} stroke={rgb} strokeWidth={width * 0.35} strokeLinejoin="round" />
+    </g>
+  );
+}
+
+function ShapesLayer({ arrows, shapes, ghost }: { arrows: BoardArrow[]; shapes: UserShape[]; ghost: UserShape | null }) {
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+  if (arrows.length === 0 && shapes.length === 0 && !ghost) return null;
+  const shadow = `lcsh-${uid}`;
+  const all = ghost ? [...shapes, ghost] : shapes;
   return (
     <svg className="lc-arrows" viewBox="0 0 8 8" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id={shadow} x="-20%" y="-20%" width="140%" height="140%" colorInterpolationFilters="sRGB">
+          <feDropShadow dx="0" dy="0.035" stdDeviation="0.045" floodColor="#000" floodOpacity="0.38" />
+        </filter>
+      </defs>
       {arrows.map((a, i) => {
         if (samePos(a.from, a.to)) return null;
-        const w = a.width / 12.5;
-        const { d, head } = arrowGeometry(a.from, a.to, w);
-        return (
-          <g key={`a${i}`}>
-            <path d={d} stroke={a.color} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            <polygon points={head} fill={a.color} strokeLinejoin="round" />
-          </g>
-        );
+        return <PremiumArrow key={`a${i}-${a.from.row}${a.from.col}${a.to.row}${a.to.col}`} id={`${uid}a${i}`}
+          from={a.from} to={a.to} color={a.color} width={a.width / 12.5} shadow={shadow} />;
       })}
-      {shapes.map((s, i) => {
+      {all.map((s, i) => {
         const color = BRUSH_COLORS[s.brush];
+        const isGhost = s === ghost;
         if (!s.to || samePos(s.from, s.to)) {
-          return <circle key={`s${i}`} cx={s.from.col + 0.5} cy={s.from.row + 0.5} r={0.46} fill="none" stroke={color} strokeWidth={0.075} />;
+          const { rgb, alpha } = parseColor(color);
+          return (
+            <g key={`s${i}`} className="lc-arrow" opacity={isGhost ? alpha * 0.6 : alpha} filter={`url(#${shadow})`}>
+              <circle cx={s.from.col + 0.5} cy={s.from.row + 0.5} r={0.44} fill={rgb} fillOpacity={0.14} stroke={rgb} strokeWidth={0.07} />
+            </g>
+          );
         }
-        const w = 0.19;
-        const { d, head } = arrowGeometry(s.from, s.to, w);
-        return (
-          <g key={`s${i}`}>
-            <path d={d} stroke={color} strokeWidth={w} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            <polygon points={head} fill={color} />
-          </g>
-        );
+        return <PremiumArrow key={`s${i}`} id={`${uid}s${i}`} from={s.from} to={s.to} color={color}
+          width={0.18} shadow={shadow} ghost={isGhost} />;
       })}
     </svg>
   );
@@ -264,7 +300,6 @@ export default function Board({
   const winner = isCheckmate ? (currentTurn === 'white' ? 'Black' : 'White') : null;
   const dragPiece = drag ? board[drag.from.row][drag.from.col] : null;
   const dragSrc = dragPiece ? pieceSrc(settings.pieceSet, dragPiece.color, dragPiece.type) : null;
-  const allShapes = drawing ? [...shapes, drawing] : shapes;
 
   return (
     <div
@@ -311,7 +346,7 @@ export default function Board({
         {overlay && <div className="lc-layer" style={{ zIndex: 5 }}>{overlay}</div>}
 
         {/* Arrows + user shapes (z=6) */}
-        <ShapesLayer arrows={arrows ?? []} shapes={allShapes} />
+        <ShapesLayer arrows={arrows ?? []} shapes={shapes} ghost={drawing} />
 
         {/* Animated piece overlay (z=30) */}
         {animOverlay && <div className="lc-layer" style={{ zIndex: 30 }}>{animOverlay}</div>}
