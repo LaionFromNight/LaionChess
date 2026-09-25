@@ -317,8 +317,8 @@ export default function App() {
   }, [setSetting]);
 
   const spottingOverlay = useMemo(
-    () => buildSpottingOverlay(spottingModes, boardState),
-    [spottingModes, boardState],
+    () => buildSpottingOverlay(spottingModes, boardState, flipped),
+    [spottingModes, boardState, flipped],
   );
 
   // ── Top-3 book arrows (Analysis + Create) ─────────────────────────────────────

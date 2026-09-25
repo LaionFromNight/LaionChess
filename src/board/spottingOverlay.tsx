@@ -1,396 +1,410 @@
 import type { GameState, Position, PieceColor, Board as ChessBoard } from '../chess/types';
 import { getLegalMoves, findKing, isKingInCheck } from '../chess/logic';
 import type { SpottingMode } from '../chess/analysis';
-import { getAttackedSquares, computeDefenseEdges, computeExchanges } from '../chess/analysis';
+import { getAttackedSquares, computeDefenseEdges } from '../chess/analysis';
+import {
+  pieceSafety, pawnStructure, outposts, fileKinds, development, activity, kingZone, VALUE,
+} from '../chess/patterns';
 
-// ── king-shot helpers ─────────────────────────────────────────────────────────
+// ── palette (matches the arrow palette) ────────────────────────────────────────
+export const OV = {
+  white: '#ffb830',   // White's pieces / control
+  black: '#409cff',   // Black's pieces / control
+  good: '#26d08c',    // an opportunity for the side to move
+  bad: '#ff5468',     // a danger for the side to move
+  warn: '#ffb830',
+  violet: '#a080ff',
+  ink: '#101216',
+} as const;
+const side = (c: PieceColor) => (c === 'white' ? OV.white : OV.black);
+const other = (c: PieceColor): PieceColor => (c === 'white' ? 'black' : 'white');
 
-function findCheckingPieces(board: ChessBoard, kingPos: Position, attackerColor: PieceColor): Position[] {
-  const result: Position[] = [];
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = board[r][c];
-      if (!piece || piece.color !== attackerColor) continue;
-      const attacked = getAttackedSquares(board, { row: r, col: c }, piece.type, piece.color);
-      if (attacked.some(sq => sq.row === kingPos.row && sq.col === kingPos.col)) {
-        result.push({ row: r, col: c });
-      }
-    }
-  }
-  return result;
-}
-
-function isRawAttackedBy(board: ChessBoard, pos: Position, byColor: PieceColor): boolean {
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = board[r][c];
-      if (!piece || piece.color !== byColor) continue;
-      const attacked = getAttackedSquares(board, { row: r, col: c }, piece.type, piece.color);
-      if (attacked.some(sq => sq.row === pos.row && sq.col === pos.col)) return true;
-    }
-  }
-  return false;
-}
-
+// ── legal control map (pins respected, king only to legal squares) ─────────────
 function getPinAxis(board: ChessBoard, piecePos: Position, color: PieceColor): Set<string> | null {
   const kingPos = findKing(board, color);
   if (!kingPos) return null;
-
   const tmp: ChessBoard = board.map(row => [...row]);
   tmp[piecePos.row][piecePos.col] = null;
   if (!isKingInCheck(tmp, color)) return null;
-
-  const dr = piecePos.row - kingPos.row;
-  const dc = piecePos.col - kingPos.col;
-  const stepR = dr === 0 ? 0 : dr > 0 ? 1 : -1;
-  const stepC = dc === 0 ? 0 : dc > 0 ? 1 : -1;
-
+  const stepR = Math.sign(piecePos.row - kingPos.row);
+  const stepC = Math.sign(piecePos.col - kingPos.col);
   const axis = new Set<string>();
-  let r = kingPos.row + stepR, c = kingPos.col + stepC;
-  while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-    axis.add(`${r},${c}`); r += stepR; c += stepC;
-  }
-  r = kingPos.row - stepR; c = kingPos.col - stepC;
-  while (r >= 0 && r < 8 && c >= 0 && c < 8) {
-    axis.add(`${r},${c}`); r -= stepR; c -= stepC;
+  for (const s of [1, -1]) {
+    let r = kingPos.row + stepR * s, c = kingPos.col + stepC * s;
+    while (r >= 0 && r < 8 && c >= 0 && c < 8) { axis.add(`${r},${c}`); r += stepR * s; c += stepC * s; }
   }
   return axis;
 }
 
-function computeLegalControlMap(state: GameState): { white: number[][]; black: number[][] } {
+function legalControl(state: GameState): Record<PieceColor, number[][]> {
   const white = Array.from({ length: 8 }, () => new Array(8).fill(0));
   const black = Array.from({ length: 8 }, () => new Array(8).fill(0));
-
-  for (let r = 0; r < 8; r++) {
-    for (let c = 0; c < 8; c++) {
-      const piece = state.board[r][c];
-      if (!piece) continue;
-      const map = piece.color === 'white' ? white : black;
-
-      if (piece.type === 'king') {
-        const moves = getLegalMoves(
-          state.board, { row: r, col: c },
-          state.enPassantTarget,
-          state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-          state.blackCanCastleKingside, state.blackCanCastleQueenside,
-        );
-        for (const sq of moves) map[sq.row][sq.col]++;
-      } else {
-        const attacked = getAttackedSquares(state.board, { row: r, col: c }, piece.type, piece.color);
-        const pinAxis = getPinAxis(state.board, { row: r, col: c }, piece.color);
-        for (const sq of attacked) {
-          if (pinAxis && !pinAxis.has(`${sq.row},${sq.col}`)) continue;
-          map[sq.row][sq.col]++;
-        }
-      }
+  for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+    const piece = state.board[r][c];
+    if (!piece) continue;
+    const map = piece.color === 'white' ? white : black;
+    if (piece.type === 'king') {
+      for (const sq of getAttackedSquares(state.board, { row: r, col: c }, 'king', piece.color)) map[sq.row][sq.col]++;
+      continue;
+    }
+    const pinAxis = getPinAxis(state.board, { row: r, col: c }, piece.color);
+    for (const sq of getAttackedSquares(state.board, { row: r, col: c }, piece.type, piece.color)) {
+      if (pinAxis && !pinAxis.has(`${sq.row},${sq.col}`)) continue;
+      map[sq.row][sq.col]++;
     }
   }
   return { white, black };
 }
 
-const ALL_DEFS = (
-  <defs>
-    <pattern id="stripe-lo" patternUnits="userSpaceOnUse" width="0.28" height="0.28" patternTransform="rotate(45 0 0)">
-      <line x1="0" y1="0" x2="0" y2="0.28" stroke="rgba(255,70,70,0.80)" strokeWidth="0.10" />
-    </pattern>
-    <pattern id="stripe-hi" patternUnits="userSpaceOnUse" width="0.28" height="0.28" patternTransform="rotate(45 0 0)">
-      <line x1="0" y1="0" x2="0" y2="0.28" stroke="rgba(200,0,0,0.95)" strokeWidth="0.17" />
-    </pattern>
-    <marker id="arr-a" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 4 2, 0 4" fill="rgba(255,80,80,0.9)" />
-    </marker>
-    <marker id="arr-d" markerWidth="4" markerHeight="4" refX="3.5" refY="2" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 4 2, 0 4" fill="rgba(80,255,160,0.9)" />
-    </marker>
-    <marker id="arr-shot-safe" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 5 2.5, 0 5" fill="rgba(60,255,90,0.95)" />
-    </marker>
-    <marker id="arr-shot-unsafe" markerWidth="5" markerHeight="5" refX="4" refY="2.5" orient="auto" markerUnits="strokeWidth">
-      <polygon points="0 0, 5 2.5, 0 5" fill="rgba(180,0,255,0.95)" />
-    </marker>
-  </defs>
-);
+// ── drawing primitives (viewBox 0 0 8 8, one unit per square) ──────────────────
+type Corner = 'tl' | 'tr' | 'bl' | 'br';
 
-export function buildSpottingOverlay(modes: Set<SpottingMode>, state: GameState): React.ReactNode {
-  if (modes.size === 0) return null;
-
-  const { board, currentTurn } = state;
-
-  const SVG_PROPS = {
-    viewBox: '0 0 8 8',
-    width: '100%',
-    height: '100%',
-    style: { position: 'absolute' as const, inset: 0 },
-    xmlns: 'http://www.w3.org/2000/svg',
+function makeKit(flipped: boolean) {
+  // Badges sit in a *visual* corner and their text stays upright when the board
+  // (and this layer) is rotated 180°.
+  const flipCorner: Record<Corner, Corner> = { tl: 'br', tr: 'bl', bl: 'tr', br: 'tl' };
+  const at = (p: Position, corner: Corner) => {
+    const k = flipped ? flipCorner[corner] : corner;
+    const x = p.col + (k === 'tl' || k === 'bl' ? 0.2 : 0.8);
+    const y = p.row + (k === 'tl' || k === 'tr' ? 0.2 : 0.8);
+    return { x, y };
   };
+  const upright = (x: number, y: number) => (flipped ? `rotate(180 ${x} ${y})` : undefined);
 
-  const layers: React.ReactNode[] = [ALL_DEFS];
+  return {
+    tint: (key: string, p: Position, color: string, alpha: number) => (
+      <rect key={key} x={p.col + 0.035} y={p.row + 0.035} width={0.93} height={0.93} rx={0.09}
+        fill={color} fillOpacity={alpha} />
+    ),
+    frame: (key: string, p: Position, color: string, opts: { dashed?: boolean; width?: number; alpha?: number } = {}) => (
+      <rect key={key} x={p.col + 0.06} y={p.row + 0.06} width={0.88} height={0.88} rx={0.12}
+        fill="none" stroke={color} strokeOpacity={opts.alpha ?? 0.95} strokeWidth={opts.width ?? 0.055}
+        strokeDasharray={opts.dashed ? '0.14 0.09' : undefined} />
+    ),
+    ring: (key: string, p: Position, color: string, opts: { dashed?: boolean; width?: number; r?: number; glow?: boolean } = {}) => (
+      <g key={key}>
+        {opts.glow && <circle cx={p.col + 0.5} cy={p.row + 0.5} r={opts.r ?? 0.44} fill={color} fillOpacity={0.16} />}
+        <circle cx={p.col + 0.5} cy={p.row + 0.5} r={opts.r ?? 0.44} fill="none"
+          stroke={color} strokeWidth={opts.width ?? 0.065} strokeDasharray={opts.dashed ? '0.16 0.1' : undefined} />
+      </g>
+    ),
+    dot: (key: string, p: Position, color: string, r = 0.13) => (
+      <circle key={key} cx={p.col + 0.5} cy={p.row + 0.5} r={r} fill={color} stroke={OV.ink} strokeOpacity={0.4} strokeWidth={0.02} />
+    ),
+    badge: (key: string, p: Position, corner: Corner, text: string, bg: string, fg: string = OV.ink) => {
+      const { x, y } = at(p, corner);
+      const w = Math.max(0.3, 0.13 * text.length + 0.14);
+      return (
+        <g key={key} transform={upright(x, y)} className="ov-badge">
+          <rect x={x - w / 2} y={y - 0.14} width={w} height={0.28} rx={0.14} fill={bg} stroke="rgba(255,255,255,0.85)" strokeWidth={0.022} />
+          <text x={x} y={y} dy={0.075} textAnchor="middle" fontSize={0.2} fontWeight={800}
+            fontFamily="Inter, system-ui, sans-serif" fill={fg}>{text}</text>
+        </g>
+      );
+    },
+    line: (key: string, a: Position, b: Position, color: string, opts: { dashed?: boolean; width?: number; arrow?: string; shorten?: number; alpha?: number } = {}) => {
+      const x1 = a.col + 0.5, y1 = a.row + 0.5, x2 = b.col + 0.5, y2 = b.row + 0.5;
+      const len = Math.hypot(x2 - x1, y2 - y1) || 1;
+      const s = opts.shorten ?? 0;
+      return (
+        <line key={key} x1={x1} y1={y1} x2={x2 - ((x2 - x1) / len) * s} y2={y2 - ((y2 - y1) / len) * s}
+          stroke={color} strokeOpacity={opts.alpha ?? 0.9} strokeWidth={opts.width ?? 0.06} strokeLinecap="round"
+          strokeDasharray={opts.dashed ? '0.14 0.09' : undefined} markerEnd={opts.arrow ? `url(#${opts.arrow})` : undefined} />
+      );
+    },
+    label: (key: string, x: number, y: number, text: string, color: string) => (
+      <text key={key} x={x} y={y} transform={upright(x, y)} textAnchor="middle" fontSize={0.19} fontWeight={800}
+        fontFamily="Inter, system-ui, sans-serif" fill={color} className="ov-badge">{text}</text>
+    ),
+  };
+}
 
-  // ── LaionEye ────────────────────────────────────────────────────────────────
-  const eyeModes = (['eye-full','eye-white','eye-black','eye-1','eye-2'] as SpottingMode[]).filter(m => modes.has(m));
-  if (eyeModes.length > 0) {
-    const ctl = computeLegalControlMap(state);
-    const rects: React.ReactNode[] = [];
-    for (let r = 0; r < 8; r++) {
-      for (let c = 0; c < 8; c++) {
-        let count = 0;
-        for (const m of eyeModes) {
-          let v = 0;
-          if (m === 'eye-full')  v = Math.max(ctl.white[r][c], ctl.black[r][c]);
-          else if (m === 'eye-white') v = ctl.white[r][c];
-          else if (m === 'eye-black') v = ctl.black[r][c];
-          else if (m === 'eye-1') v = currentTurn === 'white' ? ctl.white[r][c] : ctl.black[r][c];
-          else if (m === 'eye-2') v = currentTurn === 'white' ? ctl.black[r][c] : ctl.white[r][c];
-          if (v > count) count = v;
-        }
-        if (count > 0) {
-          const fill = count <= 2 ? 'url(#stripe-lo)' : 'url(#stripe-hi)';
-          rects.push(<rect key={`e-${r}-${c}`} x={c} y={r} width={1} height={1} fill={fill} />);
-        }
-      }
-    }
-    layers.push(<g key="eye">{rects}</g>);
-  }
+function markers(id: string) {
+  const m = (name: string, color: string) => (
+    <marker id={`${id}-${name}`} markerWidth="4" markerHeight="4" refX="2.6" refY="2" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L4,2 L0,4 L1,2 Z" fill={color} />
+    </marker>
+  );
+  return <defs>{m('good', OV.good)}{m('bad', OV.bad)}{m('violet', OV.violet)}{m('white', OV.white)}{m('black', OV.black)}</defs>;
+}
 
-  // ── Dalmacja ────────────────────────────────────────────────────────────────
-  if (modes.has('dalmacja')) {
-    const edges = computeDefenseEdges(board);
-    const lines = edges.map((e, i) => {
-      const x1 = e.from.col + 0.5, y1 = e.from.row + 0.5;
-      const x2 = e.to.col + 0.5, y2 = e.to.row + 0.5;
-      const stroke = e.color === 'white' ? 'rgba(255,220,90,0.82)' : 'rgba(0,200,255,0.82)';
-      return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2}
-        stroke={stroke} strokeWidth={0.065} strokeLinecap="round"
-        strokeDasharray="0.18 0.10" />;
-    });
-    const defended = new Set<string>();
-    edges.forEach(e => defended.add(`${e.to.row},${e.to.col}`));
-    const dots = [...defended].map(key => {
-      const [r, c] = key.split(',').map(Number);
-      const piece = board[r][c];
-      const fill = piece?.color === 'white' ? 'rgba(255,220,90,0.45)' : 'rgba(0,200,255,0.45)';
-      return <circle key={key} cx={c + 0.5} cy={r + 0.5} r={0.38} fill={fill} />;
-    });
-    layers.push(<g key="dalmacja">{dots}{lines}</g>);
-  }
+const PIECE_LETTER: Record<string, string> = { knight: 'N', bishop: 'B', rook: 'R', queen: 'Q' };
 
-  // ── Lufycfer ────────────────────────────────────────────────────────────────
-  if (modes.has('lufycfer')) {
-    const exchanges = computeExchanges(board);
-    const elems: React.ReactNode[] = [];
-    for (const ex of exchanges) {
-      const { square, attackers, defenders } = ex;
-      const sqFill = attackers.length > defenders.length
-        ? 'rgba(255,60,60,0.50)'
-        : 'rgba(50,255,130,0.45)';
-      elems.push(<rect key={`sq-${square.row}-${square.col}`}
-        x={square.col} y={square.row} width={1} height={1} fill={sqFill} />);
-      const tx = square.col + 0.5, ty = square.row + 0.5;
-      for (const a of attackers) {
-        const ax = a.pos.col + 0.5, ay = a.pos.row + 0.5;
-        const dx = tx - ax, dy = ty - ay;
-        const len = Math.sqrt(dx * dx + dy * dy);
-        elems.push(<line key={`a-${a.pos.row}-${a.pos.col}-${square.row}-${square.col}`}
-          x1={ax} y1={ay} x2={tx - (dx / len) * 0.4} y2={ty - (dy / len) * 0.4}
-          stroke="rgba(255,80,80,0.80)" strokeWidth={0.06}
-          markerEnd="url(#arr-a)" strokeLinecap="round" />);
-      }
-      for (const d of defenders) {
-        const dx2 = d.pos.col + 0.5, dy2 = d.pos.row + 0.5;
-        const vx = tx - dx2, vy = ty - dy2;
-        const len = Math.sqrt(vx * vx + vy * vy);
-        elems.push(<line key={`d-${d.pos.row}-${d.pos.col}-${square.row}-${square.col}`}
-          x1={dx2} y1={dy2} x2={tx - (vx / len) * 0.4} y2={ty - (vy / len) * 0.4}
-          stroke="rgba(80,255,160,0.80)" strokeWidth={0.06}
-          markerEnd="url(#arr-d)" strokeLinecap="round" />);
-      }
-    }
-    layers.push(<g key="lufycfer">{elems}</g>);
-  }
+export function buildSpottingOverlay(modes: Set<SpottingMode>, state: GameState, flipped = false): React.ReactNode {
+  if (modes.size === 0) return null;
+  const { board, currentTurn } = state;
+  const k = makeKit(flipped);
+  const mid = 'ovm';
+  const layers: React.ReactNode[] = [];
+  const needControl = modes.has('control-white') || modes.has('control-black') || modes.has('control-balance') || modes.has('king-safety');
+  const ctl = needControl ? legalControl(state) : null;
 
-  // ── King Path ────────────────────────────────────────────────────────────────
-  if (modes.has('king-path')) {
-    const elems: React.ReactNode[] = [];
-
+  // ── Square control ─────────────────────────────────────────────────────────
+  if (ctl && (modes.has('control-white') || modes.has('control-black'))) {
+    const els: React.ReactNode[] = [];
     for (const color of ['white', 'black'] as PieceColor[]) {
-      const kingPos = findKing(board, color);
-      if (!kingPos) continue;
-      const kx = kingPos.col + 0.5, ky = kingPos.row + 0.5;
-      const ringColor   = color === 'white' ? 'rgba(255,215,60,0.85)' : 'rgba(0,210,255,0.85)';
-      const pinColor    = color === 'white' ? 'rgba(255,200,50,0.90)' : 'rgba(0,220,255,0.90)';
-      const mobileBright = color === 'white' ? '#ffe040' : '#00eeff';
-
-      elems.push(<circle key={`king-ring-${color}`}
-        cx={kx} cy={ky} r={0.43}
-        fill="none" stroke={ringColor} strokeWidth={0.08} />);
-
-      const colorInCheck = isKingInCheck(board, color);
-
-      if (!colorInCheck) {
-        for (let r = 0; r < 8; r++) {
-          for (let c = 0; c < 8; c++) {
-            const piece = board[r][c];
-            if (!piece || piece.color !== color || piece.type === 'king') continue;
-            const tmp: ChessBoard = board.map(row => [...row]);
-            tmp[r][c] = null;
-            if (!isKingInCheck(tmp, color)) continue;
-
-            const px = c + 0.5, py = r + 0.5;
-            elems.push(<line key={`pin-line-${r}-${c}`}
-              x1={kx} y1={ky} x2={px} y2={py}
-              stroke={pinColor} strokeWidth={0.07}
-              strokeDasharray="0.18 0.10" strokeLinecap="round" />);
-
-            const dr = r === kingPos.row ? 0 : r > kingPos.row ? 1 : -1;
-            const dc = c === kingPos.col ? 0 : c > kingPos.col ? 1 : -1;
-            let sr = r + dr, sc = c + dc;
-            while (sr >= 0 && sr < 8 && sc >= 0 && sc < 8) {
-              if (tmp[sr][sc]) {
-                elems.push(<line key={`pin-ray-${r}-${c}`}
-                  x1={px} y1={py} x2={sc + 0.5} y2={sr + 0.5}
-                  stroke="rgba(255,60,60,0.60)" strokeWidth={0.05}
-                  strokeDasharray="0.10 0.08" strokeLinecap="round" />);
-                break;
-              }
-              sr += dr; sc += dc;
-            }
-          }
-        }
-      } else {
-        const dests = new Set<string>();
-        for (let r = 0; r < 8; r++) {
-          for (let c = 0; c < 8; c++) {
-            const piece = board[r][c];
-            if (!piece || piece.color !== color) continue;
-            const moves = getLegalMoves(board, { row: r, col: c },
-              state.enPassantTarget,
-              state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-              state.blackCanCastleKingside, state.blackCanCastleQueenside);
-            if (moves.length > 0) {
-              elems.push(<circle key={`mobile-halo-${r}-${c}`}
-                cx={c + 0.5} cy={r + 0.5} r={0.41}
-                fill="none" stroke="rgba(0,0,0,0.70)" strokeWidth={0.14} />);
-              elems.push(<circle key={`mobile-${r}-${c}`}
-                cx={c + 0.5} cy={r + 0.5} r={0.41}
-                fill="none" stroke={mobileBright} strokeWidth={0.08} />);
-              for (const m of moves) dests.add(`${m.row},${m.col}`);
-            }
-          }
-        }
-        for (const key of dests) {
-          const [r, c] = key.split(',').map(Number);
-          elems.push(<circle key={`dest-${r}-${c}`}
-            cx={c + 0.5} cy={r + 0.5} r={0.20}
-            fill="rgba(190,0,255,0.85)" />);
-        }
+      if (!modes.has(color === 'white' ? 'control-white' : 'control-black')) continue;
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const n = ctl[color][r][c];
+        if (!n) continue;
+        els.push(k.tint(`c${color}${r}${c}`, { row: r, col: c }, side(color), Math.min(0.14 + 0.09 * (n - 1), 0.4)));
+        if (n > 1) els.push(k.badge(`cb${color}${r}${c}`, { row: r, col: c }, color === 'white' ? 'bl' : 'tr', String(n), side(color)));
       }
     }
-
-    layers.push(<g key="king-path">{elems}</g>);
+    layers.push(<g key="control">{els}</g>);
   }
 
-  // ── King Shot ────────────────────────────────────────────────────────────────
-  if (modes.has('king-shot')) {
-    const elems: React.ReactNode[] = [];
-    const oppColor: PieceColor = currentTurn === 'white' ? 'black' : 'white';
-    const oppKingPos = findKing(board, oppColor);
+  if (ctl && modes.has('control-balance')) {
+    const els: React.ReactNode[] = [];
+    for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+      const w = ctl.white[r][c], b = ctl.black[r][c];
+      if (!w && !b) continue;
+      const p = { row: r, col: c };
+      if (w === b) {
+        els.push(k.frame(`bal${r}${c}`, p, OV.violet, { dashed: true, width: 0.045 }));
+        continue;
+      }
+      const lead: PieceColor = w > b ? 'white' : 'black';
+      els.push(k.tint(`bal${r}${c}`, p, side(lead), Math.min(0.12 + 0.08 * Math.abs(w - b), 0.34)));
+      if (w && b) els.push(k.badge(`balb${r}${c}`, p, 'br', `${w}:${b}`, side(lead)));
+    }
+    layers.push(<g key="balance">{els}</g>);
+  }
 
-    if (oppKingPos) {
-      const srcRing = currentTurn === 'white' ? '#ff9020' : '#2090ff';
-
-      type ShotInfo = {
-        fr: number; fc: number; tr: number; tc: number;
-        checkers: Position[];
-        unsafe: boolean;
-      };
-      const shots: ShotInfo[] = [];
-      const sources = new Set<string>();
-
+  // ── Open files ───────────────────────────────────────────────────────────────
+  if (modes.has('files')) {
+    const els: React.ReactNode[] = [];
+    for (const { col, kind } of fileKinds(board)) {
+      const color = kind === 'open' ? OV.good : kind === 'half-white' ? OV.white : OV.black;
+      els.push(<rect key={`f${col}`} x={col + 0.1} y={0.05} width={0.8} height={7.9} rx={0.4} fill={color} fillOpacity={0.12}
+        stroke={color} strokeOpacity={0.55} strokeWidth={0.035} strokeDasharray="0.2 0.12" />);
+      const y = flipped ? 7.8 : 0.26;
+      els.push(k.label(`fl${col}`, col + 0.5, y, kind === 'open' ? 'OPEN' : 'HALF', color));
+      // Rooks / queens already on it get a ring.
       for (let r = 0; r < 8; r++) {
-        for (let c = 0; c < 8; c++) {
-          const piece = board[r][c];
-          if (!piece || piece.color !== currentTurn) continue;
-
-          const legal = getLegalMoves(board, { row: r, col: c },
-            state.enPassantTarget,
-            state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
-            state.blackCanCastleKingside, state.blackCanCastleQueenside);
-
-          for (const dest of legal) {
-            const tmp: ChessBoard = board.map(row => [...row]);
-            if (piece.type === 'pawn' && state.enPassantTarget &&
-                dest.row === state.enPassantTarget.row && dest.col === state.enPassantTarget.col) {
-              tmp[piece.color === 'white' ? dest.row + 1 : dest.row - 1][dest.col] = null;
-            }
-            tmp[dest.row][dest.col] = (piece.type === 'pawn' && (dest.row === 0 || dest.row === 7))
-              ? { type: 'queen', color: piece.color }
-              : piece;
-            tmp[r][c] = null;
-
-            if (!isKingInCheck(tmp, oppColor)) continue;
-
-            const checkers = findCheckingPieces(tmp, oppKingPos, currentTurn);
-            const unsafe = checkers.some(chk => isRawAttackedBy(tmp, chk, oppColor));
-
-            sources.add(`${r},${c}`);
-            shots.push({ fr: r, fc: c, tr: dest.row, tc: dest.col, checkers, unsafe });
-          }
+        const p = board[r][col];
+        if (p && (p.type === 'rook' || p.type === 'queen')) {
+          const fits = kind === 'open' || (kind === 'half-white' && p.color === 'white') || (kind === 'half-black' && p.color === 'black');
+          if (fits) els.push(k.ring(`fr${r}${col}`, { row: r, col }, side(p.color), { glow: true }));
         }
-      }
-
-      for (const key of sources) {
-        const [r, c] = key.split(',').map(Number);
-        const fx = c + 0.5, fy = r + 0.5;
-        elems.push(<circle key={`shot-halo-${key}`}
-          cx={fx} cy={fy} r={0.42}
-          fill="none" stroke="rgba(0,0,0,0.65)" strokeWidth={0.15} />);
-        elems.push(<circle key={`shot-src-${key}`}
-          cx={fx} cy={fy} r={0.42}
-          fill="none" stroke={srcRing} strokeWidth={0.09} />);
-      }
-
-      const kx = oppKingPos.col + 0.5, ky = oppKingPos.row + 0.5;
-
-      for (const { fr, fc, tr, tc, checkers, unsafe } of shots) {
-        const fx = fc + 0.5, fy = fr + 0.5;
-        const tx = tc + 0.5, ty = tr + 0.5;
-        const k = `${fr}-${fc}-${tr}-${tc}`;
-
-        const shotColor  = unsafe ? '#b400ff' : '#3cff5a';
-        const destFill   = unsafe ? 'rgba(180,0,255,0.28)' : 'rgba(50,255,80,0.28)';
-        const arrowMark  = unsafe ? 'url(#arr-shot-unsafe)' : 'url(#arr-shot-safe)';
-
-        elems.push(<rect key={`shot-dest-${k}`}
-          x={tc} y={tr} width={1} height={1} fill={destFill} />);
-
-        const adx = tx - fx, ady = ty - fy;
-        const alen = Math.sqrt(adx * adx + ady * ady);
-        if (alen > 0.01) {
-          elems.push(<line key={`shot-arrow-${k}`}
-            x1={fx} y1={fy}
-            x2={tx - (adx / alen) * 0.38} y2={ty - (ady / alen) * 0.38}
-            stroke={shotColor} strokeWidth={0.07}
-            markerEnd={arrowMark} strokeLinecap="round" />);
-        }
-
-        checkers.forEach((chk, i) => {
-          const cx = chk.col + 0.5, cy = chk.row + 0.5;
-          const rdx = kx - cx, rdy = ky - cy;
-          const rlen = Math.sqrt(rdx * rdx + rdy * rdy);
-          if (rlen > 0.01) {
-            elems.push(<line key={`shot-ray-${k}-${i}`}
-              x1={cx} y1={cy}
-              x2={kx - (rdx / rlen) * 0.43} y2={ky - (rdy / rlen) * 0.43}
-              stroke="rgba(255,50,50,0.75)" strokeWidth={0.06}
-              strokeDasharray="0.13 0.09" strokeLinecap="round" />);
-          }
-        });
       }
     }
-
-    layers.push(<g key="king-shot">{elems}</g>);
+    layers.push(<g key="files">{els}</g>);
   }
 
-  if (layers.length <= 1) return null;
-  return <svg {...SVG_PROPS}>{layers}</svg>;
+  // ── Outposts ─────────────────────────────────────────────────────────────────
+  if (modes.has('outposts')) {
+    const els: React.ReactNode[] = [];
+    for (const o of outposts(board)) {
+      const cx = o.pos.col + 0.5, cy = o.pos.row + 0.5, s = o.occupied ? 0.3 : 0.2;
+      els.push(<path key={`o${o.pos.row}${o.pos.col}${o.color}`} d={`M${cx} ${cy - s} L${cx + s} ${cy} L${cx} ${cy + s} L${cx - s} ${cy} Z`}
+        fill={side(o.color)} fillOpacity={o.occupied ? 0.9 : 0.55} stroke="rgba(255,255,255,0.8)" strokeWidth={0.025} />);
+      if (o.occupied) els.push(k.ring(`or${o.pos.row}${o.pos.col}`, o.pos, side(o.color), { glow: true }));
+    }
+    layers.push(<g key="outposts">{els}</g>);
+  }
+
+  // ── Pawn structure ───────────────────────────────────────────────────────────
+  if (modes.has('pawns')) {
+    const els: React.ReactNode[] = [];
+    const TAG = { passed: { t: 'P', c: OV.good }, isolated: { t: 'I', c: OV.bad }, doubled: { t: 'D', c: OV.warn }, backward: { t: 'B', c: OV.violet } };
+    for (const pw of pawnStructure(board)) {
+      const key = `${pw.pos.row}${pw.pos.col}`;
+      if (pw.flags.includes('passed')) {
+        // Path to promotion.
+        const end = { row: pw.color === 'white' ? 0 : 7, col: pw.pos.col };
+        if (end.row !== pw.pos.row) els.push(k.line(`pp${key}`, pw.pos, end, OV.good, { dashed: true, width: 0.05, alpha: 0.7 }));
+        els.push(<circle key={`pq${key}`} cx={end.col + 0.5} cy={end.row + 0.5} r={0.1} fill={OV.good} />);
+        els.push(k.ring(`pr${key}`, pw.pos, OV.good, { glow: true }));
+      } else if (pw.flags.includes('isolated') || pw.flags.includes('backward')) {
+        els.push(k.ring(`pw${key}`, pw.pos, pw.flags.includes('isolated') ? OV.bad : OV.violet, { dashed: true }));
+      }
+      pw.flags.forEach((f, i) => els.push(k.badge(`pb${key}${f}`, pw.pos, i === 0 ? 'tl' : i === 1 ? 'tr' : 'bl', TAG[f].t, TAG[f].c)));
+    }
+    layers.push(<g key="pawns">{els}</g>);
+  }
+
+  // ── Development & opening principles ────────────────────────────────────────
+  if (modes.has('development')) {
+    const els: React.ReactNode[] = [];
+    const dev = development(state);
+    // The four centre squares, tinted by who controls them.
+    const c2 = ctl ?? legalControl(state);
+    for (const [r, c] of [[3, 3], [3, 4], [4, 3], [4, 4]]) {
+      const w = c2.white[r][c], b = c2.black[r][c];
+      const lead = w === b ? OV.violet : side(w > b ? 'white' : 'black');
+      els.push(k.frame(`dc${r}${c}`, { row: r, col: c }, lead, { width: 0.06 }));
+    }
+    for (const u of dev.undeveloped) {
+      els.push(k.ring(`du${u.pos.row}${u.pos.col}`, u.pos, side(u.color), { dashed: true }));
+      els.push(k.badge(`dub${u.pos.row}${u.pos.col}`, u.pos, 'tr', 'dev', side(u.color)));
+    }
+    for (const u of dev.uncastled) {
+      els.push(k.ring(`dk${u.pos.row}${u.pos.col}`, u.pos, OV.bad, { dashed: true, width: 0.075 }));
+      els.push(k.badge(`dkb${u.pos.row}${u.pos.col}`, u.pos, 'tr', 'O-O?', OV.bad));
+    }
+    for (const q of dev.earlyQueen) {
+      els.push(k.ring(`dq${q.pos.row}${q.pos.col}`, q.pos, OV.warn, { width: 0.07 }));
+      els.push(k.badge(`dqb${q.pos.row}${q.pos.col}`, q.pos, 'tr', 'early', OV.warn));
+    }
+    layers.push(<g key="development">{els}</g>);
+  }
+
+  // ── Piece activity ───────────────────────────────────────────────────────────
+  if (modes.has('activity')) {
+    const els: React.ReactNode[] = [];
+    for (const a of activity(state)) {
+      const max = { knight: 8, bishop: 13, rook: 14, queen: 27 }[a.type as 'knight'] ?? 8;
+      const ratio = a.moves / max;
+      const color = ratio >= 0.5 ? OV.good : a.moves <= 2 ? OV.bad : OV.warn;
+      const key = `${a.pos.row}${a.pos.col}`;
+      if (a.moves <= 2) els.push(k.ring(`ar${key}`, a.pos, OV.bad, { dashed: true }));
+      els.push(k.badge(`ab${key}`, a.pos, 'br', String(a.moves), color));
+      if (a.badBishop) els.push(k.badge(`abb${key}`, a.pos, 'tl', 'bad', OV.violet, '#fff'));
+    }
+    layers.push(<g key="activity">{els}</g>);
+  }
+
+  // ── Protection map (who defends whom) ──────────────────────────────────────
+  if (modes.has('protection')) {
+    const els: React.ReactNode[] = [];
+    const edges = computeDefenseEdges(board);
+    edges.forEach((e, i) => els.push(k.line(`pe${i}`, e.from, e.to, side(e.color), { width: 0.035, alpha: 0.45, shorten: 0.3 })));
+    const count = new Map<string, { n: number; color: PieceColor; pos: Position }>();
+    for (const e of edges) {
+      const key = `${e.to.row},${e.to.col}`;
+      const cur = count.get(key) ?? { n: 0, color: e.color, pos: e.to };
+      cur.n++;
+      count.set(key, cur);
+    }
+    for (const [key, v] of count) els.push(k.badge(`pb${key}`, v.pos, 'bl', `×${v.n}`, side(v.color)));
+    layers.push(<g key="protection">{els}</g>);
+  }
+
+  // ── Loose pieces (LPDO) ──────────────────────────────────────────────────────
+  const safety = modes.has('loose') || modes.has('hanging') ? pieceSafety(board) : [];
+  if (modes.has('loose')) {
+    const els: React.ReactNode[] = [];
+    for (const s of safety) {
+      if (s.defenders.length || s.loss > 0) continue; // hanging ones are shown by "Hanging pieces"
+      if (s.type === 'pawn') continue;
+      els.push(k.ring(`l${s.pos.row}${s.pos.col}`, s.pos, OV.warn, { dashed: true, width: 0.07, glow: true }));
+      els.push(k.badge(`lb${s.pos.row}${s.pos.col}`, s.pos, 'tl', 'loose', OV.warn));
+    }
+    layers.push(<g key="loose">{els}</g>);
+  }
+
+  // ── Hanging pieces (static exchange evaluation) ───────────────────────────────
+  if (modes.has('hanging')) {
+    const els: React.ReactNode[] = [];
+    for (const s of safety) {
+      if (!s.attackers.length) continue;
+      const key = `${s.pos.row}${s.pos.col}`;
+      const mine = s.color === currentTurn; // a danger for the side to move
+      if (s.loss > 0) {
+        const color = mine ? OV.bad : OV.good;
+        els.push(<g key={`h${key}`} className="ov-pulse">{k.tint(`ht${key}`, s.pos, color, 0.3)}</g>);
+        els.push(k.ring(`hr${key}`, s.pos, color, { width: 0.08 }));
+        const cheapest = [...s.attackers].sort((a, b) => VALUE[a.type] - VALUE[b.type])[0];
+        els.push(k.line(`ha${key}`, cheapest.pos, s.pos, color, { width: 0.075, arrow: `${mid}-${mine ? 'bad' : 'good'}`, shorten: 0.42 }));
+        els.push(k.badge(`hb${key}`, s.pos, 'tr', `${mine ? '−' : '+'}${s.loss}`, color, '#fff'));
+      } else {
+        // Attacked but adequately defended: a quiet amber frame with the count.
+        els.push(k.frame(`hs${key}`, s.pos, OV.warn, { dashed: true, width: 0.04, alpha: 0.8 }));
+        els.push(k.badge(`hsb${key}`, s.pos, 'tr', `${s.attackers.length}:${s.defenders.length}`, OV.warn));
+      }
+    }
+    layers.push(<g key="hanging">{els}</g>);
+  }
+
+  // ── King safety: king zone pressure, escape squares and pins ────────────────
+  if (modes.has('king-safety') && ctl) {
+    const els: React.ReactNode[] = [];
+    for (const color of ['white', 'black'] as PieceColor[]) {
+      const kp = findKing(board, color);
+      if (!kp) continue;
+      const enemy = ctl[other(color)];
+      let pressure = 0;
+      for (const z of kingZone(board, color, kp, enemy)) {
+        pressure += z.hits;
+        if (z.hits) {
+          els.push(k.tint(`kz${color}${z.pos.row}${z.pos.col}`, z.pos, OV.bad, Math.min(0.18 + 0.1 * z.hits, 0.45)));
+          if (z.hits > 1) els.push(k.badge(`kzb${color}${z.pos.row}${z.pos.col}`, z.pos, 'br', String(z.hits), OV.bad, '#fff'));
+        }
+      }
+      const escapes = getLegalMoves(board, kp, state.enPassantTarget,
+        state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
+        state.blackCanCastleKingside, state.blackCanCastleQueenside)
+        .filter(m => Math.abs(m.col - kp.col) <= 1);
+      escapes.forEach(m => els.push(k.dot(`ke${color}${m.row}${m.col}`, m, OV.good, 0.11)));
+      const inCheck = isKingInCheck(board, color);
+      els.push(k.ring(`kr${color}`, kp, inCheck ? OV.bad : side(color), { width: 0.085, glow: true }));
+      // Escape-square count only matters once the king is under some pressure.
+      if (inCheck || pressure > 0) {
+        els.push(k.badge(`kb${color}`, kp, 'tr', `${escapes.length}`, escapes.length <= 1 ? OV.bad : OV.good, escapes.length <= 1 ? '#fff' : OV.ink));
+      }
+      // Pins: a piece that shields its king from a slider.
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const p = board[r][c];
+        if (!p || p.color !== color || p.type === 'king') continue;
+        const tmp: ChessBoard = board.map(row => [...row]);
+        tmp[r][c] = null;
+        if (!isKingInCheck(tmp, color)) continue;
+        const dr = Math.sign(r - kp.row), dc = Math.sign(c - kp.col);
+        let sr = r + dr, sc = c + dc;
+        while (sr >= 0 && sr < 8 && sc >= 0 && sc < 8 && !tmp[sr][sc]) { sr += dr; sc += dc; }
+        if (sr >= 0 && sr < 8 && sc >= 0 && sc < 8) {
+          els.push(k.line(`kp${r}${c}`, { row: sr, col: sc }, kp, OV.bad, { dashed: true, width: 0.05, alpha: 0.75, shorten: 0.4 }));
+        }
+        els.push(k.ring(`kpr${r}${c}`, { row: r, col: c }, OV.violet, { width: 0.07 }));
+        els.push(k.badge(`kpb${r}${c}`, { row: r, col: c }, 'tl', 'pin', OV.violet, '#fff'));
+      }
+    }
+    layers.push(<g key="king">{els}</g>);
+  }
+
+  // ── Checks available to the side to move ─────────────────────────────────────
+  if (modes.has('checks')) {
+    const els: React.ReactNode[] = [];
+    const opp = other(currentTurn);
+    const oppKing = findKing(board, opp);
+    if (oppKing) {
+      for (let r = 0; r < 8; r++) for (let c = 0; c < 8; c++) {
+        const piece = board[r][c];
+        if (!piece || piece.color !== currentTurn) continue;
+        const legal = getLegalMoves(board, { row: r, col: c }, state.enPassantTarget,
+          state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
+          state.blackCanCastleKingside, state.blackCanCastleQueenside);
+        for (const dest of legal) {
+          const tmp: ChessBoard = board.map(row => [...row]);
+          tmp[dest.row][dest.col] = (piece.type === 'pawn' && (dest.row === 0 || dest.row === 7)) ? { type: 'queen', color: piece.color } : piece;
+          tmp[r][c] = null;
+          if (!isKingInCheck(tmp, opp)) continue;
+          // Safe check = the checking piece can't simply be taken.
+          const moved = tmp[dest.row][dest.col]!;
+          const hits = [];
+          for (let rr = 0; rr < 8; rr++) for (let cc = 0; cc < 8; cc++) {
+            const q = tmp[rr][cc];
+            if (q && q.color === opp && getAttackedSquares(tmp, { row: rr, col: cc }, q.type, q.color).some(s => s.row === dest.row && s.col === dest.col)) hits.push(q);
+          }
+          const safe = hits.length === 0;
+          const color = safe ? OV.good : OV.violet;
+          const key = `${r}${c}${dest.row}${dest.col}`;
+          els.push(k.tint(`cht${key}`, dest, color, 0.22));
+          els.push(k.line(`cha${key}`, { row: r, col: c }, dest, color, { width: 0.065, arrow: `${mid}-${safe ? 'good' : 'violet'}`, shorten: 0.36, dashed: !safe }));
+          els.push(k.badge(`chb${key}`, dest, 'tr', `${PIECE_LETTER[moved.type] ?? ''}+`, color, safe ? OV.ink : '#fff'));
+        }
+      }
+      els.push(k.ring('chk', oppKing, OV.bad, { width: 0.07, dashed: true }));
+    }
+    layers.push(<g key="checks">{els}</g>);
+  }
+
+  if (!layers.length) return null;
+  return (
+    <svg className="ov-layer" viewBox="0 0 8 8" width="100%" height="100%" style={{ position: 'absolute', inset: 0 }} xmlns="http://www.w3.org/2000/svg">
+      {markers(mid)}
+      {layers}
+    </svg>
+  );
 }

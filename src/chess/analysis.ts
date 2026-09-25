@@ -1,6 +1,33 @@
 import { Board, PieceColor, PieceType, Position } from './types';
 
-export type SpottingMode = 'none' | 'eye-full' | 'eye-1' | 'eye-2' | 'eye-white' | 'eye-black' | 'dalmacja' | 'lufycfer' | 'king-path' | 'king-shot';
+/** Board overlays. Tactics: hanging, loose, checks, king-safety. Position: the rest. */
+export type SpottingMode =
+  | 'hanging' | 'loose' | 'checks' | 'king-safety'
+  | 'control-white' | 'control-black' | 'control-balance'
+  | 'protection' | 'pawns' | 'outposts' | 'files' | 'development' | 'activity';
+
+/** Old (pre-rename) overlay ids → new ids, so saved settings keep working. */
+export const LEGACY_OVERLAYS: Record<string, SpottingMode> = {
+  dalmacja: 'protection',
+  lufycfer: 'hanging',
+  'king-path': 'king-safety',
+  'king-shot': 'checks',
+  'eye-white': 'control-white',
+  'eye-black': 'control-black',
+  'eye-full': 'control-balance',
+  'eye-1': 'control-balance',
+  'eye-2': 'control-balance',
+};
+
+export function normalizeOverlays(list: unknown): SpottingMode[] {
+  if (!Array.isArray(list)) return [];
+  const out = new Set<SpottingMode>();
+  for (const v of list) {
+    if (typeof v !== 'string' || v === 'none') continue;
+    out.add((LEGACY_OVERLAYS[v] ?? v) as SpottingMode);
+  }
+  return [...out];
+}
 
 const PIECE_VALUES: Record<PieceType, number> = {
   pawn: 1,

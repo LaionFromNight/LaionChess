@@ -1,7 +1,7 @@
 import {
   createContext, useCallback, useContext, useEffect, useMemo, useRef, useState,
 } from 'react';
-import type { SpottingMode } from '../chess/analysis';
+import { normalizeOverlays, type SpottingMode } from '../chess/analysis';
 
 // ── types ───────────────────────────────────────────────────────────────────
 export type Accent = 'cyan' | 'green' | 'magenta' | 'amber';
@@ -96,7 +96,9 @@ function load(): UiSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { ...DEFAULTS };
-    return { ...DEFAULTS, ...JSON.parse(raw) };
+    const parsed = { ...DEFAULTS, ...JSON.parse(raw) } as UiSettings;
+    parsed.spotModes = normalizeOverlays(parsed.spotModes);
+    return parsed;
   } catch {
     return { ...DEFAULTS };
   }
