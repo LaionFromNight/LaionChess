@@ -1,0 +1,971 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "slav-defense",
+  "name": "Slav Defense",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "Support d5 with ...c6 and keep the light-squared bishop free for ...Bf5. A rock-solid Queen's Gambit defense covering the main 5.a4 line, the Exchange Slav and the offbeat systems.",
+  "lines": [
+    {
+      "id": "main-e3",
+      "name": "Main Line — 5.a4 Bf5 6.e3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take the pawn — White must spend time to regain it."
+        },
+        {
+          "san": "a4",
+          "from": "a2",
+          "to": "a4"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop the bishop outside the pawn chain — the Slav's big idea."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "Bxc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4",
+          "note": "Pin and develop."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Prepare ...Bg6 and ...O-O."
+        },
+        {
+          "san": "Qe2",
+          "from": "d1",
+          "to": "e2"
+        },
+        {
+          "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
+          "note": "Step away from e4 with tempo."
+        },
+        {
+          "san": "e4",
+          "from": "e3",
+          "to": "e4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Bd3",
+          "from": "c4",
+          "to": "d3"
+        },
+        {
+          "san": "Bh5",
+          "from": "g6",
+          "to": "h5",
+          "note": "Pin the f3-knight — a classic, fully playable Slav."
+        }
+      ]
+    },
+    {
+      "id": "main-ne5",
+      "name": "Main Line — 6.Ne5 (Krause)",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take the pawn — White must spend time to regain it."
+        },
+        {
+          "san": "a4",
+          "from": "a2",
+          "to": "a4"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop the bishop outside the pawn chain — the Slav's big idea."
+        },
+        {
+          "san": "Ne5",
+          "from": "f3",
+          "to": "e5"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Challenge the e5-knight."
+        },
+        {
+          "san": "Nxc4",
+          "from": "e5",
+          "to": "c4"
+        },
+        {
+          "san": "Qc7",
+          "from": "d8",
+          "to": "c7",
+          "note": "Prepare ...e5."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "The central break."
+        },
+        {
+          "san": "dxe5",
+          "from": "d4",
+          "to": "e5"
+        },
+        {
+          "san": "Nxe5",
+          "from": "d7",
+          "to": "e5",
+          "note": "Recapture."
+        },
+        {
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4"
+        },
+        {
+          "san": "Nfd7",
+          "from": "f6",
+          "to": "d7",
+          "note": "Keep the pinned e5-knight protected — Black is fine."
+        }
+      ]
+    },
+    {
+      "id": "e3-b5",
+      "name": "4.Nc3 dxc4 5.e3 b5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take the pawn — White must spend time to regain it."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "b5",
+          "from": "b7",
+          "to": "b5",
+          "note": "Hold the extra pawn."
+        },
+        {
+          "san": "a4",
+          "from": "a2",
+          "to": "a4"
+        },
+        {
+          "san": "b4",
+          "from": "b5",
+          "to": "b4",
+          "note": "Kick the knight."
+        },
+        {
+          "san": "Na2",
+          "from": "c3",
+          "to": "a2"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "Bxc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Develop."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle — the b4-pawn is annoying for White."
+        }
+      ]
+    },
+    {
+      "id": "exchange",
+      "name": "Exchange Slav — 3.cxd5 cxd5",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "cxd5",
+          "from": "c6",
+          "to": "d5",
+          "note": "Recapture with the c-pawn."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Mirror White's bishop."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "Bb5",
+          "from": "f1",
+          "to": "b5"
+        },
+        {
+          "san": "Nd7",
+          "from": "f6",
+          "to": "d7",
+          "note": "Prepare ...Be7 and ...O-O — fully equal."
+        }
+      ]
+    },
+    {
+      "id": "e3-bf5",
+      "name": "3.Nf3 Nf6 4.e3 Bf5 5.Nc3 e6 6.Nh4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop the bishop before ...e6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "Nh4",
+          "from": "f3",
+          "to": "h4"
+        },
+        {
+          "san": "Bg6",
+          "from": "f5",
+          "to": "g6",
+          "note": "Keep the bishop."
+        },
+        {
+          "san": "Nxg6",
+          "from": "h4",
+          "to": "g6"
+        },
+        {
+          "san": "hxg6",
+          "from": "h7",
+          "to": "g6",
+          "note": "Recapture towards the center — the h-file opens."
+        },
+        {
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Develop; the g6-pawn covers f5 and h5."
+        }
+      ]
+    },
+    {
+      "id": "e3-qb3",
+      "name": "4.e3 Bf5 5.cxd5 cxd5 6.Qb3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop the bishop before ...e6."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "cxd5",
+          "from": "c6",
+          "to": "d5",
+          "note": "Recapture."
+        },
+        {
+          "san": "Qb3",
+          "from": "d1",
+          "to": "b3"
+        },
+        {
+          "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
+          "note": "Offer a queen trade."
+        },
+        {
+          "san": "Qxb6",
+          "from": "b3",
+          "to": "b6"
+        },
+        {
+          "san": "axb6",
+          "from": "a7",
+          "to": "b6",
+          "note": "The half-open a-file compensates for the doubled pawns."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid, easy development."
+        }
+      ]
+    },
+    {
+      "id": "qc2",
+      "name": "4.Qc2 dxc4 5.Qxc4 Bf5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Qc2",
+          "from": "d1",
+          "to": "c2"
+        },
+        {
+          "san": "dxc4",
+          "from": "d5",
+          "to": "c4",
+          "note": "Take."
+        },
+        {
+          "san": "Qxc4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop with tempo-gaining ideas like ...Nbd7-b6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Develop."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Castle next — comfortable."
+        }
+      ]
+    },
+    {
+      "id": "g3",
+      "name": "4.g3 Bf5 — Fianchetto",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
+        },
+        {
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5",
+          "note": "Develop outside the chain."
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7",
+          "note": "Develop."
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5"
+        },
+        {
+          "san": "exd5",
+          "from": "e6",
+          "to": "d5",
+          "note": "Recapture towards the center."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7",
+          "note": "Castle next — a solid Carlsbad structure."
+        }
+      ]
+    },
+    {
+      "id": "nc3-a6",
+      "name": "3.Nc3 Nf6 4.e3 a6 — Chebanenko",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3"
+        },
+        {
+          "san": "a6",
+          "from": "a7",
+          "to": "a6",
+          "note": "The Chebanenko: prepare ...b5."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "b5",
+          "from": "b7",
+          "to": "b5",
+          "note": "Gain queenside space."
+        },
+        {
+          "san": "b3",
+          "from": "b2",
+          "to": "b3"
+        },
+        {
+          "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
+          "note": "Develop outside the chain."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Solid."
+        }
+      ]
+    },
+    {
+      "id": "winawer",
+      "name": "Winawer Countergambit — 3.e4 dxe4 4.Nc3 e5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Take the center."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6",
+          "note": "The Slav: defend d5 and keep the c8-bishop free."
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "dxe4",
+          "from": "d5",
+          "to": "e4",
+          "note": "Take the pawn."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5",
+          "note": "The Winawer Countergambit idea: hit d4 at once."
+        }
+      ]
+    }
+  ]
+}

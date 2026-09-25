@@ -13,55 +13,85 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "d5"
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "e6"
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
         },
         {
           "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Develop the knight toward e5."
         },
         {
-          "san": "c5"
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
         },
         {
           "san": "c3",
+          "from": "c2",
+          "to": "c3",
           "note": "Support d4 so the center stays rock solid against ...c5."
         },
         {
-          "san": "Nc6"
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
         },
         {
           "san": "Nbd2",
+          "from": "b1",
+          "to": "d2",
           "note": "The knight goes to d2 to support e4 or f3."
         },
         {
-          "san": "Bd6"
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6"
         },
         {
           "san": "Bg3",
+          "from": "f4",
+          "to": "g3",
           "note": "Don't trade — retreat to g3 so Black's ...Bxf4 exf4 doesn't happen on his terms."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
         },
         {
           "san": "Bd3",
+          "from": "f1",
+          "to": "d3",
           "note": "Put the bishop on its best diagonal, aiming at h7. Next comes O-O and a later e4 or Ne5."
         }
       ]
@@ -73,55 +103,85 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "d5"
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "c5"
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
         },
         {
           "san": "c3",
+          "from": "c2",
+          "to": "c3",
           "note": "Against ...c5, answer with c3 — the d4 pawn stays anchored."
         },
         {
-          "san": "Nc6"
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
         },
         {
           "san": "Nd2",
+          "from": "b1",
+          "to": "d2",
           "note": "Knight to d2 first, keeping the d1–b3 diagonal open for the queen."
         },
         {
-          "san": "e6"
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
         },
         {
           "san": "Ngf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Now the other knight comes out."
         },
         {
-          "san": "Bd6"
+          "san": "Bd6",
+          "from": "f8",
+          "to": "d6"
         },
         {
           "san": "Bg3",
+          "from": "f4",
+          "to": "g3",
           "note": "Avoid the trade on f4 and keep the bishop."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
         },
         {
           "san": "Bd3",
+          "from": "f1",
+          "to": "d3",
           "note": "Classical London setup — castle next and look for Ne5 or e4."
         }
       ]
@@ -133,62 +193,96 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "d5"
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "c5"
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
         },
         {
           "san": "c3",
+          "from": "c2",
+          "to": "c3",
           "note": "Solid support for d4."
         },
         {
-          "san": "Nc6"
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
         },
         {
           "san": "Nd2",
+          "from": "b1",
+          "to": "d2",
           "note": "Knight to d2 keeps the queen's path to b3 open."
         },
         {
-          "san": "Qb6"
+          "san": "Qb6",
+          "from": "d8",
+          "to": "b6"
         },
         {
           "san": "Qb3",
+          "from": "d1",
+          "to": "b3",
           "note": "Meet the attack on b2 by offering a queen trade — if queens come off, ...axb6 leaves Black with doubled pawns."
         },
         {
-          "san": "c4"
+          "san": "c4",
+          "from": "c5",
+          "to": "c4"
         },
         {
           "san": "Qc2",
+          "from": "b3",
+          "to": "c2",
           "note": "Retreat to c2 — the queen covers b2 and eyes e4."
         },
         {
-          "san": "Bf5"
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5"
         },
         {
           "san": "Qc1",
+          "from": "c2",
+          "to": "c1",
           "note": "Sidestep the bishop. From c1 the queen guards b2 and we plan e4 or b3 to break the c4 chain."
         },
         {
-          "san": "e6"
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
         },
         {
           "san": "Ngf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Develop normally. Black's queenside space is a target for b3."
         }
       ]
@@ -200,62 +294,96 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "d5"
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "Bf5"
+          "san": "Bf5",
+          "from": "c8",
+          "to": "f5"
         },
         {
           "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Develop naturally."
         },
         {
-          "san": "e6"
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
         },
         {
           "san": "c4",
+          "from": "c2",
+          "to": "c4",
           "note": "Against the symmetrical setup, c4 hits d5 and exposes Black's b7."
         },
         {
-          "san": "c6"
+          "san": "c6",
+          "from": "c7",
+          "to": "c6"
         },
         {
           "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
           "note": "Develop and increase the pressure on d5."
         },
         {
-          "san": "Nbd7"
+          "san": "Nbd7",
+          "from": "b8",
+          "to": "d7"
         },
         {
           "san": "Qb3",
+          "from": "d1",
+          "to": "b3",
           "note": "The queen targets b7, which Black's bishop no longer defends."
         },
         {
-          "san": "Qb6"
+          "san": "Qb6",
+          "from": "d8",
+          "to": "b6"
         },
         {
           "san": "c5",
+          "from": "c4",
+          "to": "c5",
           "note": "Gain queenside space with tempo on the queen."
         },
         {
-          "san": "Qxb3"
+          "san": "Qxb3",
+          "from": "b6",
+          "to": "b3"
         },
         {
           "san": "axb3",
+          "from": "a2",
+          "to": "b3",
           "note": "Recapture toward the center — the a-file opens for our rook and we keep a queenside bind."
         }
       ]
@@ -267,55 +395,85 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "g6"
+          "san": "g6",
+          "from": "g7",
+          "to": "g6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "Bg7"
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7"
         },
         {
           "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Develop the knight and control e5."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
         },
         {
           "san": "Be2",
+          "from": "f1",
+          "to": "e2",
           "note": "A modest but solid square for the bishop against the King's Indian setup."
         },
         {
-          "san": "d6"
+          "san": "d6",
+          "from": "d7",
+          "to": "d6"
         },
         {
           "san": "h3",
+          "from": "h2",
+          "to": "h3",
           "note": "Give the f4 bishop a home on h2 in case of ...Nh5."
         },
         {
-          "san": "c5"
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
         },
         {
           "san": "c3",
+          "from": "c2",
+          "to": "c3",
           "note": "Keep d4 firmly supported."
         },
         {
-          "san": "Nc6"
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
         },
         {
           "san": "O-O",
+          "from": "e1",
+          "to": "g1",
           "note": "Castle — a sound, solid position where Black's bishop bites on granite."
         }
       ]
@@ -327,41 +485,63 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "c5"
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "Qb6"
+          "san": "Qb6",
+          "from": "d8",
+          "to": "b6"
         },
         {
           "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
           "note": "Ignore b2! If the queen grabs it, Nb5 threatens Nc7+ and Rb1 hunts the queen."
         },
         {
-          "san": "Qxb2"
+          "san": "Qxb2",
+          "from": "b6",
+          "to": "b2"
         },
         {
           "san": "Nb5",
+          "from": "c3",
+          "to": "b5",
           "note": "Threatening Nc7+ and Rb1 — the black queen is in danger."
         },
         {
-          "san": "Na6"
+          "san": "Na6",
+          "from": "b8",
+          "to": "a6"
         },
         {
           "san": "Rb1",
+          "from": "a1",
+          "to": "b1",
           "note": "Chase the queen off to a2 where it's out of play; White has a big lead in development."
         }
       ]
@@ -373,56 +553,233 @@
       "plies": [
         {
           "san": "d4",
+          "from": "d2",
+          "to": "d4",
           "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
         },
         {
-          "san": "f5"
+          "san": "f5",
+          "from": "f7",
+          "to": "f5"
         },
         {
           "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
           "note": "The London bishop: develop it outside the pawn chain before playing e3."
         },
         {
-          "san": "Nf6"
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
         },
         {
           "san": "e3",
+          "from": "e2",
+          "to": "e3",
           "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
         },
         {
-          "san": "e6"
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
         },
         {
           "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
           "note": "Develop and control e5."
         },
         {
-          "san": "Be7"
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7"
         },
         {
           "san": "Bd3",
+          "from": "f1",
+          "to": "d3",
           "note": "The bishop eyes the light squares around Black's king and supports a later e4 break."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
         },
         {
           "san": "Nbd2",
+          "from": "b1",
+          "to": "d2",
           "note": "The knight supports a future e4 break."
         },
         {
-          "san": "d6"
+          "san": "d6",
+          "from": "d7",
+          "to": "d6"
         },
         {
           "san": "h3",
+          "from": "h2",
+          "to": "h3",
           "note": "Give the f4 bishop the h2 square and stop ...Nh5 or ...Ng4 ideas."
         },
         {
-          "san": "Qe8"
+          "san": "Qe8",
+          "from": "d8",
+          "to": "e8"
         },
         {
           "san": "c3",
+          "from": "c2",
+          "to": "c3",
           "note": "Solidify d4. Plan: Qe2 and e4, opening the center against Black's weakened king."
+        }
+      ]
+    },
+    {
+      "id": "vs-d5-c5-early",
+      "name": "1...d5 2.Bf4 c5 3.e3 Nc6 4.c3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
+        },
+        {
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
+          "note": "The London bishop: develop it outside the pawn chain before playing e3."
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3",
+          "note": "Keep the pyramid: e3, c3 and Bf4."
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
+        },
+        {
+          "san": "c3",
+          "from": "c2",
+          "to": "c3",
+          "note": "Support d4 and give the queen b3."
+        },
+        {
+          "san": "Qb6",
+          "from": "d8",
+          "to": "b6"
+        },
+        {
+          "san": "Qb3",
+          "from": "d1",
+          "to": "b3",
+          "note": "Meet ...Qb6 with Qb3, as always."
+        },
+        {
+          "san": "c4",
+          "from": "c5",
+          "to": "c4"
+        },
+        {
+          "san": "Qc2",
+          "from": "b3",
+          "to": "c2",
+          "note": "Retreat — the queen eyes h7 and the kingside."
+        }
+      ]
+    },
+    {
+      "id": "vs-grunfeld",
+      "name": "1...Nf6 2.Bf4 g6 3.e3 Bg7 — vs ...d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "Open with 1.d4 — occupy the center and free the c1 bishop."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "Bf4",
+          "from": "c1",
+          "to": "f4",
+          "note": "The London bishop: develop it outside the pawn chain before playing e3."
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6"
+        },
+        {
+          "san": "e3",
+          "from": "e2",
+          "to": "e3",
+          "note": "Build the solid pyramid: e3 supports d4 and opens the f1 bishop."
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7"
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
+          "note": "Develop the knight and control e5."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2",
+          "note": "A modest but solid square for the bishop against the King's Indian setup."
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1",
+          "note": "Castle — against ...d5 the usual London pyramid is ideal."
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
+        },
+        {
+          "san": "c3",
+          "from": "c2",
+          "to": "c3",
+          "note": "Support d4: the London structure holds firm."
         }
       ]
     }

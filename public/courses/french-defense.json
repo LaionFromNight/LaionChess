@@ -12,52 +12,80 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Hit the base of White's chain — the key French idea."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Add a second attacker to d4, the key point of White's chain."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
           "note": "Add a third attacker to d4 and hit b2."
         },
         {
-          "san": "a3"
+          "san": "a3",
+          "from": "a2",
+          "to": "a3"
         },
         {
           "san": "c4",
+          "from": "c5",
+          "to": "c4",
           "note": "Grab queenside space and stop b4 opening lines."
         },
         {
-          "san": "Nbd2"
+          "san": "Nbd2",
+          "from": "b1",
+          "to": "d2"
         },
         {
           "san": "Na5",
+          "from": "c6",
+          "to": "a5",
           "note": "The knight heads for b3, exploiting the c4 pawn's support."
         }
       ]
@@ -68,73 +96,113 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Hit the base of White's chain — the key French idea."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Add a second attacker to d4, the key point of White's chain."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
           "note": "Add a third attacker to d4 and hit b2."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade in the center before capturing."
         },
         {
-          "san": "cxd4"
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
         },
         {
           "san": "Bd7",
+          "from": "c8",
+          "to": "d7",
           "note": "Prepare to take on d4 safely — Bd7 guards against Bb5+."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Nxd4",
+          "from": "c6",
+          "to": "d4",
           "note": "Accept the gambit — d4 has more attackers than defenders."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Qxd4",
+          "from": "b6",
+          "to": "d4",
           "note": "Grab the pawn; White gets development in return, so consolidate next."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "Stop Nb5 and consolidate; you are a pawn up."
         }
       ]
@@ -145,66 +213,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Hit the base of White's chain — the key French idea."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Add a second attacker to d4, the key point of White's chain."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Qb6",
+          "from": "d8",
+          "to": "b6",
           "note": "Add a third attacker to d4 and hit b2."
         },
         {
-          "san": "Be2"
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Trade on d4 to open the c-file."
         },
         {
-          "san": "cxd4"
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
         },
         {
           "san": "Nh6",
+          "from": "g8",
+          "to": "h6",
           "note": "The knight heads to f5 to pile up on d4."
         },
         {
-          "san": "b3"
+          "san": "b3",
+          "from": "b2",
+          "to": "b3"
         },
         {
           "san": "Nf5",
+          "from": "h6",
+          "to": "f5",
           "note": "From f5 the knight is the fourth attacker on d4."
         },
         {
-          "san": "Bb2"
+          "san": "Bb2",
+          "from": "c1",
+          "to": "b2"
         },
         {
           "san": "Bb4+",
+          "from": "f8",
+          "to": "b4",
           "note": "Check! Kf1 ruins White's castling, while Bd2/Nd2 blocks the defense of d4."
         }
       ]
@@ -215,66 +319,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "exd5",
+          "from": "e6",
+          "to": "d5",
           "note": "Recapture toward the center; the position is symmetrical."
         },
         {
-          "san": "Bd3"
+          "san": "Bd3",
+          "from": "f1",
+          "to": "d3"
         },
         {
           "san": "Bd6",
+          "from": "f8",
+          "to": "d6",
           "note": "Develop and mirror White's bishop."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Ne7",
+          "from": "g8",
+          "to": "e7",
           "note": "Keep the f-pawn free and head for g6 or f5."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle — in symmetrical structures, the side that develops better wins."
         },
         {
-          "san": "Re1"
+          "san": "Re1",
+          "from": "f1",
+          "to": "e1"
         },
         {
           "san": "Bg4",
+          "from": "c8",
+          "to": "g4",
           "note": "Pin the knight and develop actively."
         },
         {
-          "san": "Nbd2"
+          "san": "Nbd2",
+          "from": "b1",
+          "to": "d2"
         },
         {
           "san": "Nd7",
+          "from": "b8",
+          "to": "d7",
           "note": "Develop the knight and prepare ...Re8."
         },
         {
-          "san": "c3"
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
         },
         {
           "san": "c6",
+          "from": "c7",
+          "to": "c6",
           "note": "Solid: secure d5 and the bishop on d6."
         }
       ]
@@ -285,73 +425,113 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "Nd2"
+          "san": "Nd2",
+          "from": "b1",
+          "to": "d2"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Strike at the center — the knight on d2 does not pressure d5."
         },
         {
-          "san": "exd5"
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
         },
         {
           "san": "Qxd5",
+          "from": "d8",
+          "to": "d5",
           "note": "Recapture with the queen to avoid an isolated pawn."
         },
         {
-          "san": "Ngf3"
+          "san": "Ngf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Release the central tension."
         },
         {
-          "san": "Bc4"
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
         },
         {
           "san": "Qd6",
+          "from": "d5",
+          "to": "d6",
           "note": "Retreat to a safe square that still eyes d4 and the kingside."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and prepare ...Nc6 and ...Be7."
         },
         {
-          "san": "Nb3"
+          "san": "Nb3",
+          "from": "d2",
+          "to": "b3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Defend the d4 pawn with a developing move."
         },
         {
-          "san": "Nbxd4"
+          "san": "Nbxd4",
+          "from": "b3",
+          "to": "d4"
         },
         {
           "san": "Nxd4",
+          "from": "c6",
+          "to": "d4",
           "note": "Trade knights; with fewer pieces your extra central control counts."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "Control b5 and prepare ...Qc7 and ...b5."
         }
       ]
@@ -362,73 +542,113 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "The Classical: counterattack e4."
         },
         {
-          "san": "Bg5"
+          "san": "Bg5",
+          "from": "c1",
+          "to": "g5"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Break the pin with a developing move."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Nfd7",
+          "from": "f6",
+          "to": "d7",
           "note": "Retreat the knight, ready for ...c5."
         },
         {
-          "san": "Bxe7"
+          "san": "Bxe7",
+          "from": "g5",
+          "to": "e7"
         },
         {
           "san": "Qxe7",
+          "from": "d8",
+          "to": "e7",
           "note": "Recapture with the queen, which now eyes b4 and the dark squares."
         },
         {
-          "san": "f4"
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle first, then strike with ...c5."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Hit the base of the chain — the standard French break."
         },
         {
-          "san": "Qd2"
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and add pressure to d4."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "c4",
+          "from": "c5",
+          "to": "c4",
           "note": "Gain queenside space and prepare ...b5-b4 against White's king."
         }
       ]
@@ -439,73 +659,113 @@
       "tag": "Main",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d4"
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "Challenge e4 at once — White must decide whether to advance, exchange or defend."
         },
         {
-          "san": "Nc3"
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "The Classical: counterattack e4."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Nfd7",
+          "from": "f6",
+          "to": "d7",
           "note": "Retreat, clearing the path for ...c5 against the pawn chain."
         },
         {
-          "san": "f4"
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Hit the base of the chain before White consolidates."
         },
         {
-          "san": "Nf3"
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Add pressure to d4."
         },
         {
-          "san": "Be3"
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
         },
         {
           "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
           "note": "Open lines and trade White's central pawn."
         },
         {
-          "san": "Nxd4"
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
         },
         {
           "san": "Bc5",
+          "from": "f8",
+          "to": "c5",
           "note": "Develop with pressure on the d4 knight."
         },
         {
-          "san": "Qd2"
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle — the f-file break ...f6 is often a resource later."
         },
         {
-          "san": "O-O-O"
+          "san": "O-O-O",
+          "from": "e1",
+          "to": "c1"
         },
         {
           "san": "a6",
+          "from": "a7",
+          "to": "a6",
           "note": "Prepare ...b5 for the queenside attack."
         }
       ]
@@ -516,66 +776,102 @@
       "tag": "Sideline",
       "plies": [
         {
-          "san": "e4"
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
         },
         {
           "san": "e6",
+          "from": "e7",
+          "to": "e6",
           "note": "The French: prepare ...d5 with a solid pawn chain."
         },
         {
-          "san": "d3"
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
         },
         {
           "san": "d5",
+          "from": "d7",
+          "to": "d5",
           "note": "White plays slowly, so take the center with ...d5."
         },
         {
-          "san": "Nd2"
+          "san": "Nd2",
+          "from": "b1",
+          "to": "d2"
         },
         {
           "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
           "note": "Develop and add pressure to e4."
         },
         {
-          "san": "Ngf3"
+          "san": "Ngf3",
+          "from": "g1",
+          "to": "f3"
         },
         {
           "san": "c5",
+          "from": "c7",
+          "to": "c5",
           "note": "Grab space on the queenside, where your attack will come."
         },
         {
-          "san": "g3"
+          "san": "g3",
+          "from": "g2",
+          "to": "g3"
         },
         {
           "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
           "note": "Develop and control d4 and e5."
         },
         {
-          "san": "Bg2"
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2"
         },
         {
           "san": "Be7",
+          "from": "f8",
+          "to": "e7",
           "note": "Develop modestly; the bishop guards the kingside dark squares."
         },
         {
-          "san": "O-O"
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
         },
         {
           "san": "O-O",
+          "from": "e8",
+          "to": "g8",
           "note": "Castle; White attacks the kingside, you attack the queenside."
         },
         {
-          "san": "Re1"
+          "san": "Re1",
+          "from": "f1",
+          "to": "e1"
         },
         {
           "san": "b5",
+          "from": "b7",
+          "to": "b5",
           "note": "Start the queenside expansion with ...b4 and ...a5."
         },
         {
-          "san": "e5"
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
         },
         {
           "san": "Nd7",
+          "from": "f6",
+          "to": "d7",
           "note": "Retreat, keeping an eye on the e5 pawn for a later ...Qc7."
         }
       ]

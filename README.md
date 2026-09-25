@@ -20,12 +20,19 @@ If you are developing a production application, we recommend using TypeScript wi
 
 ## Opening courses
 
-`public/courses/manifest.json` lists the trainable courses (10 openings, 81 lines):
-Scotch, Italian, Ruy Lopez, Queen's Gambit, London (White) and Sicilian Najdorf,
-Caro-Kann, French, Scandinavian, King's Indian (Black). Each course is a
-`laionchess.course.v1` JSON file; every line starts from move 1 and every move of
-the trained side carries a coach note. Lines branch only on the opponent's moves,
-so the repertoire stays consistent.
+`public/courses/manifest.json` lists the trainable courses (18 openings, 171 lines).
+
+- **White:** Scotch, Italian, Ruy Lopez, Vienna Game, Queen's Gambit, Catalan,
+  London System, English Opening.
+- **Black:** Sicilian Najdorf, Accelerated Dragon, Caro-Kann, French, Scandinavian,
+  Petroff (vs 1.e4); King's Indian, Nimzo-Indian (+ Queen's Indian), Grünfeld,
+  Slav (vs 1.d4).
+
+Each course is a `laionchess.course.v1` JSON file; every line starts from move 1
+and every move of the trained side carries a coach note. Lines branch only on the
+opponent's moves, so the repertoire stays consistent — the same position always
+gets the same answer. Lines follow mainstream book theory; every move is checked
+for legality and repertoire consistency before it ships.
 
 Trainer modes: **Learn** (guided arrows + notes), **Practice** (recall a chosen
 line) and **Drill** (random lines, no hints, streak counter).

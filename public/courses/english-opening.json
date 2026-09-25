@@ -1,0 +1,563 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "english-opening",
+  "name": "English Opening",
+  "author": "LaionChess",
+  "playAs": "w",
+  "description": "A flexible 1.c4 repertoire: a Reversed Sicilian with g3 against 1...e5, the Symmetrical English, and quick central strikes with e4 against the Indian set-ups.",
+  "lines": [
+    {
+      "id": "reversed-dragon",
+      "name": "1...e5 2.Nc3 Nf6 3.g3 d5 — Reversed Dragon",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop and add a second control of d5."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3",
+          "note": "Fianchetto — the g2-bishop will be your best piece."
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
+        },
+        {
+          "san": "cxd5",
+          "from": "c4",
+          "to": "d5",
+          "note": "Take the pawn — a Sicilian Dragon with colours reversed and an extra tempo."
+        },
+        {
+          "san": "Nxd5",
+          "from": "f6",
+          "to": "d5"
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2",
+          "note": "Hit the d5-knight along the long diagonal."
+        },
+        {
+          "san": "Nb6",
+          "from": "d5",
+          "to": "b6"
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
+          "note": "Develop and pressure e5."
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1",
+          "note": "Castle."
+        },
+        {
+          "san": "Be7",
+          "from": "f8",
+          "to": "e7"
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3",
+          "note": "Solid support; prepare Be3 and a queenside expansion."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "a3",
+          "from": "a2",
+          "to": "a3",
+          "note": "Prepare b4 — the typical Reversed Sicilian queenside attack."
+        }
+      ]
+    },
+    {
+      "id": "bb4",
+      "name": "1...e5 2.Nc3 Nf6 3.g3 Bb4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop and add a second control of d5."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3",
+          "note": "Fianchetto — the g2-bishop will be your best piece."
+        },
+        {
+          "san": "Bb4",
+          "from": "f8",
+          "to": "b4"
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2",
+          "note": "Develop the bishop anyway."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4",
+          "note": "Block the long diagonal and take the center — the c3-knight is now well protected."
+        },
+        {
+          "san": "Bxc3",
+          "from": "b4",
+          "to": "c3"
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3",
+          "note": "Recapture; the bishop pair and central pawns give White the long-term trumps."
+        }
+      ]
+    },
+    {
+      "id": "botvinnik",
+      "name": "1...e5 2.Nc3 Nc6 3.g3 g6 — Botvinnik",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop and add a second control of d5."
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3",
+          "note": "Fianchetto again."
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6"
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2",
+          "note": "The bishop on g2."
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7"
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3",
+          "note": "Prepare e4 for the Botvinnik set-up."
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6"
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4",
+          "note": "The Botvinnik: pawns on c4 and e4 clamp d5."
+        },
+        {
+          "san": "Nge7",
+          "from": "g8",
+          "to": "e7"
+        },
+        {
+          "san": "Nge2",
+          "from": "g1",
+          "to": "e2",
+          "note": "Knight to e2 keeps the f-pawn free for f4."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1",
+          "note": "Castle, then plan f4 or a queenside push with Rb1 and b4."
+        }
+      ]
+    },
+    {
+      "id": "symmetrical",
+      "name": "1...c5 — Symmetrical English",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop."
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6"
+        },
+        {
+          "san": "g3",
+          "from": "g2",
+          "to": "g3",
+          "note": "Fianchetto."
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6"
+        },
+        {
+          "san": "Bg2",
+          "from": "f1",
+          "to": "g2",
+          "note": "Bishop to g2."
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7"
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
+          "note": "Develop."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1",
+          "note": "Castle."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "Break the symmetry in the center."
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4"
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4",
+          "note": "Recapture — the g2-bishop now hits c6 and b7."
+        }
+      ]
+    },
+    {
+      "id": "mikenas",
+      "name": "1...Nf6 2.Nc3 e6 3.e4 — Mikenas Attack",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop."
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6"
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4",
+          "note": "The Mikenas–Carls Attack: grab the whole center."
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
+        },
+        {
+          "san": "e5",
+          "from": "e4",
+          "to": "e5",
+          "note": "Kick the knight."
+        },
+        {
+          "san": "d4",
+          "from": "d5",
+          "to": "d4"
+        },
+        {
+          "san": "exf6",
+          "from": "e5",
+          "to": "f6",
+          "note": "Take the knight."
+        },
+        {
+          "san": "dxc3",
+          "from": "d4",
+          "to": "c3"
+        },
+        {
+          "san": "bxc3",
+          "from": "b2",
+          "to": "c3",
+          "note": "Recapture towards the center."
+        },
+        {
+          "san": "Qxf6",
+          "from": "d8",
+          "to": "f6"
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "A broad pawn center and quick development give White the easier game."
+        }
+      ]
+    },
+    {
+      "id": "kid-e4",
+      "name": "1...Nf6 2.Nc3 g6 3.e4 — King's Indian set-up",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6"
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3",
+          "note": "Develop."
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6"
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4",
+          "note": "Take the center with e4 before Black gets ...d5 in."
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6"
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "The big center."
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7"
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3",
+          "note": "Develop."
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8"
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2",
+          "note": "Classical development."
+        },
+        {
+          "san": "e5",
+          "from": "e7",
+          "to": "e5"
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1",
+          "note": "Castle — the Classical King's Indian with the most natural set-up."
+        }
+      ]
+    },
+    {
+      "id": "c6",
+      "name": "1...c6 2.e4 d5 — Panov structure",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4",
+          "note": "The English: control d5 from the side and keep the center flexible."
+        },
+        {
+          "san": "c6",
+          "from": "c7",
+          "to": "c6"
+        },
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4",
+          "note": "Play e4 so ...d5 leads into a Caro-Kann Panov."
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5"
+        },
+        {
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5",
+          "note": "Trade."
+        },
+        {
+          "san": "cxd5",
+          "from": "c6",
+          "to": "d5"
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4",
+          "note": "Transpose to a Panov Attack — active pieces against an isolated-pawn position."
+        }
+      ]
+    }
+  ]
+}

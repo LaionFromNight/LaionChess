@@ -1,0 +1,1110 @@
+{
+  "schema": "laionchess.course.v1",
+  "id": "accelerated-dragon",
+  "name": "Accelerated Dragon",
+  "author": "LaionChess",
+  "playAs": "b",
+  "description": "A Sicilian with an early ...g6: skip ...d6 so ...d5 can come in one move. Sound, positional and aggressive, with answers to the Maróczy Bind, the Rossolimo, the Alapin and the Grand Prix.",
+  "lines": [
+    {
+      "id": "maroczy",
+      "name": "Maróczy Bind — 5.c4 Bg7 6.Be3",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "The Maróczy Bind — Black aims the bishop at d4 and the queenside."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop, hitting e4."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "Now ...d6 is right — the position is locked."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bd7",
+          "from": "c8",
+          "to": "d7",
+          "note": "The Gurgenidze plan: ...Nxd4 and ...Bc6."
+        },
+        {
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
+        },
+        {
+          "san": "Nxd4",
+          "from": "c6",
+          "to": "d4",
+          "note": "Trade the active knight."
+        },
+        {
+          "san": "Bxd4",
+          "from": "e3",
+          "to": "d4"
+        },
+        {
+          "san": "Bc6",
+          "from": "d7",
+          "to": "c6",
+          "note": "Pressure on e4."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "a5",
+          "from": "a7",
+          "to": "a5",
+          "note": "Gain space on the queenside — typical, solid counterplay."
+        }
+      ]
+    },
+    {
+      "id": "maroczy-nc2",
+      "name": "Maróczy Bind — 6.Nc2",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "c4",
+          "from": "c2",
+          "to": "c4"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "The Maróczy Bind — Black aims the bishop at d4 and the queenside."
+        },
+        {
+          "san": "Nc2",
+          "from": "d4",
+          "to": "c2"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "Develop."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "Nh6",
+          "from": "g8",
+          "to": "h6",
+          "note": "The knight heads for f5 or supports ...f5."
+        }
+      ]
+    },
+    {
+      "id": "bc4-a5",
+      "name": "5.Nc3 Bg7 6.Be3 Nf6 7.Bc4 — ...a5!",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop, hitting e4."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Bb3",
+          "from": "c4",
+          "to": "b3"
+        },
+        {
+          "san": "a5",
+          "from": "a7",
+          "to": "a5",
+          "note": "Threaten ...a4 to trap or chase the b3-bishop."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "The Accelerated Dragon's point: ...d5 in one move!"
+        },
+        {
+          "san": "exd5",
+          "from": "e4",
+          "to": "d5"
+        },
+        {
+          "san": "Nb4",
+          "from": "c6",
+          "to": "b4",
+          "note": "Hit d5 and c2 — Black regains the pawn with active play."
+        }
+      ]
+    },
+    {
+      "id": "be2-d5",
+      "name": "5.Nc3 Bg7 6.Be3 Nf6 7.Be2 O-O 8.O-O d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop, hitting e4."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Equalize at once with the central break."
+        }
+      ]
+    },
+    {
+      "id": "f3-d5",
+      "name": "5.Nc3 Bg7 6.Be3 Nf6 7.f3 O-O 8.Qd2 d5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop, hitting e4."
+        },
+        {
+          "san": "f3",
+          "from": "f2",
+          "to": "f3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Qd2",
+          "from": "d1",
+          "to": "d2"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Without ...d6 played, the break comes in one move — Yugoslav Attack ideas lose their bite."
+        }
+      ]
+    },
+    {
+      "id": "nb3",
+      "name": "5.Nc3 Bg7 6.Nb3",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Nb3",
+          "from": "d4",
+          "to": "b3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Be2",
+          "from": "f1",
+          "to": "e2"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "Solid — then ...a5 or ...Be6."
+        }
+      ]
+    },
+    {
+      "id": "nxc6",
+      "name": "5.Nxc6 bxc6 6.Qd4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade a wing pawn for a center pawn."
+        },
+        {
+          "san": "Nxd4",
+          "from": "f3",
+          "to": "d4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "The Accelerated Dragon: fianchetto before ...d6."
+        },
+        {
+          "san": "Nxc6",
+          "from": "d4",
+          "to": "c6"
+        },
+        {
+          "san": "bxc6",
+          "from": "b7",
+          "to": "c6",
+          "note": "Recapture towards the center."
+        },
+        {
+          "san": "Qd4",
+          "from": "d1",
+          "to": "d4"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop and hit e4."
+        },
+        {
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
+        },
+        {
+          "san": "Nd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Centralize."
+        },
+        {
+          "san": "e6",
+          "from": "e5",
+          "to": "e6"
+        },
+        {
+          "san": "f6",
+          "from": "f7",
+          "to": "f6",
+          "note": "Block — the e6-pawn will fall."
+        },
+        {
+          "san": "exd7+",
+          "from": "e6",
+          "to": "d7"
+        },
+        {
+          "san": "Bxd7",
+          "from": "c8",
+          "to": "d7",
+          "note": "Recapture with good development."
+        }
+      ]
+    },
+    {
+      "id": "rossolimo",
+      "name": "Rossolimo — 3.Bb5 g6 4.O-O",
+      "tag": "Main",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "Bb5",
+          "from": "f1",
+          "to": "b5"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Fianchetto anyway."
+        },
+        {
+          "san": "O-O",
+          "from": "e1",
+          "to": "g1"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Re1",
+          "from": "f1",
+          "to": "e1"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop, hitting e4."
+        },
+        {
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Release."
+        },
+        {
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Strike."
+        },
+        {
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
+        },
+        {
+          "san": "Ne4",
+          "from": "f6",
+          "to": "e4",
+          "note": "An active outpost on e4."
+        }
+      ]
+    },
+    {
+      "id": "rossolimo-bxc6",
+      "name": "Rossolimo — 4.Bxc6 dxc6",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "Bb5",
+          "from": "f1",
+          "to": "b5"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Fianchetto anyway."
+        },
+        {
+          "san": "Bxc6",
+          "from": "b5",
+          "to": "c6"
+        },
+        {
+          "san": "dxc6",
+          "from": "d7",
+          "to": "c6",
+          "note": "Recapture towards the center, opening the d-file."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "h3",
+          "from": "h2",
+          "to": "h3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Develop."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "O-O",
+          "from": "e8",
+          "to": "g8",
+          "note": "Castle."
+        },
+        {
+          "san": "Be3",
+          "from": "c1",
+          "to": "e3"
+        },
+        {
+          "san": "b6",
+          "from": "b7",
+          "to": "b6",
+          "note": "Solid; the bishop pair is Black's long-term trump."
+        }
+      ]
+    },
+    {
+      "id": "alapin",
+      "name": "Alapin — 3.c3 Nf6 4.e5 Nd5",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop and control d4."
+        },
+        {
+          "san": "c3",
+          "from": "c2",
+          "to": "c3"
+        },
+        {
+          "san": "Nf6",
+          "from": "g8",
+          "to": "f6",
+          "note": "Hit e4 immediately."
+        },
+        {
+          "san": "e5",
+          "from": "e4",
+          "to": "e5"
+        },
+        {
+          "san": "Nd5",
+          "from": "f6",
+          "to": "d5",
+          "note": "Centralize."
+        },
+        {
+          "san": "d4",
+          "from": "d2",
+          "to": "d4"
+        },
+        {
+          "san": "cxd4",
+          "from": "c5",
+          "to": "d4",
+          "note": "Trade."
+        },
+        {
+          "san": "cxd4",
+          "from": "c3",
+          "to": "d4"
+        },
+        {
+          "san": "d6",
+          "from": "d7",
+          "to": "d6",
+          "note": "Challenge the e5-pawn."
+        }
+      ]
+    },
+    {
+      "id": "grand-prix",
+      "name": "Grand Prix — 2.Nc3 Nc6 3.f4",
+      "tag": "Sideline",
+      "plies": [
+        {
+          "san": "e4",
+          "from": "e2",
+          "to": "e4"
+        },
+        {
+          "san": "c5",
+          "from": "c7",
+          "to": "c5",
+          "note": "The Sicilian — fight for d4 from the side."
+        },
+        {
+          "san": "Nc3",
+          "from": "b1",
+          "to": "c3"
+        },
+        {
+          "san": "Nc6",
+          "from": "b8",
+          "to": "c6",
+          "note": "Develop."
+        },
+        {
+          "san": "f4",
+          "from": "f2",
+          "to": "f4"
+        },
+        {
+          "san": "g6",
+          "from": "g7",
+          "to": "g6",
+          "note": "Fianchetto."
+        },
+        {
+          "san": "Nf3",
+          "from": "g1",
+          "to": "f3"
+        },
+        {
+          "san": "Bg7",
+          "from": "f8",
+          "to": "g7",
+          "note": "Develop."
+        },
+        {
+          "san": "Bc4",
+          "from": "f1",
+          "to": "c4"
+        },
+        {
+          "san": "e6",
+          "from": "e7",
+          "to": "e6",
+          "note": "Blunt the c4-bishop."
+        },
+        {
+          "san": "f5",
+          "from": "f4",
+          "to": "f5"
+        },
+        {
+          "san": "Nge7",
+          "from": "g8",
+          "to": "e7",
+          "note": "Develop."
+        },
+        {
+          "san": "fxe6",
+          "from": "f5",
+          "to": "e6"
+        },
+        {
+          "san": "fxe6",
+          "from": "f7",
+          "to": "e6",
+          "note": "Recapture."
+        },
+        {
+          "san": "d3",
+          "from": "d2",
+          "to": "d3"
+        },
+        {
+          "san": "d5",
+          "from": "d7",
+          "to": "d5",
+          "note": "Seize the center."
+        }
+      ]
+    }
+  ]
+}

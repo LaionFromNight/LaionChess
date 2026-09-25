@@ -90,6 +90,78 @@
       "fen": "rnbq1rk1/ppp2pbp/3p1np1/4p3/2PPP3/2N2N2/PP2BPPP/R1BQK2R w KQ - 0 7",
       "tag": "New",
       "tagClass": "tag-green"
+    },
+    {
+      "id": "catalan",
+      "file": "catalan.json",
+      "name": "Catalan Opening",
+      "desc": "Fianchetto on g2 against ...e6 and ...d5: the Open Catalan with Qc2/Qa4, the Closed Catalan, plus Benoni and King's Indian set-ups.",
+      "fen": "rn1q1rk1/1bp1bppp/p3pn2/1p6/3P4/5NP1/PPQBPPBP/RN3RK1 b - - 3 10",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "english-opening",
+      "file": "english-opening.json",
+      "name": "English Opening",
+      "desc": "1.c4 with a g3 fianchetto against 1...e5 and 1...c5, the Mikenas Attack against ...e6 and an e4 center against ...g6.",
+      "fen": "r1bq1rk1/ppp1bppp/1nn5/4p3/8/P1NP1NP1/1P2PPBP/R1BQ1RK1 b - - 0 9",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "vienna-game",
+      "file": "vienna-game.json",
+      "name": "Vienna Game",
+      "desc": "Hit 1...e5 with 2.Nc3 and f4: the Vienna Gambit against 2...Nf6, Bc4 lines against 2...Nc6 and a plan against 2...Bc5.",
+      "fen": "rnbq1rk1/ppp3pp/5b2/3p4/3Pn3/2NB1N2/PPP3PP/R1BQ1RK1 b - - 1 9",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "grunfeld",
+      "file": "grunfeld.json",
+      "name": "Grünfeld Defense",
+      "desc": "Hit White's center with ...d5, ...Bg7 and ...c5: Exchange (Rb1, Bc4, Be3), Russian System, 4.Bf4, 4.Bg5 and anti-Grünfelds.",
+      "fen": "rn3rk1/pp2ppbp/6p1/8/3PP1b1/5N2/q2BBPPP/1R1Q1RK1 w - - 2 13",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "nimzo-indian",
+      "file": "nimzo-indian.json",
+      "name": "Nimzo-Indian Defense",
+      "desc": "Pin with 3...Bb4 against 3.Nc3 (Rubinstein, Classical, Sämisch, Leningrad…), the Queen's Indian against 3.Nf3 and ...dxc4 against the Catalan.",
+      "fen": "r1bq1rk1/pp3ppp/2n1pn2/b1p5/2BP4/P1N1PN2/1P3PPP/R1BQ1RK1 w - - 1 10",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "slav-defense",
+      "file": "slav-defense.json",
+      "name": "Slav Defense",
+      "desc": "1.d4 d5 2.c4 c6: the Main Line with ...dxc4 and ...Bf5, the Exchange Slav, 4.e3, Chebanenko ideas and the Winawer Countergambit.",
+      "fen": "r2q1rk1/pp1n1ppp/2p1pn2/7b/Pb1PP3/2NB1N2/1P2QPPP/R1B2RK1 w - - 3 12",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "accelerated-dragon",
+      "file": "accelerated-dragon.json",
+      "name": "Accelerated Dragon",
+      "desc": "1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 g6: Maróczy Bind, 5.Nc3 with Bc4, the ...d5 break, the Rossolimo and the Alapin.",
+      "fen": "r2q1rk1/1p2ppbp/2bp1np1/p7/2PBP3/2N2P2/PP1QB1PP/R4RK1 w - - 0 13",
+      "tag": "New",
+      "tagClass": "tag-green"
+    },
+    {
+      "id": "petroff-defense",
+      "file": "petroff-defense.json",
+      "name": "Petroff Defense",
+      "desc": "1.e4 e5 2.Nf3 Nf6: the Classical 5.d4, 5.Nc3, 3.d4, the Four Knights, the Vienna and the Bishop's Opening.",
+      "fen": "r2q1rk1/ppp1bppp/8/3p1b2/1nPPn3/2N2N2/PP2BPPP/R1BQ1RK1 w - - 5 11",
+      "tag": "New",
+      "tagClass": "tag-green"
     }
   ]
 }
