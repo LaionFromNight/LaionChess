@@ -5,8 +5,8 @@ import type { BoardArrow } from '../components/Board';
 import type { BookRow } from '../data/book';
 import { ARROW } from './arrowPalette';
 
-const COLORS = [ARROW.green, ARROW.gold, ARROW.violet];
-const WIDTHS = [2.8, 2.2, 1.7];
+// Wider than engine arrows, so where both agree the book shows as a see-through halo.
+const WIDTHS = [3.6, 3.2, 2.9];
 
 /**
  * Top-3 most-played book moves for the current position, drawn as board arrows.
@@ -18,7 +18,11 @@ export function computeTopArrows(state: GameState, rows: BookRow[] | null): Boar
   rows.slice(0, 3).forEach((row, i) => {
     const resolved = resolveSan(state, row[0]);
     if (resolved) {
-      arrows.push({ from: resolved.from, to: resolved.to, color: COLORS[i], width: WIDTHS[i] });
+      // One see-through colour for all book moves; the number is the popularity rank.
+      arrows.push({
+        from: resolved.from, to: resolved.to, color: ARROW.book, width: WIDTHS[i],
+        label: String(i + 1), labelAt: 'tail',
+      });
     }
   });
   return arrows;

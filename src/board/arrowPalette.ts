@@ -11,6 +11,8 @@ export const ARROW = {
   blue: 'rgba(64, 156, 255, 0.9)',
   coral: 'rgba(255, 122, 89, 0.82)',
   sky: 'rgba(90, 200, 250, 0.9)',     // hover preview
+  engine: 'rgba(56, 148, 255, 0.9)',  // every engine line — rank shown by a number
+  book: 'rgba(255, 150, 50, 0.5)',    // Lichess book moves — lighter, see-through
 } as const;
 
 export interface ParsedColor { rgb: string; alpha: number }

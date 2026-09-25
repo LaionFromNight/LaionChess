@@ -16,7 +16,7 @@ import {
   getMainLineTip, getPathToNode, deleteSubtree, pgnGameToTree, treeToPgnGame,
 } from './chess/tree';
 import type { GameTree } from './chess/tree';
-import Board from './components/Board';
+import Board, { type BoardArrow } from './components/Board';
 import MoveList from './components/MoveList';
 import SpottingPanel from './components/SpottingPanel';
 import PromotionPicker from './components/PromotionPicker';
@@ -210,7 +210,6 @@ export default function App() {
   // ── analysis / create panel toggles ──────────────────────────────────────────
   const [showEval, setShowEval] = useState(true);
   const [showBook, setShowBook] = useState(true);
-  const [showTop, setShowTop] = useState(false);
   const [showBookOptions, setShowBookOptions] = useState(false);
   const [hoverBookSan, setHoverBookSan] = useState<string | null>(null);
   const [flipped, setFlipped] = useState(false);
@@ -322,23 +321,27 @@ export default function App() {
     [spottingModes, boardState],
   );
 
-  // ── Top-3 book arrows (Create view) ───────────────────────────────────────────
+  // ── Top-3 book arrows (Analysis + Create) ─────────────────────────────────────
+  const showTop = settings.bookArrows && showBook;
   const topArrows = useMemo(
     () => (showTop ? computeTopArrows(displayedState, bookRows) : []),
     [showTop, displayedState, bookRows],
   );
 
-  // ── Engine PV arrows (Analysis view) — one per line, ranked by colour ─────────
-  const engineArrows = useMemo(() => {
+  // ── Engine PV arrows (Analysis view) — one colour, numbered by line rank ──────
+  const engineArrows = useMemo((): BoardArrow[] => {
     if (!enginePanelOn || !settings.engineArrows) return [];
-    const colors = [ARROW.green, ARROW.gold, ARROW.violet, ARROW.coral, ARROW.blue];
+    const widths = [2.3, 2.0, 1.8, 1.6, 1.5];
     return engineLinesExpanded
       .filter(l => l.moves.length > 0)
       .map((l, i) => ({
         from: l.moves[0].from, to: l.moves[0].to,
-        color: colors[Math.min(i, colors.length - 1)],
-        width: i === 0 ? 2.6 : 1.9,
-      }));
+        color: ARROW.engine,
+        width: widths[Math.min(i, widths.length - 1)],
+        label: String(i + 1),
+      }))
+      // draw the best line last so it sits on top
+      .reverse();
   }, [enginePanelOn, settings.engineArrows, engineLinesExpanded]);
 
   // ── Hover arrow from Common Moves ─────────────────────────────────────────────
@@ -350,7 +353,8 @@ export default function App() {
   }, [hoverBookSan, displayedState]);
 
   const boardArrows = useMemo(() => {
-    const base = activeView === 'analysis' ? engineArrows : topArrows;
+    // Book arrows underneath, engine arrows on top.
+    const base = activeView === 'analysis' ? [...topArrows, ...engineArrows] : topArrows;
     if (!hoverBookArrow) return base;
     const deduped = base.filter(a =>
       !(a.from.row === hoverBookArrow.from.row && a.from.col === hoverBookArrow.from.col &&
@@ -918,6 +922,9 @@ export default function App() {
                   <div className="section">
                     <div className="section-head">
                       <span>Common moves</span>
+                      <button type="button" className={`chip arrows-chip${settings.bookArrows ? ' on' : ''}`}
+                        onClick={() => setSetting('bookArrows', !settings.bookArrows)}
+                        title="Show the 3 most played moves as numbered arrows">↗ Arrows</button>
                       <div className="popover-host">
                         <button type="button" className={`tool-btn icon${showBookOptions ? ' on' : ''}`} onClick={() => setShowBookOptions(v => !v)} title="Filter options">⚙</button>
                         {showBookOptions && <div className="popover right"><BookFilters /></div>}
@@ -951,7 +958,7 @@ export default function App() {
                 </div>
                 <div className="toggle-row">
                   <PanelToggle on={showBook} label="Book" onClick={() => setShowBook(v => !v)} />
-                  <PanelToggle on={showTop} label="Top 3 arrows" onClick={() => setShowTop(v => !v)} />
+                  <PanelToggle on={settings.bookArrows} label="Top 3 arrows" onClick={() => setSetting('bookArrows', !settings.bookArrows)} />
                   <div className="segmented small push">
                     <button type="button" className={courseSide === 'white' ? 'on' : ''} onClick={() => setCourseSide('white')}><span className="t">♔ White</span></button>
                     <button type="button" className={courseSide === 'black' ? 'on' : ''} onClick={() => setCourseSide('black')}><span className="t">♚ Black</span></button>
