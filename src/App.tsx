@@ -880,9 +880,7 @@ export default function App() {
         )}
 
         {activeView === 'daily-puzzle' && (
-          <div style={{ padding: 40, textAlign: 'center', color: '#f44336' }}>
-            Loading DailyPuzzleView...
-          </div>
+          <DailyPuzzleView onAnalysis={openAnalysisFromState} />
         )}
 
         {activeView === 'endgames' && <EndgamesView onStart={startEndgame} />}
