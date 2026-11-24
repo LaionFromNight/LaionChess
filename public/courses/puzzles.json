@@ -2,7 +2,9 @@
   {
     "id": "puzzle-001",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p2Q/4P3/8/PPPP1PPP/RNB1KB1R w KQkq - 4 4",
-    "solution": ["Qxf7#"],
+    "solution": [
+      "Qxf7#"
+    ],
     "theme": "back-rank",
     "rating": 800,
     "mateIn": 1,
@@ -11,7 +13,9 @@
   {
     "id": "puzzle-002",
     "fen": "rnbqkb1r/ppp2ppp/3p1n2/4p2Q/4P3/8/PPPP1PPP/RNB1KB1R w KQkq - 0 5",
-    "solution": ["Qxf7#"],
+    "solution": [
+      "Qxf7#"
+    ],
     "theme": "back-rank",
     "rating": 900,
     "mateIn": 1,
@@ -20,70 +24,105 @@
   {
     "id": "puzzle-003",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/6P1/5N1b/PPPPPPBP/RNBQK2R w KQkq - 2 4",
-    "solution": ["Bc4", "Nxe5", "Qe2+"],
+    "solution": [
+      "Bc4",
+      "Nxe5",
+      "Qe2+"
+    ],
     "theme": "tactics",
     "rating": 1000,
-    "mateIn": 3,
+    "mateIn": 2,
     "description": "Bc4 attacks f7, Nxe5 wins a piece, Qe2+ forks King and Bishop."
   },
   {
     "id": "puzzle-004",
     "fen": "rnbqkbnr/ppp2ppp/3p4/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 3",
-    "solution": ["Nf3", "Bg4", "h3", "Bxf3", "Qxf3"],
+    "solution": [
+      "Nf3",
+      "Bg4",
+      "h3",
+      "Bxf3",
+      "Qxf3"
+    ],
     "theme": "tactics",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 3,
     "description": "Win the bishop on g4 after ...Bg4."
   },
   {
     "id": "puzzle-005",
     "fen": "r1bqkb1r/pppp1ppp/5n2/4p3/1b2P3/2N2N2/PPPP1PPP/R1BQKB1R w KQkq - 4 4",
-    "solution": ["Bb5+", "Bd7", "Bxd7+"],
+    "solution": [
+      "Bb5+",
+      "Bd7",
+      "Bxd7+"
+    ],
     "theme": "exchange",
     "rating": 1100,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Pin and exchange the bad bishop."
   },
   {
     "id": "puzzle-006",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3P4/5N1b/PPP1PPPP/RNBQKB1R w KQkq - 2 4",
-    "solution": ["Bg5", "h6", "Bxf6", "Qxf6"],
+    "solution": [
+      "Bg5",
+      "h6",
+      "Bxf6",
+      "Qxf6"
+    ],
     "theme": "pin",
     "rating": 1300,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Pin the knight on f6 — if ...h6, exchange on f6."
   },
   {
     "id": "puzzle-007",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
-    "solution": ["Nf6", "dxe5", "Nxe4"],
+    "solution": [
+      "Nf6",
+      "dxe5",
+      "Nxe4"
+    ],
     "theme": "fork",
     "rating": 1000,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Reynolds Attack — Black wins the d4 pawn after ...Nf6."
   },
   {
     "id": "puzzle-008",
     "fen": "r1bqkbnr/ppp2ppp/2np4/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5",
-    "solution": ["Bb5+", "Bd7", "Bxd7+", "Qxd7"],
+    "solution": [
+      "Bb5+",
+      "Bd7",
+      "Bxd7+",
+      "Qxd7"
+    ],
     "theme": "exchange",
     "rating": 1100,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Scottish Game — White exchanges the bishop to damage Black's structure."
   },
   {
     "id": "puzzle-009",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 4 5",
-    "solution": ["Bb5", "Bd7", "Bxc6", "bxc6"],
+    "solution": [
+      "Bb5",
+      "Bd7",
+      "Bxc6",
+      "bxc6"
+    ],
     "theme": "double-bishop",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Double the c-pawns after Bb5-Bd7-Bxc6."
   },
   {
     "id": "puzzle-010",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 5 5",
-    "solution": ["Qf7#"],
+    "solution": [
+      "Qf7#"
+    ],
     "theme": "mate",
     "rating": 700,
     "mateIn": 1,
@@ -92,7 +131,9 @@
   {
     "id": "puzzle-011",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 5 5",
-    "solution": ["Qxf7#"],
+    "solution": [
+      "Qxf7#"
+    ],
     "theme": "mate",
     "rating": 700,
     "mateIn": 1,
@@ -101,127 +142,194 @@
   {
     "id": "puzzle-012",
     "fen": "rnbqkbnr/ppp2ppp/3p4/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 3",
-    "solution": ["c4", "dxc4", "Nf3", "c5", "e5"],
+    "solution": [
+      "c4",
+      "dxc4",
+      "Nf3",
+      "c5",
+      "e5"
+    ],
     "theme": "opening-trap",
     "rating": 1100,
-    "mateIn": 0,
+    "mateIn": 3,
     "description": "Dutch Defense — White punishes ...dxc4 with c4, then builds a strong center."
   },
   {
     "id": "puzzle-013",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/6P1/5N1b/PPPP1PBP/RNBQK2R w KQkq - 3 5",
-    "solution": ["Ng5", "d5", "exd5", "Na5"],
+    "solution": [
+      "Ng5",
+      "d5",
+      "exd5",
+      "Na5"
+    ],
     "theme": "attacking-f7",
     "rating": 1400,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Fried Liver attack — Ng5 puts pressure on f7."
   },
   {
     "id": "puzzle-014",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
-    "solution": ["f5", "exf5", "Bc5+"],
+    "solution": [
+      "f5",
+      "exf5",
+      "Bc5+"
+    ],
     "theme": "gambit",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "King's Gambit — Black accepts the gambit with ...f5."
   },
   {
     "id": "puzzle-015",
     "fen": "rnbqkb1r/ppp2ppp/3p1n2/4p2Q/4P3/8/PPPP1PPP/RNB1KB1R b KQkq - 0 4",
-    "solution": ["Qe7", "Bc4", "Qd8"],
+    "solution": [
+      "Qe7",
+      "Bc4",
+      "Qd8"
+    ],
     "theme": "defensive",
     "rating": 1000,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Defend against Scholar's mate with ...Qe7."
   },
   {
     "id": "puzzle-016",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 4 5",
-    "solution": ["Nc3", "Bb4", "Bd3"],
+    "solution": [
+      "Nc3",
+      "Bb4",
+      "Bd3"
+    ],
     "theme": "development",
     "rating": 1100,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Four Knights — develop with Nc3 and Bd3."
   },
   {
     "id": "puzzle-017",
     "fen": "r1bqkbnr/ppp2ppp/2np4/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5",
-    "solution": ["Bb5+", "Bd7", "Bxd7+", "Qxd7", "O-O"],
+    "solution": [
+      "Bb5+",
+      "Bd7",
+      "Bxd7+",
+      "Qxd7",
+      "O-O"
+    ],
     "theme": "development",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 3,
     "description": "Scottish Game — castle after the bishop exchange."
   },
   {
     "id": "puzzle-018",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/1b1NP3/8/PPPP1PPP/RNBQKB1R w KQkq - 4 5",
-    "solution": ["Qe2", "Bc5", "O-O"],
+    "solution": [
+      "Qe2",
+      "Bc5",
+      "O-O"
+    ],
     "theme": "development",
     "rating": 1000,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Develop with Qe2, preparing to castle."
   },
   {
     "id": "puzzle-019",
     "fen": "r1bqkbnr/ppp2ppp/2np4/4p3/3NP3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 5",
-    "solution": ["Nxe5", "d6", "Nf3", "Nxe4"],
+    "solution": [
+      "Nxe5",
+      "d6",
+      "Nf3",
+      "Nxe4"
+    ],
     "theme": "tactics",
     "rating": 1300,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Scotch Game — Nxe5 wins a central pawn."
   },
   {
     "id": "puzzle-020",
     "fen": "r1bqkbnr/ppp2ppp/2np4/4p3/3NP3/2N5/PPP2PPP/R1BQKB1R b KQkq - 3 4",
-    "solution": ["Nf6", "Bb5+", "Bd7", "Bxd7+", "Qxd7"],
+    "solution": [
+      "Nf6",
+      "Bb5+",
+      "Bd7",
+      "Bxd7+",
+      "Qxd7"
+    ],
     "theme": "tactics",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 3,
     "description": "Four Knights with Bb5+ — White's best continuation."
   },
   {
     "id": "puzzle-021",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
-    "solution": ["Nf6", "Bc4", "Nxe4"],
+    "solution": [
+      "Nf6",
+      "Bc4",
+      "Nxe4"
+    ],
     "theme": "tactics",
     "rating": 1000,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Reynolds Attack — Black wins the d4 pawn."
   },
   {
     "id": "puzzle-022",
     "fen": "r1bqkb1r/pppp1ppp/2n2n2/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 4 5",
-    "solution": ["Qe2", "d6", "Bd3"],
+    "solution": [
+      "Qe2",
+      "d6",
+      "Bd3"
+    ],
     "theme": "development",
     "rating": 1100,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Control the center with Qe2 and Bd3."
   },
   {
     "id": "puzzle-023",
     "fen": "r1bqkbnr/ppp2ppp/2np4/4p3/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5",
-    "solution": ["O-O", "Bc5", "c3", "Nf6"],
+    "solution": [
+      "O-O",
+      "Bc5",
+      "c3",
+      "Nf6"
+    ],
     "theme": "opening",
     "rating": 1000,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "Scotch Game — castle and build with c3."
   },
   {
     "id": "puzzle-024",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3NP3/5N2/PPP2PPP/RNBQKB1R b KQkq - 2 4",
-    "solution": ["f5", "exf5", "Bc5+"],
+    "solution": [
+      "f5",
+      "exf5",
+      "Bc5+"
+    ],
     "theme": "gambit",
     "rating": 1200,
-    "mateIn": 0,
+    "mateIn": 2,
     "description": "King's Gambit — Dutch style response with ...f5."
   },
   {
     "id": "puzzle-025",
     "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/3NP3/8/PPP2PPP/RNBQKB1R b KQkq - 0 4",
-    "solution": ["f5", "exf5", "Nf6", "Bg5", "Be7"],
+    "solution": [
+      "f5",
+      "exf5",
+      "Nf6",
+      "Bg5",
+      "Be7"
+    ],
     "theme": "gambit",
     "rating": 1300,
-    "mateIn": 0,
+    "mateIn": 3,
     "description": "King's Gambit — accept and develop normally."
   }
 ]

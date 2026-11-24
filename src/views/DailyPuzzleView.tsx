@@ -120,7 +120,7 @@ export default function DailyPuzzleView(): JSX.Element {
     const newState = { ...state, board: state.board.map(r => [...r]) };
     newState.board[toRow][toCol] = movingPiece;
     newState.board[from.row][from.col] = null;
-    newState.currentTurn = newState.currentTurn === 'w' ? 'b' : 'w';
+    newState.currentTurn = newState.currentTurn === 'white' ? 'black' : 'white';
 
     const moveFrom = `${String.fromCharCode(97 + from.col)}${8 - from.row}`;
     const moveTo = `${String.fromCharCode(97 + toCol)}${8 - toRow}`;
@@ -137,6 +137,7 @@ export default function DailyPuzzleView(): JSX.Element {
         setUserSolutions([...userSolutions, `${moveFrom}${moveTo}`]);
         setCurrentFen(toFen(newState));
         setGameState(newState);
+        setCurrentTurn(newState.currentTurn);
         if (userSolutions.length + 1 >= (puzzle?.solution?.length || 0)) {
           setSolved(true);
           setFeedbackMsg('Puzzle Solved!');
@@ -208,22 +209,24 @@ export default function DailyPuzzleView(): JSX.Element {
         }}>
           {rows.map((row, rowIdx) =>
             row.map((piece, colIdx) => {
+              const boardRow = flipped ? 7 - rowIdx : rowIdx;
+              const boardCol = flipped ? 7 - colIdx : colIdx;
               const light = (rowIdx + colIdx) % 2 === 0;
               const key = `${rowIdx}-${colIdx}`;
-              const isSelected = selectedPos?.row === rowIdx && selectedPos?.col === colIdx;
-              const isLegalHighlight = legalMoves.some(m => m.row === rowIdx && m.col === colIdx);
+              const isSelected = selectedPos?.row === boardRow && selectedPos?.col === boardCol;
+              const isLegalHighlight = legalMoves.some(m => m.row === boardRow && m.col === boardCol);
               const src = piece ? pieceSrc(settings.pieceSet, piece.color, piece.type as PieceType) : null;
               return (
                 <span key={key} style={{
                   background: light ? theme.light : theme.dark,
                   cursor: (piece && piece.color === currentTurn) ? 'pointer' : 'default',
-                  position: 'relative', width: '12.5%', aspectRatio: '1',
+                  position: 'relative',
                 }}
                 onClick={() => {
                   if (piece && piece.color === currentTurn) {
-                    handleSquareClick(rowIdx, colIdx);
+                    handleSquareClick(boardRow, boardCol);
                   } else if (selectedPos) {
-                    handleDestClick(rowIdx, colIdx);
+                    handleDestClick(boardRow, boardCol);
                   }
                 }}>
                   {src ? (
@@ -237,10 +240,12 @@ export default function DailyPuzzleView(): JSX.Element {
                   {isSelected && (
                     <span style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: theme.light, opacity: 0.3 }} />
                   )}
-                  <span style={{ position: 'absolute', fontSize: '8px', color: light ? theme.dark : theme.light, opacity: 0.6, pointerEvents: 'none' }}>
-                    {colIdx === (flipped ? 7 : 0)}{String.fromCharCode(97 + colIdx)}
-                    {' '}{flipped ? (8 - rowIdx) : (rowIdx + 1)}
-                  </span>
+                  {rowIdx === 7 && (
+                    <span style={{ position: 'absolute', bottom: 1, right: 3, fontSize: '8px', color: light ? theme.dark : theme.light, opacity: 0.7, pointerEvents: 'none' }}>{String.fromCharCode(97 + boardCol)}</span>
+                  )}
+                  {colIdx === 0 && (
+                    <span style={{ position: 'absolute', top: 1, left: 3, fontSize: '8px', color: light ? theme.dark : theme.light, opacity: 0.7, pointerEvents: 'none' }}>{8 - boardRow}</span>
+                  )}
                 </span>
               );
             })
@@ -259,7 +264,7 @@ export default function DailyPuzzleView(): JSX.Element {
                   <span style={{ background: '#9c27b0', padding: '2px 8px', borderRadius: 12, fontSize: 12, color: '#fff' }}>{puzzle.mateIn} move{puzzle.mateIn > 1 ? 's' : ''}</span>
                 </div>
                 <p style={{ margin: '8px 0 0', fontSize: 13, color: '#888' }}>
-                  {puzzle.color === 'w' ? 'White' : 'Black'} to move
+                  {currentTurn === 'white' ? 'White' : 'Black'} to move
                 </p>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: '#ccc' }}>
                   {puzzle.description}
