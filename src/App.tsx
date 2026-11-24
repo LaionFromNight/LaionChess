@@ -41,6 +41,7 @@ import EnginePanel, { type PanelLine } from './components/EnginePanel';
 import { useCourses, type Course, type CourseCardMeta } from './courses/useCourses';
 import { loadProgress, loadLastCourse, saveLastCourse } from './courses/progress';
 import TrainerView from './views/TrainerView';
+import DailyPuzzleView from './views/DailyPuzzleView';
 import { dueSummary } from './courses/srs';
 import VisionView from './views/VisionView';
 import EndgamesView, { markEndgameDone } from './views/EndgamesView';
@@ -142,7 +143,7 @@ function buildFoldedOpeningJson(tree: GameTree, title: string, side: PieceColor)
   };
 }
 
-type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master' | 'vision' | 'endgames' | 'sparring';
+type ActiveView = 'home' | 'analysis' | 'openings' | 'trainer' | 'create' | 'master' | 'vision' | 'endgames' | 'sparring' | 'daily-puzzle';
 
 function MiniBoard({ fen, flipped }: { fen: string; flipped?: boolean }) {
   const { settings } = useSettings();
@@ -710,6 +711,7 @@ export default function App() {
   const navItems: Array<{ view: ActiveView; label: string; icon: string }> = [
     { view: 'home', label: 'Home', icon: '⌂' },
     { view: 'openings', label: 'Openings', icon: '♘' },
+    { view: 'daily-puzzle', label: 'Puzzle', icon: '🧩' },
     { view: 'analysis', label: 'Analysis', icon: '♟' },
     { view: 'vision', label: 'Vision', icon: '◉' },
     { view: 'endgames', label: 'Endgames', icon: '♚' },
@@ -792,6 +794,17 @@ export default function App() {
               </section>
             )}
 
+            {/* Daily Puzzle card on Home */}
+            <section className="continue-card" style={{ cursor: 'pointer' }} onClick={() => setActiveView('daily-puzzle')}>
+              <div className="mini" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>🧩</div>
+              <div className="body">
+                <span className="eyebrow">Daily Puzzle</span>
+                <h3>Solve today's tactical puzzle</h3>
+                <span className="muted">Find the best move — new puzzle every 24 hours. Rating updates automatically from Lichess.</span>
+              </div>
+              <button className="btn btn-primary" type="button">Solve →</button>
+            </section>
+
             <section className="home-section">
               <div className="section-row">
                 <h2>Openings</h2>
@@ -872,6 +885,10 @@ export default function App() {
 
         {activeView === 'vision' && (
           <VisionView courses={courses} onAnalysis={openAnalysisFromState} />
+        )}
+
+        {activeView === 'daily-puzzle' && (
+          <DailyPuzzleView onAnalysis={openAnalysisFromState} />
         )}
 
         {activeView === 'endgames' && <EndgamesView onStart={startEndgame} />}
