@@ -67,6 +67,29 @@ export default function DailyPuzzleView(): JSX.Element {
   const [flipped, setFlipped] = useState(false);
   const [locked, setLocked] = useState(false);
   const restartToken = useRef(0);
+  const [winWidth, setWinWidth] = useState(() => typeof window !== 'undefined' ? window.innerWidth : 1280);
+
+  useEffect(() => {
+    const onResize = () => setWinWidth(window.innerWidth);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  const applyPuzzle = (p: Puzzle) => {
+    restartToken.current++;
+    setPuzzle(p);
+    setCurrentFen(p.fen);
+    setCurrentTurn(p.color);
+    const st = parseFen(p.fen);
+    if (st) setGameState(st);
+    setSelectedPos(null);
+    setUserSolutions([]);
+    setSolved(false);
+    setFeedback(null);
+    setFeedbackMsg('');
+    setLocked(false);
+    setFlipped(false);
+  };
 
   // Fetch puzzle on mount
   useEffect(() => {
@@ -75,11 +98,7 @@ export default function DailyPuzzleView(): JSX.Element {
     fetchRandomPuzzle()
       .then(p => {
         if (p) {
-          setPuzzle(p);
-          setCurrentFen(p.fen);
-          setCurrentTurn(p.color);
-          const st = parseFen(p.fen);
-          if (st) setGameState(st);
+          applyPuzzle(p);
         } else {
           setError('No puzzles available. Check public/courses/puzzles.json');
         }
@@ -190,26 +209,22 @@ export default function DailyPuzzleView(): JSX.Element {
   };
 
   const handleRestart = () => {
-    restartToken.current++;
-    if (puzzle) {
-      setCurrentFen(puzzle.fen);
-      setCurrentTurn(puzzle.color);
-      const st = parseFen(puzzle.fen);
-      if (st) setGameState(st);
-      setSelectedPos(null);
-      setUserSolutions([]);
-      setSolved(false);
-      setFeedback(null);
-      setFeedbackMsg('');
-      setLocked(false);
-    }
+    if (puzzle) applyPuzzle(puzzle);
+  };
+
+  const handleNextPuzzle = () => {
+    const list = puzzleCache ?? [];
+    if (!list.length || !puzzle) return;
+    const idx = list.findIndex(p => p.id === puzzle.id);
+    const next = list[(idx + 1) % list.length];
+    applyPuzzle(next);
   };
 
   return (
-    <div style={{ maxWidth: 900, margin: '0 auto', padding: 20 }}>
+    <div style={{ maxWidth: 900, margin: '0 auto', padding: winWidth < 640 ? '12px 12px 20px' : '20px' }}>
       <div style={{ textAlign: 'center', marginBottom: 20 }}>
         <span style={{ display: 'block', marginBottom: 8 }}>Daily Puzzle</span>
-        <h2 style={{ margin: 0, fontSize: 28 }}>
+        <h2 style={{ margin: 0, fontSize: winWidth < 640 ? 22 : 28 }}>
           {puzzle ? `${puzzle.theme} • ${puzzle.rating} rating` : 'Loading puzzle...'}
         </h2>
         <p style={{ color: '#888', margin: '8px 0 0' }}>
@@ -236,7 +251,7 @@ export default function DailyPuzzleView(): JSX.Element {
           <p style={{ margin: '4px 0 0', color: '#888' }}>
             Solution: {puzzle?.solution.join(' ')}
           </p>
-          <button className="btn btn-primary btn-sm" type="button" onClick={handleRestart} style={{ marginTop: 12 }}>
+          <button className="btn btn-primary btn-sm" type="button" onClick={handleNextPuzzle} style={{ marginTop: 12 }}>
             Next Puzzle →
           </button>
         </div>
@@ -245,7 +260,7 @@ export default function DailyPuzzleView(): JSX.Element {
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
         <div style={{
           display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gridTemplateRows: 'repeat(8, 1fr)',
-          width: Math.min(560, (typeof window !== 'undefined' ? window.innerWidth - 40 : 560)),
+          width: Math.max(220, Math.floor(Math.min(560, winWidth - (winWidth < 640 ? 24 : 40)) / 8) * 8),
           aspectRatio: '1', border: '2px solid #333', borderRadius: 8, overflow: 'hidden',
           boxShadow: '0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35)',
         }}>
@@ -296,7 +311,7 @@ export default function DailyPuzzleView(): JSX.Element {
         </div>
 
         {/* Sidebar */}
-        <div style={{ minWidth: 220, display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <div style={{ width: winWidth < 720 ? '100%' : 260, maxWidth: 320, display: 'flex', flexDirection: 'column', gap: 12 }}>
           {puzzle ? (
             <>
               <div style={{ background: '#1a1a2e', borderRadius: 10, padding: 16, border: '1px solid #333' }}>
