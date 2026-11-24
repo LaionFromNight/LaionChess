@@ -39,7 +39,7 @@ async function loadPuzzles(): Promise<Puzzle[]> {
   if (!fetchPromise) {
     fetchPromise = (async () => {
       try {
-        const res = await fetch('/courses/puzzles.json');
+        const res = await fetch('courses/puzzles.json');
         if (res.ok) {
           const raw = await res.json();
           puzzleCache = (raw as any[]).map((p: any) => ({
