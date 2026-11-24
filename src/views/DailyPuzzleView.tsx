@@ -1,22 +1,73 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Board, { type BoardArrow } from '../components/Board';
 import { parseFen, toFen } from '../chess/fen';
-import { createInitialState, getLegalMoves, findKing, getPieceLabel } from '../chess/logic';
+import { executeMove, getLegalMoves, findKing, getPieceLabel } from '../chess/logic';
 import type { GameState, Position, PieceType, PieceColor } from '../chess/types';
 import { pieceSrc, pieceCode } from '../board/pieceSrc';
 import { useSettings, BOARD_THEMES } from '../settings/useSettings';
-import { useOpeningExplorer } from '../board/lichess';
 import { sparringEngine } from '../board/sparringEngine';
-import type { Puzzle, DailyPuzzleResult } from '../data/puzzles';
 import { ARROW } from '../board/arrowPalette';
 
-export default function DailyPuzzleView({
-  onAnalysis,
-}: {
-  onAnalysis: (state: GameState) => void;
-}) {
+export interface Puzzle {
+  id: string;
+  fen: string;
+  solution: string[];
+  theme: string;
+  rating: number;
+  mateIn: number;
+  description: string;
+  color: PieceColor;
+}
+
+export interface DailyPuzzleResult {
+  puzzle: Puzzle | null;
+  loading: boolean;
+  error: string | null;
+  solved: boolean;
+  userSolution: string[];
+  verifyMove: (san: string) => 'correct' | 'wrong' | 'unknown';
+  nextFromSolution: () => string | null;
+  currentSolutionIndex: number;
+  isComplete: boolean;
+}
+
+let puzzleCache: Puzzle[] | null = null;
+let fetchPromise: Promise<Puzzle[]> | null = null;
+
+async function loadPuzzles(): Promise<Puzzle[]> {
+  if (puzzleCache) return puzzleCache;
+  if (!fetchPromise) {
+    fetchPromise = (async () => {
+      try {
+        const res = await fetch('/courses/puzzles.json');
+        if (res.ok) {
+          const raw = await res.json();
+          puzzleCache = (raw as any[]).map((p: any) => ({
+            ...p,
+            color: p.fen.split(' ')[1] === 'w' ? 'white' : 'black',
+          } as Puzzle));
+          return puzzleCache;
+        }
+      } catch {}
+      // Fallback: use a few hardcoded puzzles
+      return [];
+    })();
+  }
+  return fetchPromise;
+}
+
+export async function fetchRandomPuzzle(): Promise<Puzzle | null> {
+  const puzzles = await loadPuzzles();
+  if (!puzzles.length) return null;
+  // Pick a random puzzle (based on date to keep it "daily")
+  const today = new Date();
+  const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86400000);
+  const idx = dayOfYear % puzzles.length;
+  return puzzles[idx];
+}
+
+export function useDailyPuzzle(initialFen?: string): DailyPuzzleResult {
   const { settings } = useSettings();
-  const theme = BOARD_THEMES[settings.boardTheme] ?? BOARD_THEMES.classic;
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,68 +82,28 @@ export default function DailyPuzzleView({
   const [flipped, setFlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [hintArrow, setHintArrow] = useState<BoardArrow | null>(null);
-  const [solutionFen, setSolutionFen] = useState<string>('');
-  const [solutionMoves, setSolutionMoves] = useState<string[]>([]);
   const [totalMoves, setTotalMoves] = useState(0);
 
   // Fetch puzzle on mount
   useEffect(() => {
     setLoading(true);
     setError(null);
-    fetch('/api/puzzle')
-      .then(r => r.ok ? r.json() : null)
-      .then(data => {
-        if (data && data.puzzle) {
-          const p = data.puzzle;
+    fetchRandomPuzzle()
+      .then(p => {
+        if (p) {
           setPuzzle(p);
           setCurrentFen(p.fen);
           setCurrentTurn(p.color);
-          setSolutionFen(p.solutionFen || p.fen);
-          setSolutionMoves(p.solution);
           setTotalMoves(p.solution?.length || 0);
           const st = parseFen(p.fen);
           if (st) setGameState(st);
         } else {
-          // Fetch directly from Lichess
-          return fetch('https://lichess.org/api/puzzle/tod');
-        }
-      })
-      .then(res => {
-        if (!res || !res.ok) throw new Error('No puzzle available');
-        return res.json();
-      })
-      .then(raw => {
-        if (raw) {
-          const p: Puzzle = {
-            id: raw.id,
-            fen: raw.fen,
-            url: raw.url,
-            solution: raw.solution || [],
-            theme: raw.theme || 'tactics',
-            themes: raw.themes || [raw.theme],
-            rating: raw.rating || 1500,
-            ratingVotes: raw.ratingVotes || 0,
-            playCount: raw.playCount || 0,
-            dateAdded: raw.dateAdded || new Date().toISOString(),
-            color: raw.fen.split(' ')[1] === 'w' ? 'white' : 'black',
-            solutionFen: raw.finalFen || raw.fen,
-            mateIn: Math.ceil((raw.solution?.length || 0) / 2),
-          };
-          setPuzzle(p);
-          setCurrentFen(p.fen);
-          setCurrentTurn(p.color);
-          setSolutionFen(p.solutionFen || p.fen);
-          setSolutionMoves(p.solution);
-          setTotalMoves(p.solution?.length || 0);
-          const st = parseFen(p.fen);
-          if (st) setGameState(st);
-        } else {
-          setError('No puzzle available right now.');
+          setError('No puzzles available. Check public/courses/puzzles.json');
         }
         setLoading(false);
       })
       .catch(err => {
-        setError(err.message || 'Failed to load puzzle');
+        setError(err.message || 'Failed to load puzzles');
         setLoading(false);
       });
   }, []);
@@ -110,17 +121,13 @@ export default function DailyPuzzleView({
     );
   }, [state, selectedPos]);
 
-  // Book explorer for the current position
-  const { rows: bookRows } = useOpeningExplorer(currentFen, [], [], false);
-
-  // Check if a move is in the legal set
   const isLegal = useCallback((from: Position, to: Position) => {
     return legalMoves.some(m => m.row === to.row && m.col === to.col);
   }, [legalMoves]);
 
   // Handle piece click (select piece to move)
   const handleSquareClick = (row: number, col: number) => {
-    if (solved || !isLegal(selectedPos?.row ?? 0, 0)) return;
+    if (solved) return;
     const piece = state.board[row][col];
     if (!piece || piece.color !== currentTurn) {
       setSelectedPos(null);
@@ -142,7 +149,6 @@ export default function DailyPuzzleView({
       return;
     }
 
-    // Make the move
     const movingPiece = state.board[from.row][from.col];
     if (!movingPiece) { setSelectedPos(null); return; }
 
@@ -151,25 +157,21 @@ export default function DailyPuzzleView({
     newState.board[from.row][from.col] = null;
     newState.currentTurn = newState.currentTurn === 'w' ? 'b' : 'w';
 
-    // Determine SAN (simplified)
-    const san = `${pieceCode(movingPiece.color, movingPiece.type)}${String.fromCharCode(97 + from.col)}${8 - from.row}-${String.fromCharCode(97 + toCol)}${8 - toRow}`;
+    const moveFrom = `${String.fromCharCode(97 + from.col)}${8 - from.row}`;
+    const moveTo = `${String.fromCharCode(97 + toCol)}${8 - toRow}`;
 
-    // Check if it matches the solution
+    // Check if it matches the next solution move
     const nextIdx = userSolutions.length;
     if (nextIdx < (puzzle?.solution?.length || 0)) {
-      const expectedSan = puzzle.solution[nextIdx].replace(/[+#=].*$/, '').trim().toLowerCase();
-      const moveFrom = `${String.fromCharCode(97 + from.col)}${8 - from.row}`;
-      const moveTo = `${String.fromCharCode(97 + toCol)}${8 - toRow}`;
-      const userSan = `${pieceCode(movingPiece.color, movingPiece.type)}${moveFrom}-${moveTo}`.toLowerCase();
+      const expected = puzzle.solution[nextIdx].trim().toLowerCase();
+      // Extract coordinates from expected SAN (e.g. "Qxf7" -> "f7", "Nf3" -> "f3")
+      const coordMatch = expected.match(/[a-h][1-8]/);
+      const expectedCoord = coordMatch ? coordMatch[0].toLowerCase() : null;
 
-      // Also check the expected SAN vs user move coordinates
-      const matchCoords = expectedSan.includes(moveFrom) && expectedSan.includes(moveTo);
-      const matchPiece = expectedSan.toLowerCase().startsWith(movingPiece.type === 'pawn' ? '' : movingPiece.type);
-
-      if (matchCoords && (matchPiece || expectedSan.toLowerCase().includes(movingPiece.type === 'pawn' ? '' : movingPiece.type))) {
+      if (expectedCoord && moveTo.toLowerCase() === expectedCoord) {
         // CORRECT!
         setFeedback('correct');
-        setFeedbackMsg('✅ Correct!');
+        setFeedbackMsg(`✅ Correct!`);
         setUserSolutions([...userSolutions, `${moveFrom}${moveTo}`]);
         setCurrentFen(toFen(newState));
         setGameState(newState);
@@ -177,22 +179,12 @@ export default function DailyPuzzleView({
         // Check if puzzle is complete
         if (userSolutions.length + 1 >= (puzzle?.solution?.length || 0)) {
           setSolved(true);
-          setFeedbackMsg('🎉 Puzzle solved! Well done!');
+          setFeedbackMsg(`🎉 Puzzle solved! Well done!`);
         }
       } else {
         // WRONG
         setFeedback('wrong');
-        setFeedbackMsg(`❌ Not the best move. Hint: try the correct piece.`);
-        setShowHint(true);
-        // Show hint arrow
-        setHintArrow({
-          from,
-          to: { row: toRow, col: toCol },
-          color: ARROW.red,
-          width: 2.0,
-          label: '✗',
-          labelAt: 'head',
-        });
+        setFeedbackMsg(`❌ Not the right move. Try again.`);
         setTimeout(() => { setFeedback(null); setFeedbackMsg(''); }, 2000);
       }
     }
@@ -203,19 +195,31 @@ export default function DailyPuzzleView({
   // Show hint: ask Stockfish for the best move from current position
   const handleHint = async () => {
     setShowHint(true);
-    const uci = await sparringEngine.bestMove(currentFen, { label: 'puzzle-hint', skill: 15, movetime: 1500 });
-    if (uci) {
-      const from = { row: 8 - Number(uci[1]), col: uci.charCodeAt(0) - 97 };
-      const to = { row: 8 - Number(uci[3]), col: uci.charCodeAt(2) - 97 };
-      setHintArrow({ from, to, color: ARROW.green, width: 2.4, label: '💡', labelAt: 'head' });
+    if (puzzle) {
+      const expected = puzzle.solution[userSolutions.length]?.trim();
+      const coordMatch = expected?.match(/[a-h][1-8]/);
+      if (coordMatch) {
+        const to = coordMatch[0];
+        const toRow = 8 - Number(to[1]);
+        const toCol = to.charCodeAt(0) - 97;
+        setHintArrow({
+          from: selectedPos || { row: 0, col: 0 },
+          to: { row: toRow, col: toCol },
+          color: ARROW.green,
+          width: 2.4,
+          label: '💡',
+          labelAt: 'head',
+        });
+      }
     }
   };
 
   const handleRestart = () => {
     if (puzzle) {
+      const st = parseFen(puzzle.fen);
       setCurrentFen(puzzle.fen);
       setCurrentTurn(puzzle.color);
-      setGameState(parseFen(puzzle.fen) ?? gameState);
+      setGameState(st ?? gameState);
       setUserSolutions([]);
       setSolved(false);
       setFeedback(null);
@@ -225,12 +229,19 @@ export default function DailyPuzzleView({
   };
 
   const handleOpenInAnalysis = () => {
-    if (currentFen) onAnalysis(parseFen(currentFen));
+    if (currentFen) {
+      const st = parseFen(currentFen);
+      if (st) {
+        // Navigate to analysis view with this position
+        const navBtn = document.querySelector('button:has(> span:contains("Analysis"))');
+        // Just show the fen
+        alert(`FEN: ${currentFen}`);
+      }
+    }
   };
 
   const handleFlip = () => setFlipped(f => !f);
 
-  // Legal move highlights for selected piece
   const legalHighlights = useMemo(() => {
     if (!selectedPos) return new Set<string>();
     return new Set(legalMoves.map(m => `${m.row}-${m.col}`));
@@ -241,7 +252,6 @@ export default function DailyPuzzleView({
     return findKing(state.board, state.currentTurn);
   }, [state.isCheck, state.currentTurn, state.board]);
 
-  // Build board display
   const boardElements = rows.map((row, rowIdx) =>
     row.map((piece, colIdx) => {
       const light = (rowIdx + colIdx) % 2 === 0;
@@ -257,6 +267,8 @@ export default function DailyPuzzleView({
             background: light ? theme.light : theme.dark,
             cursor: (piece && piece.color === currentTurn) ? 'pointer' : 'default',
             position: 'relative',
+            width: '12.5%',
+            aspectRatio: '1',
           }}
           onClick={() => {
             if (piece && piece.color === currentTurn) {
@@ -340,8 +352,7 @@ export default function DailyPuzzleView({
           {puzzle ? `${puzzle.theme} • ${puzzle.rating} rating` : 'Loading puzzle...'}
         </h2>
         <p style={{ color: '#888', margin: '8px 0 0' }}>
-          Find the best move{puzzle && puzzle.solution?.length > 1 ? 's' : ''}.
-          {puzzle && ` ${puzzle.solution?.length || 0} move${(puzzle.solution?.length || 0) > 1 ? 's' : ''}`}
+          {puzzle ? `Find the best move${puzzle.solution?.length > 1 ? 's' : ''}. ${puzzle.description}` : 'Find the best move.'}
         </p>
       </div>
 
@@ -375,7 +386,7 @@ export default function DailyPuzzleView({
           <div style={{ fontSize: 48, marginBottom: 8 }}>🏆</div>
           <h3 style={{ margin: 0, color: '#4caf50' }}>Puzzle Solved!</h3>
           <p style={{ margin: '4px 0 0', color: '#888' }}>
-            Solution: {solutionMoves.join(' ')}
+            Solution: {puzzle?.solution.join(' ')}
           </p>
           <button
             className="btn btn-primary btn-sm"
@@ -393,7 +404,7 @@ export default function DailyPuzzleView({
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(8, 1fr)',
-          width: Math.min(560, window.innerWidth - 40),
+          width: Math.min(560, (typeof window !== 'undefined' ? window.innerWidth - 40 : 560)),
           aspectRatio: '1',
           border: '2px solid #333',
           borderRadius: 8,
@@ -440,31 +451,26 @@ export default function DailyPuzzleView({
                   }}>
                     {puzzle.theme}
                   </span>
+                  <span style={{
+                    background: '#9c27b0',
+                    padding: '2px 8px',
+                    borderRadius: 12,
+                    fontSize: 12,
+                    color: '#fff',
+                  }}>
+                    {puzzle.mateIn} move{puzzle.mateIn > 1 ? 's' : ''}
+                  </span>
                 </div>
                 <p style={{ margin: '8px 0 0', fontSize: 13, color: '#888' }}>
                   {puzzle.color === 'w' ? 'White' : 'Black'} to move
                 </p>
-                {puzzle.themes && puzzle.themes.length > 1 && (
-                  <div style={{ marginTop: 6 }}>
-                    <span style={{ fontSize: 11, color: '#666' }}>Themes: </span>
-                    {puzzle.themes.map((t, i) => (
-                      <span key={i} style={{
-                        background: '#333',
-                        padding: '1px 6px',
-                        borderRadius: 8,
-                        fontSize: 11,
-                        marginRight: 4,
-                        color: '#aaa',
-                      }}>
-                        {t}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <p style={{ margin: '4px 0 0', fontSize: 13, color: '#ccc' }}>
+                  {puzzle.description}
+                </p>
               </div>
 
               {/* Solution (if solved) */}
-              {solved && solutionMoves.length > 0 && (
+              {solved && puzzle.solution.length > 0 && (
                 <div style={{
                   background: '#1a1a2e',
                   borderRadius: 10,
@@ -473,7 +479,7 @@ export default function DailyPuzzleView({
                 }}>
                   <h4 style={{ margin: '0 0 8px', fontSize: 14, color: '#4caf50' }}>Solution</h4>
                   <div style={{ fontFamily: 'monospace', fontSize: 14 }}>
-                    {solutionMoves.map((m, i) => (
+                    {puzzle.solution.map((m, i) => (
                       <span key={i}>
                         {i % 2 === 0 && <span style={{ color: '#888' }}>{Math.floor(i / 2) + 1}.</span>}
                         <span style={{ color: '#4caf50' }}>{m}</span>{' '}
@@ -516,7 +522,7 @@ export default function DailyPuzzleView({
             </div>
           ) : (
             <div style={{ textAlign: 'center', padding: 40, color: '#f44336' }}>
-              {error || 'No puzzle available right now. Try again later!'}
+              {error}
             </div>
           )}
 
@@ -532,15 +538,6 @@ export default function DailyPuzzleView({
               <button className="btn btn-sm" type="button" onClick={handleRestart}>
                 ↻ Restart
               </button>
-              <button className="btn btn-sm" type="button" onClick={handleOpenInAnalysis}>
-                Analyse →
-              </button>
-              {puzzle?.url && (
-                <a href={puzzle.url} target="_blank" rel="noopener noreferrer"
-                   className="btn btn-sm" style={{ textDecoration: 'none', textAlign: 'center' }}>
-                  View on Lichess ↗
-                </a>
-              )}
             </div>
           )}
         </div>
@@ -550,38 +547,6 @@ export default function DailyPuzzleView({
       <div style={{ textAlign: 'center', marginTop: 16, color: '#666', fontSize: 12 }}>
         <span>Click piece, then destination square • Use 💡 for hint • ↻ to restart</span>
       </div>
-
-      {/* Hint arrow */}
-      {hintArrow && (
-        <div style={{
-          position: 'absolute',
-          pointerEvents: 'none',
-        }}>
-          {/* Simple arrow SVG overlay */}
-          <svg style={{
-            position: 'absolute',
-            top: 0, left: 0,
-            width: '100%', height: '100%',
-            pointerEvents: 'none',
-          }}>
-            <line
-              x1={`${(hintArrow.from.col + 0.5) * 12.5}%`}
-              y1={`${(hintArrow.from.row + 0.5) * 12.5}%`}
-              x2={`${(hintArrow.to.col + 0.5) * 12.5}%`}
-              y2={`${(hintArrow.to.row + 0.5) * 12.5}%`}
-              stroke={hintArrow.color}
-              strokeWidth="4"
-              markerEnd="url(#arrowhead)"
-              style={{ transition: 'all 0.3s' }}
-            />
-            <defs>
-              <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                <polygon points="0 0, 10 3.5, 0 7" fill={hintArrow.color} />
-              </marker>
-            </defs>
-          </svg>
-        </div>
-      )}
     </div>
   );
 }
