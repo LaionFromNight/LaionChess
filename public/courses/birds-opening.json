@@ -1,0 +1,63 @@
+{
+  "id": "birds-opening",
+  "name": "Bird's Opening",
+  "playAs": "w",
+  "description": "1.f4: Bird's Opening — aggressive flank opening that controls e5. Covers the Dutch Defense (1...f5), Stoltz-Grob Attack, and the Haldex Gambit.",
+  "lines": [
+    {
+      "id": "bird-main",
+      "name": "Main Line — Against Dutch",
+      "tag": "Main",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4", "note": "Bird's Opening: control e5 from the flank." },
+        { "san": "f5", "note": "Dutch: mirror Bird's flank approach." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "Nf6", "note": "Develop and prepare e5 push." },
+        { "san": "e3", "note": "Solid development." },
+        { "san": "e6", "note": "Solid development." },
+        { "san": "g3", "note": "Fianchetto the king's bishop." },
+        { "san": "g6", "note": "Fianchetto for Black." },
+        { "san": "Bg2", "note": "Fianchetto for White." },
+        { "san": "Bg7", "note": "Fianchetto for Black." },
+        { "san": "O-O", "note": "Castle." },
+        { "san": "O-O", "note": "Castling." },
+        { "san": "d4", "note": "Control the center." },
+        { "san": "d5", "note": "Strong central pawn." },
+        { "san": "c4", "note": "Control the center; challenge Black's setup." }
+      ]
+    },
+    {
+      "id": "bird-vs-ec4",
+      "name": "Against 1...e5 (Stoltz-GroB)",
+      "tag": "Sideline",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4" },
+        { "san": "e5", "note": "Black controls the center." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "Nc6", "note": "Develop the knight." },
+        { "san": "e3", "note": "Solid development." },
+        { "san": "d5", "note": "Establish the center." },
+        { "san": "Bb5", "note": "Pin the knight; pressure." },
+        { "san": "Bd7", "note": "Develop and unpin." },
+        { "san": "O-O", "note": "Castle." },
+        { "san": "Bd6", "note": "Develop and challenge." }
+      ]
+    },
+    {
+      "id": "bird-haldex",
+      "name": "Haldex Gambit (2...exf4 3.Nf3)",
+      "tag": "Punish",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4" },
+        { "san": "e5", "note": "Black takes center." },
+        { "san": "fxe5", "note": "Take the pawn." },
+        { "san": "Qe7", "note": "Develop and prepare Nc6." },
+        { "san": "Nf3", "note": "Haldex: attack e5 with tempo." },
+        { "san": "Nc6", "note": "Develop the knight." },
+        { "san": "Nc3", "note": "Develop with tempo." },
+        { "san": "f6", "note": "Defend e5." },
+        { "san": "exf6", "note": "Take the pawn; White's compensation." }
+      ]
+    }
+  ]
+}

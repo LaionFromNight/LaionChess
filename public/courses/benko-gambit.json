@@ -1,0 +1,74 @@
+{
+  "id": "benko-gambit",
+  "name": "Benko Gambit",
+  "playAs": "b",
+  "description": "1.d4 Nf6 2.c4 c5 3.Nf3 cxd4: the Benko Gambit — sacrifice a pawn for long-term queenside pressure. Covers the Accepted line (4.Qxd4), the Modern Variation (4.Nc3), and key sidelines.",
+  "lines": [
+    {
+      "id": "benko-main",
+      "name": "Main Line — Accepted Benko",
+      "tag": "Main",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops naturally." },
+        { "san": "c4", "note": "White controls the center." },
+        { "san": "c5", "note": "Benko: counterattack in the center." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "cxd4", "note": "Benko Gambit: sacrifice a pawn for queenside pressure." },
+        { "san": "Qxd4", "note": "Accepted: White takes the pawn." },
+        { "san": "g6", "note": "Fianchetto the king's bishop; long-term pressure." },
+        { "san": "Nc3", "note": "Develop the queen's knight." },
+        { "san": "Bg7", "note": "Fianchetto; pressure on the long diagonal." },
+        { "san": "Qa4+", "note": "Check; develop the queen." },
+        { "san": "Nbd7", "note": "Block and develop." },
+        { "san": "Qb3", "note": "Pressure on b7; develop." },
+        { "san": "O-O", "note": "Castling." },
+        { "san": "e4", "note": "Pawn storm in the center." },
+        { "san": "b6", "note": "Support the c5 pawn; queenside expansion." },
+        { "san": "e5", "note": "Pawn storm; restrict Black's pieces." },
+        { "san": "Ne8", "note": "Reroute the knight to g7." },
+        { "san": "g4", "note": "Attack on the kingside; Black's pressure on c-file." },
+        { "san": "Bb7", "note": "Fianchetto the queen's bishop; long-term pressure." }
+      ]
+    },
+    {
+      "id": "benko-modern",
+      "name": "Modern Variation (4.Nc3)",
+      "tag": "Sideline",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops." },
+        { "san": "c4", "note": "White controls the center." },
+        { "san": "c5", "note": "Benko." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "cxd4", "note": "Benko Gambit." },
+        { "san": "Nc3", "note": "Modern Variation: develop the knight." },
+        { "san": "g6", "note": "Fianchetto." },
+        { "san": "Qxd4", "note": "Take the pawn." },
+        { "san": "Bg7", "note": "Fianchetto; queenside pressure." },
+        { "san": "e4", "note": "Pawn storm in the center." },
+        { "san": "Nc6", "note": "Develop the knight." },
+        { "san": "Bc4", "note": "Pressure on f7." },
+        { "san": "O-O", "note": "Castling." },
+        { "san": "Qd1", "note": "Retreat; White's space advantage." }
+      ]
+    },
+    {
+      "id": "benko-trap-qa4",
+      "name": "Trap: 5...Qa5? (Queen misplaced)",
+      "tag": "Trap",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops." },
+        { "san": "c4", "note": "White controls the center." },
+        { "san": "c5", "note": "Benko." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "cxd4", "note": "Benko Gambit." },
+        { "san": "Qxd4", "note": "Accepted." },
+        { "san": "Qa5+", "note": "Premature queen check on a5." },
+        { "san": "Nc3", "note": "Block and develop; the queen is misplaced." },
+        { "san": "g6", "note": "Fianchetto; the queen on a5 is out of play." }
+      ]
+    }
+  ]
+}

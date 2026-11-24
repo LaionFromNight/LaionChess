@@ -1,0 +1,62 @@
+{
+  "id": "four-knights",
+  "name": "Four Knights Game",
+  "playAs": "w",
+  "description": "1.e4 e5 2.Nc3 Nc6 3.Nf3 Nf6: the most popular opening. Solid and symmetric, with key sidelines including the Spanish Four Knights (4.Bb5) and the Scotch Four Knights (4.d4).",
+  "lines": [
+    {
+      "id": "4k-main",
+      "name": "Main Line — Classical",
+      "tag": "Main",
+      "plies": [
+        { "san": "Nc3", "from": "b1", "to": "c3" },
+        { "san": "Nc6", "note": "Black mirrors White's development." },
+        { "san": "Nf3", "from": "g1", "to": "f3", "note": "Four Knights Game: natural development." },
+        { "san": "Nf6", "note": "Symmetrical response." },
+        { "san": "Bb5", "note": "Spanish Four Knights: pin the knight." },
+        { "san": "a6", "note": "Castling options: O-O or Bd6." },
+        { "san": "Bxc6", "note": "Exchange — doubles Black's pawns but removes a defender." },
+        { "san": "dxc6", "note": "Rebuild with pawns; semi-open d-file." },
+        { "san": "d3", "note": "Solid development; prepare e4 push." },
+        { "san": "Be7", "note": "Develop and prepare castling." },
+        { "san": "O-O", "note": "Castle to safety." },
+        { "san": "O-O", "note": "Black castles; position is symmetrical and solid." },
+        { "san": "Re1", "note": "Support e4 and prepare e5 push." },
+        { "san": "d6", "note": "Support the center." }
+      ]
+    },
+    {
+      "id": "4k-scotch",
+      "name": "Scotch Four Knights (4.d4)",
+      "tag": "Sideline",
+      "plies": [
+        { "san": "Nc3", "from": "b1", "to": "c3" },
+        { "san": "Nc6", "note": "Mirror development." },
+        { "san": "Nf3", "from": "g1", "to": "f3" },
+        { "san": "Nf6", "note": "Symmetrical response." },
+        { "san": "d4", "note": "Scotch Four Knights: open the center." },
+        { "san": "exd4", "note": "Symmetrical exchange." },
+        { "san": "Nxd4", "note": "Recapture and centralize." },
+        { "san": "Nxd4", "note": "Exchange knights." },
+        { "san": "Qxd4", "note": "Queen central." },
+        { "san": "Qe7", "note": "Equalize." }
+      ]
+    },
+    {
+      "id": "4k-trap-b5",
+      "name": "Trap: 4...Bb4? (Bad Bishops)",
+      "tag": "Trap",
+      "plies": [
+        { "san": "Nc3", "from": "b1", "to": "c3" },
+        { "san": "Nc6", "note": "Mirror development." },
+        { "san": "Nf3", "from": "g1", "to": "f3" },
+        { "san": "Nf6", "note": "Symmetrical response." },
+        { "san": "Bb5", "note": "Spanish Four Knights." },
+        { "san": "Bb4", "note": "Double pin — beautiful but overextends." },
+        { "san": "O-O", "note": "Castle; the pin is awkward for Black." },
+        { "san": "O-O", "note": "Black castles; pinned pieces are a liability." },
+        { "san": "d3", "note": "Solid; the pin will be resolved favorably for White." }
+      ]
+    }
+  ]
+}

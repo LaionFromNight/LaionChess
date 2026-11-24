@@ -1,0 +1,62 @@
+{
+  "id": "kings-gambit",
+  "name": "King's Gambit",
+  "playAs": "w",
+  "description": "Aggressive 1.e4 e5 2.f4: sacrifice a pawn for rapid development and attack on the kingside. Covering Accepted (2...exf4), Declined (2...d5), and key sidelines.",
+  "lines": [
+    {
+      "id": "kg-main",
+      "name": "Main Line — King's Gambit Accepted",
+      "tag": "Main",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4", "note": "King's Gambit: offer a pawn for rapid development." },
+        { "san": "exf4", "note": "Accepted — Black takes the pawn, gaining space but delaying development." },
+        { "san": "Nf3", "from": "g1", "to": "f3", "note": "Immediate attack on f4, the main line." },
+        { "san": "g5", "note": "Defend the pawn — leads to sharp play." },
+        { "san": "h4", "note": "Lock the kingside; the pawn on g5 is a target." },
+        { "san": "g4", "note": "Black tries to hold the pawn." },
+        { "san": "Bc4", "note": "Develop with tempo, eyeing f7." },
+        { "san": "Bg7", "note": "Develop the bishop; solid but passive." },
+        { "san": "d4", "note": "Open the center; critical moment." },
+        { "san": "d6", "note": "Support the center; solid but cramped." },
+        { "san": "O-O", "note": "Castle — safety first." },
+        { "san": "Ne7", "note": "Return the pawn; simplified play." },
+        { "san": "Nxg5", "note": "Take back the pawn — White's compensation." },
+        { "san": "Qe7", "note": "Defend g5 and prepare central play." },
+        { "san": "Qe2", "note": "Support e5 and prepare d4 push." }
+      ]
+    },
+    {
+      "id": "kg-schmidt",
+      "name": "Schmidt Defense (2...d5)",
+      "tag": "Sideline",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4" },
+        { "san": "d5", "note": "Schmidt: counter in the center immediately." },
+        { "san": "exd5", "note": "Open the center." },
+        { "san": "Qxd5", "note": "Queen central — active but exposed." },
+        { "san": "Nc3", "note": "Attack the queen, gain tempo." },
+        { "san": "Qa5", "note": "Retreat to a safe square." },
+        { "san": "Nf3", "note": "Develop with tempo." },
+        { "san": "Nf6", "note": "Develop the knight." },
+        { "san": "Bc4", "note": "Pressure on f7." },
+        { "san": "Be6", "note": "Develop and challenge." },
+        { "san": "d4", "note": "Establish a strong center." }
+      ]
+    },
+    {
+      "id": "kg-trap-f6",
+      "name": "Trap: 2...Qh4+?",
+      "tag": "Trap",
+      "plies": [
+        { "san": "f4", "from": "f2", "to": "f4" },
+        { "san": "Qh4+", "note": "Premature queen check — loses time." },
+        { "san": "g3", "note": "Kick the queen — simple and strong." },
+        { "san": "Qh5", "note": "Queen rerouted." },
+        { "san": "Nf3", "note": "Develop with initiative." },
+        { "san": "g6", "note": "Defend f4." },
+        { "san": "Bg2", "note": "Strong fianchetto; controls long diagonal." }
+      ]
+    }
+  ]
+}

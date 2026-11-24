@@ -1,0 +1,84 @@
+{
+  "id": "dutch-defense",
+  "name": "Dutch Defense",
+  "playAs": "b",
+  "description": "1.d4 f5: aggressive counterattacking system for Black. Covers Stonewall (e6, Bd6, Ne7, c6), Leningrad (g6, Bg7), and the Staunton Gambit (e4).",
+  "lines": [
+    {
+      "id": "dutch-stonewall",
+      "name": "Stonewall Setup",
+      "tag": "Main",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "f5", "note": "Dutch Defense: stakes claim on e4." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "Nf6", "note": "Develop and prepare e5 push." },
+        { "san": "g3", "note": "Prepare fianchetto of the king's bishop." },
+        { "san": "g6", "note": "Leningrad Dutch: fianchetto." },
+        { "san": "Bg2", "note": "Fianchetto; controls long diagonal." },
+        { "san": "Bg7", "note": "Fianchetto for Black." },
+        { "san": "O-O", "note": "Castle." },
+        { "san": "O-O", "note": "Castling; safe king." },
+        { "san": "c4", "note": "Control the center." },
+        { "san": "e6", "note": "Stonewall: support the e5 pawn break." },
+        { "san": "Nc3", "note": "Develop the queen's knight." },
+        { "san": "d6", "note": "Support the center." },
+        { "san": "Bf4", "note": "Develop outside the pawn chain." },
+        { "san": "Be7", "note": "Solid development." },
+        { "san": "Qb3", "note": "Pressure on b7 and d5." },
+        { "san": "Qe8", "note": "Prepare to push e5." },
+        { "san": "Ne5", "note": "Strong outpost; centralize." },
+        { "san": "Qe7", "note": "Support the e5 break." }
+      ]
+    },
+    {
+      "id": "dutch-leningrad",
+      "name": "Leningrad Dutch",
+      "tag": "Main",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "f5", "note": "Dutch: aggressive counterplay." },
+        { "san": "g3", "note": "Fianchetto approach." },
+        { "san": "g6", "note": "Leningrad: fianchetto the king's bishop." },
+        { "san": "Bg2", "note": "Fianchetto for White." },
+        { "san": "Bg7", "note": "Fianchetto for Black." },
+        { "san": "Nf3", "note": "Natural development." },
+        { "san": "Nf6", "note": "Develop and prepare e5 push." },
+        { "san": "O-O", "note": "Castle." },
+        { "san": "O-O", "note": "Castling." },
+        { "san": "c4", "note": "Control the center." },
+        { "san": "d6", "note": "Support the center." },
+        { "san": "Nc3", "note": "Develop the queen's knight." }
+      ]
+    },
+    {
+      "id": "dutch-staunton",
+      "name": "Staunton Gambit (2.e4)",
+      "tag": "Punish",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "f5", "note": "Dutch." },
+        { "san": "e4", "note": "Staunton Gambit: sacrifice a pawn for attack." },
+        { "san": "fxe4", "note": "Accept the gambit." },
+        { "san": "Qe2", "note": "Attack the e4 pawn; sharp play." },
+        { "san": "Qe7", "note": "Defend and centralize." },
+        { "san": "Nc3", "note": "Develop with tempo." },
+        { "san": "Nf6", "note": "Develop and prepare e5." }
+      ]
+    },
+    {
+      "id": "dutch-trap-q4",
+      "name": "Trap: 2...Qe7? (Q4)",
+      "tag": "Trap",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "f5", "note": "Dutch." },
+        { "san": "Qe2", "note": "Q4 variation: queen attacks f3." },
+        { "san": "Qe7", "note": "Block the queen's attack but lose tempo." },
+        { "san": "g4", "note": "Exploit the misplaced queen; attack the weak f5 pawn." },
+        { "san": "fxg4", "note": "Black loses the f5 pawn." },
+        { "san": "Qxe7+", "note": "Exchange queens; White's initiative remains." }
+      ]
+    }
+  ]
+}
