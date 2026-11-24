@@ -203,9 +203,10 @@ export default function DailyPuzzleView(): JSX.Element {
 
       <div style={{ display: 'flex', gap: 20, justifyContent: 'center', flexWrap: 'wrap' }}>
         <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)',
+          display: 'grid', gridTemplateColumns: 'repeat(8, 1fr)', gridTemplateRows: 'repeat(8, 1fr)',
           width: Math.min(560, (typeof window !== 'undefined' ? window.innerWidth - 40 : 560)),
           aspectRatio: '1', border: '2px solid #333', borderRadius: 8, overflow: 'hidden',
+          boxShadow: '0 12px 32px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35)',
         }}>
           {rows.map((row, rowIdx) =>
             row.map((piece, colIdx) => {
@@ -221,6 +222,7 @@ export default function DailyPuzzleView(): JSX.Element {
                   background: light ? theme.light : theme.dark,
                   cursor: (piece && piece.color === currentTurn) ? 'pointer' : 'default',
                   position: 'relative',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
                 onClick={() => {
                   if (piece && piece.color === currentTurn) {
@@ -230,9 +232,9 @@ export default function DailyPuzzleView(): JSX.Element {
                   }
                 }}>
                   {src ? (
-                    <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain', pointerEvents: 'none' }} />
+                    <img src={src} alt="" style={{ width: '86%', height: '86%', objectFit: 'contain', pointerEvents: 'none', filter: 'drop-shadow(0 2px 2px rgba(0, 0, 0, 0.35))' }} />
                   ) : piece ? (
-                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: 'clamp(20px, 4vw, 48px)', pointerEvents: 'none' }}>{getPieceLabel(piece)}</span>
+                    <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', fontSize: 'clamp(20px, 4vw, 48px)', pointerEvents: 'none', textShadow: '0 2px 3px rgba(0, 0, 0, 0.4)' }}>{getPieceLabel(piece)}</span>
                   ) : null}
                   {isLegalHighlight && !piece && (
                     <span style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '28%', height: '28%', borderRadius: '50%', background: theme.light, opacity: 0.5 }} />
@@ -241,10 +243,10 @@ export default function DailyPuzzleView(): JSX.Element {
                     <span style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, background: theme.light, opacity: 0.3 }} />
                   )}
                   {rowIdx === 7 && (
-                    <span style={{ position: 'absolute', bottom: 1, right: 3, fontSize: '8px', color: light ? theme.dark : theme.light, opacity: 0.7, pointerEvents: 'none' }}>{String.fromCharCode(97 + boardCol)}</span>
+                    <span style={{ position: 'absolute', bottom: 2, right: 4, fontSize: '12px', fontWeight: 600, color: light ? theme.dark : theme.light, opacity: 0.9, pointerEvents: 'none' }}>{String.fromCharCode(97 + boardCol)}</span>
                   )}
                   {colIdx === 0 && (
-                    <span style={{ position: 'absolute', top: 1, left: 3, fontSize: '8px', color: light ? theme.dark : theme.light, opacity: 0.7, pointerEvents: 'none' }}>{8 - boardRow}</span>
+                    <span style={{ position: 'absolute', top: 2, left: 4, fontSize: '12px', fontWeight: 600, color: light ? theme.dark : theme.light, opacity: 0.9, pointerEvents: 'none' }}>{8 - boardRow}</span>
                   )}
                 </span>
               );
