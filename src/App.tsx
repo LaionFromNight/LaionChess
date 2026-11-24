@@ -211,7 +211,7 @@ export default function App() {
     fen: e.fen, you: e.you, title: e.name, goal: e.goal, lesson: e.lesson, level: 4, surviveMoves: 25,
   }, 'endgames', 'Endgames', e.id);
 
-  // Restore view from hash on initial load
+  // Restore view from hash on initial load (one-time)
   useEffect(() => {
     const hash = window.location.hash.slice(1); // e.g. "#/daily-puzzle"
     const view = hash.replace(/^\//, '') as ActiveView;
@@ -220,10 +220,11 @@ export default function App() {
     }
   }, []);
 
-  // Update hash when view changes
+  // Update hash when view changes (prevent infinite loop)
+  const viewHashRef = useRef<string | null>(null);
   useEffect(() => {
     const viewNames: Record<ActiveView, string> = {
-      home: 'home',
+      home: '',
       analysis: 'analysis',
       openings: 'openings',
       trainer: 'trainer',
@@ -235,14 +236,13 @@ export default function App() {
       'daily-puzzle': 'daily-puzzle',
     };
     const current = viewNames[activeView];
-    if (current && current !== 'home') {
-      window.location.hash = `/${current}`;
-    } else {
-      // Replace home to avoid confusion
-      const currentHash = window.location.hash.slice(1);
-      if (currentHash) {
+    const newHash = current ? `/${current}` : '';
+    if (newHash !== viewHashRef.current) {
+      viewHashRef.current = newHash;
+      if (newHash) {
+        window.location.hash = newHash;
+      } else {
         history.replaceState(null, '', '/');
-        window.location.hash = '';
       }
     }
   }, [activeView]);
