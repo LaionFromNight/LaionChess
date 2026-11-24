@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import Board, { type BoardArrow } from '../components/Board';
 import { parseFen, toFen } from '../chess/fen';
-import { executeMove, getLegalMoves, findKing, getPieceLabel } from '../chess/logic';
+import { executeMove, getLegalMoves, findKing, getPieceLabel, createInitialState } from '../chess/logic';
 import type { GameState, Position, PieceType, PieceColor } from '../chess/types';
 import { pieceSrc, pieceCode } from '../board/pieceSrc';
 import { useSettings, BOARD_THEMES } from '../settings/useSettings';
@@ -66,7 +66,7 @@ export async function fetchRandomPuzzle(): Promise<Puzzle | null> {
   return puzzles[idx];
 }
 
-export function useDailyPuzzle(initialFen?: string): DailyPuzzleResult {
+export default function DailyPuzzleView({ onAnalysis }: { onAnalysis?: (fen: string) => void } = {}): JSX.Element {
   const { settings } = useSettings();
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [loading, setLoading] = useState(true);
@@ -192,53 +192,40 @@ export function useDailyPuzzle(initialFen?: string): DailyPuzzleResult {
     setSelectedPos(null);
   };
 
-  // Show hint: ask Stockfish for the best move from current position
+  // Show hint: highlight the next expected move
   const handleHint = async () => {
+    if (!puzzle) return;
     setShowHint(true);
-    if (puzzle) {
-      const expected = puzzle.solution[userSolutions.length]?.trim();
-      const coordMatch = expected?.match(/[a-h][1-8]/);
-      if (coordMatch) {
-        const to = coordMatch[0];
-        const toRow = 8 - Number(to[1]);
-        const toCol = to.charCodeAt(0) - 97;
-        setHintArrow({
-          from: selectedPos || { row: 0, col: 0 },
-          to: { row: toRow, col: toCol },
-          color: ARROW.green,
-          width: 2.4,
-          label: '💡',
-          labelAt: 'head',
-        });
-      }
+    const expected = puzzle.solution[userSolutions.length]?.trim();
+    const coordMatch = expected?.match(/[a-h][1-8]/);
+    if (coordMatch && selectedPos) {
+      const to = coordMatch[0];
+      const toRow = 8 - Number(to[1]);
+      const toCol = to.charCodeAt(0) - 97;
+      setHintArrow({
+        from: selectedPos,
+        to: { row: toRow, col: toCol },
+        color: ARROW.green,
+        width: 2.4,
+        label: '💡',
+        labelAt: 'head',
+      });
     }
   };
 
-  const handleRestart = () => {
+  const handleRestart = useCallback(() => {
     if (puzzle) {
       const st = parseFen(puzzle.fen);
       setCurrentFen(puzzle.fen);
       setCurrentTurn(puzzle.color);
-      setGameState(st ?? gameState);
+      if (st) setGameState(st);
       setUserSolutions([]);
       setSolved(false);
       setFeedback(null);
       setShowHint(false);
       setHintArrow(null);
     }
-  };
-
-  const handleOpenInAnalysis = () => {
-    if (currentFen) {
-      const st = parseFen(currentFen);
-      if (st) {
-        // Navigate to analysis view with this position
-        const navBtn = document.querySelector('button:has(> span:contains("Analysis"))');
-        // Just show the fen
-        alert(`FEN: ${currentFen}`);
-      }
-    }
-  };
+  }, [puzzle]);
 
   const handleFlip = () => setFlipped(f => !f);
 
