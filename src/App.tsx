@@ -211,22 +211,41 @@ export default function App() {
     fen: e.fen, you: e.you, title: e.name, goal: e.goal, lesson: e.lesson, level: 4, surviveMoves: 25,
   }, 'endgames', 'Endgames', e.id);
 
-  // Remember where we are so the Lichess OAuth round-trip returns to this view,
-  // and finish that round-trip (?code=…) when we come back from lichess.org.
+  // Restore view from hash on initial load
   useEffect(() => {
-    try { sessionStorage.setItem(VIEW_KEY, activeView); } catch { /* ignore */ }
-    // Each view opens at the top (on phones the page itself scrolls, so the old
-    // scroll position would otherwise land you in the middle of the new view).
-    window.scrollTo(0, 0);
-    document.querySelector('.page-content')?.scrollTo(0, 0);
-  }, [activeView]);
-  useEffect(() => {
-    completeLichessLogin().then(back => {
-      if (back && ['home', 'openings', 'analysis', 'create', 'trainer', 'master', 'vision', 'endgames'].includes(back)) {
-        setActiveView(back as ActiveView);
-      }
-    });
+    const hash = window.location.hash.slice(1); // e.g. "#/daily-puzzle"
+    const view = hash.replace(/^\//, '') as ActiveView;
+    if (['home', 'analysis', 'openings', 'trainer', 'create', 'master', 'vision', 'endgames', 'sparring', 'daily-puzzle'].includes(view)) {
+      setActiveView(view);
+    }
   }, []);
+
+  // Update hash when view changes
+  useEffect(() => {
+    const viewNames: Record<ActiveView, string> = {
+      home: 'home',
+      analysis: 'analysis',
+      openings: 'openings',
+      trainer: 'trainer',
+      create: 'create',
+      master: 'master',
+      vision: 'vision',
+      endgames: 'endgames',
+      sparring: 'sparring',
+      'daily-puzzle': 'daily-puzzle',
+    };
+    const current = viewNames[activeView];
+    if (current && current !== 'home') {
+      window.location.hash = `/${current}`;
+    } else {
+      // Replace home to avoid confusion
+      const currentHash = window.location.hash.slice(1);
+      if (currentHash) {
+        history.replaceState(null, '', '/');
+        window.location.hash = '';
+      }
+    }
+  }, [activeView]);
 
   // ── analysis / create panel toggles ──────────────────────────────────────────
   const [showEval, setShowEval] = useState(true);
