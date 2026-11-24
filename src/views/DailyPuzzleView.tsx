@@ -150,8 +150,6 @@ export default function DailyPuzzleView(): JSX.Element {
     setSelectedPos(null);
   };
 
-  const handleFlip = () => setFlipped(f => !f);
-
   const handleRestart = () => {
     if (puzzle) {
       setCurrentFen(puzzle.fen);
@@ -162,7 +160,6 @@ export default function DailyPuzzleView(): JSX.Element {
       setUserSolutions([]);
       setSolved(false);
       setFeedback(null);
-      setSelectedPos(null);
     }
   };
 
