@@ -1,0 +1,65 @@
+{
+  "id": "trompowsky-attack",
+  "name": "Trompowsky Attack",
+  "playAs": "w",
+  "description": "1.d4 Nf6 2.Bg5: the Trompowsky — aggressive bishop pin that avoids mainline theory. Covers Ruy Lopez Exchange (3...d5), Isolated Queen's Pawn (IQP) positions, and the Japanese Variation (2...Ne4).",
+  "lines": [
+    {
+      "id": "tromp-main",
+      "name": "Main Line — Classical Tromp",
+      "tag": "Main",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops naturally." },
+        { "san": "Bg5", "note": "Trompowsky: pin the knight; avoid mainline d4 openings." },
+        { "san": "Ne4", "note": "Japanese Variation: exchange the bishop." },
+        { "san": "Bxf6", "note": "Double Black's pawns; but White gains the bishop pair." },
+        { "san": "gxf6", "note": "Black accepts doubled pawns; open g-file." },
+        { "san": "Qd2", "note": "Develop and prepare e4 push." },
+        { "san": "d5", "note": "Establish a strong center." },
+        { "san": "e3", "note": "Solid development; prepare e4." },
+        { "san": "Bg7", "note": "Fianchetto the bishop." },
+        { "san": "f3", "note": "Support the center; prepare e4." },
+        { "san": "c6", "note": "Support the d5 pawn." },
+        { "san": "c3", "note": "Support d4; prepare e4." },
+        { "san": "e6", "note": "Solid development." },
+        { "san": "Nd2", "note": "Prepare f4 push; develop the knight." }
+      ]
+    },
+    {
+      "id": "tromp-rubinstein",
+      "name": "Rubinstein Variation (2...d5)",
+      "tag": "Sideline",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops naturally." },
+        { "san": "Bg5", "note": "Trompowsky." },
+        { "san": "d5", "note": "Rubinstein: challenge the center." },
+        { "san": "e3", "note": "Solid; prepare e4." },
+        { "san": "e6", "note": "Solid development." },
+        { "san": "Nd2", "note": "Prepare f4 push; develop." },
+        { "san": "Be7", "note": "Solid development." },
+        { "san": "f4", "note": "Tromp-style aggressive pawn push." },
+        { "san": "O-O", "note": "Castling." },
+        { "san": "Qf3", "note": "Queen central; pressure on e4." }
+      ]
+    },
+    {
+      "id": "tromp-trap-nxe4",
+      "name": "Trap: 2...Ne4 3.Bxf6 gxf6? (Weak kingside)",
+      "tag": "Trap",
+      "plies": [
+        { "san": "d4", "from": "d2", "to": "d4" },
+        { "san": "Nf6", "note": "Black develops." },
+        { "san": "Bg5", "note": "Trompousky." },
+        { "san": "Ne4", "note": "Japanese Variation." },
+        { "san": "Bxf6", "note": "Double the pawns." },
+        { "san": "gxf6", "note": "Doubled f-pawns; kingside weakened." },
+        { "san": "Qe2+", "note": "Check; exploit the weakened kingside." },
+        { "san": "Qe7", "note": "Block; but the king is exposed." },
+        { "san": "Nc3", "note": "Develop with tempo." },
+        { "san": "d6", "note": "Solidify the center." }
+      ]
+    }
+  ]
+}
