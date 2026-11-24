@@ -879,8 +879,13 @@ export default function App() {
           <VisionView courses={courses} onAnalysis={openAnalysisFromState} />
         )}
 
-        {activeView === 'daily-puzzle' && (
+        {/* {activeView === 'daily-puzzle' && (
           <DailyPuzzleView onAnalysis={openAnalysisFromState} />
+        )} */}
+        {activeView === 'daily-puzzle' && (
+          <div style={{ padding: 40, textAlign: 'center', color: '#f44336' }}>
+            DailyPuzzleView temporarily disabled (debugging)
+          </div>
         )}
 
         {activeView === 'endgames' && <EndgamesView onStart={startEndgame} />}
