@@ -39,8 +39,8 @@
       "fen": "rnbqkbnr/pp3ppp/4p3/3p1B2/3P4/8/PPP1PPPP/RNBQK1NR w KQkq - 0 5"
     },
     {
-      "id": "trompousky-attack",
-      "file": "trompousky-attack.json",
+      "id": "trompowsky-attack",
+      "file": "trompowsky-attack.json",
       "name": "Trompousky Attack",
       "desc": "1.d4 Nf6 2.Bg5: aggressive bishop pin that avoids mainline theory. Classical, Japanese and Rubinstein variations.",
       "fen": "rnbqkbnr/ppp1pppp/3p4/3P4/8/5N2/PPPP1PPP/RNBQKB1R w KQkq - 1 3"
