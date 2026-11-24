@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { parseFen, toFen } from '../chess/fen';
-import { createInitialState, getLegalMoves, getPieceLabel } from '../chess/logic';
+import { createInitialState, executeMove, getLegalMoves, getPieceLabel } from '../chess/logic';
+import { resolveSan } from '../chess/san';
 import type { GameState, Position, PieceColor, PieceType } from '../chess/types';
 import { useSettings, BOARD_THEMES } from '../settings/useSettings';
 import { pieceSrc } from '../board/pieceSrc';
@@ -64,7 +65,8 @@ export default function DailyPuzzleView(): JSX.Element {
   const [feedbackMsg, setFeedbackMsg] = useState('');
   const [selectedPos, setSelectedPos] = useState<{ row: number; col: number } | null>(null);
   const [flipped, setFlipped] = useState(false);
-  const [totalMoves, setTotalMoves] = useState(0);
+  const [locked, setLocked] = useState(false);
+  const restartToken = useRef(0);
 
   // Fetch puzzle on mount
   useEffect(() => {
@@ -76,7 +78,6 @@ export default function DailyPuzzleView(): JSX.Element {
           setPuzzle(p);
           setCurrentFen(p.fen);
           setCurrentTurn(p.color);
-          setTotalMoves(p.solution?.length || 0);
           const st = parseFen(p.fen);
           if (st) setGameState(st);
         } else {
@@ -96,17 +97,20 @@ export default function DailyPuzzleView(): JSX.Element {
     state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
     state.blackCanCastleKingside, state.blackCanCastleQueenside) : [];
 
+  const userColor = puzzle?.color ?? 'white';
+  const userMoveCount = Math.ceil((puzzle?.solution?.length ?? 0) / 2);
+
   const handleSquareClick = (row: number, col: number) => {
-    if (solved) return;
+    if (solved || locked) return;
     const piece = state.board[row][col];
-    if (!piece || piece.color !== currentTurn) return;
+    if (!piece || piece.color !== userColor) return;
     setSelectedPos({ row, col });
   };
 
   const handleFlip = () => setFlipped(f => !f);
 
   const handleDestClick = (toRow: number, toCol: number) => {
-    if (!selectedPos) return;
+    if (!selectedPos || locked || solved) return;
     const from = selectedPos;
     const legal = getLegalMoves(state.board, from, state.enPassantTarget,
       state.whiteCanCastleKingside, state.whiteCanCastleQueenside,
@@ -116,42 +120,77 @@ export default function DailyPuzzleView(): JSX.Element {
       setSelectedPos(null);
       return;
     }
-    const movingPiece = state.board[from.row][from.col];
-    const newState = { ...state, board: state.board.map(r => [...r]) };
-    newState.board[toRow][toCol] = movingPiece;
-    newState.board[from.row][from.col] = null;
-    newState.currentTurn = newState.currentTurn === 'white' ? 'black' : 'white';
 
     const moveFrom = `${String.fromCharCode(97 + from.col)}${8 - from.row}`;
     const moveTo = `${String.fromCharCode(97 + toCol)}${8 - toRow}`;
 
-    const nextIdx = userSolutions.length;
-    if (nextIdx < (puzzle?.solution?.length || 0)) {
-      const expected = puzzle.solution[nextIdx].trim().toLowerCase();
-      const coordMatch = expected.match(/[a-h][1-8]/);
-      const expectedCoord = coordMatch ? coordMatch[0].toLowerCase() : null;
-
-      if (expectedCoord && moveTo.toLowerCase() === expectedCoord) {
-        setFeedback('correct');
-        setFeedbackMsg('Correct!');
-        setUserSolutions([...userSolutions, `${moveFrom}${moveTo}`]);
-        setCurrentFen(toFen(newState));
-        setGameState(newState);
-        setCurrentTurn(newState.currentTurn);
-        if (userSolutions.length + 1 >= (puzzle?.solution?.length || 0)) {
-          setSolved(true);
-          setFeedbackMsg('Puzzle Solved!');
-        }
+    // The user plays the even-index moves in the solution (their color always moves first)
+    const expectedIdx = userSolutions.length * 2;
+    const expectedSan = puzzle?.solution?.[expectedIdx];
+    let correct = false;
+    if (expectedSan) {
+      const resolved = resolveSan(state, expectedSan);
+      if (resolved) {
+        correct = resolved.from.row === from.row && resolved.from.col === from.col
+          && resolved.to.row === toRow && resolved.to.col === toCol;
       } else {
-        setFeedback('wrong');
-        setFeedbackMsg('Wrong move.');
-        setTimeout(() => { setFeedback(null); setFeedbackMsg(''); }, 2000);
+        // Fallback: relaxed destination-coordinate match
+        const coordMatch = expectedSan.trim().toLowerCase().match(/[a-h][1-8]/);
+        const expectedCoord = coordMatch ? coordMatch[0].toLowerCase() : null;
+        correct = !!expectedCoord && moveTo.toLowerCase() === expectedCoord;
       }
     }
+
+    if (!correct) {
+      setFeedback('wrong');
+      setFeedbackMsg('Wrong move.');
+      setTimeout(() => { setFeedback(null); setFeedbackMsg(''); }, 2000);
+      setSelectedPos(null);
+      return;
+    }
+
+    const to = { row: toRow, col: toCol };
+    const newState = executeMove(state, from, to);
+    const newUserSolutions = [...userSolutions, `${moveFrom}${moveTo}`];
+    setUserSolutions(newUserSolutions);
+    setGameState(newState);
+    setCurrentFen(toFen(newState));
+    setCurrentTurn(newState.currentTurn);
     setSelectedPos(null);
+    setFeedback('correct');
+    setFeedbackMsg('Correct!');
+
+    if (newUserSolutions.length >= userMoveCount) {
+      setSolved(true);
+      setFeedback('correct');
+      setFeedbackMsg('Puzzle Solved!');
+      return;
+    }
+
+    // The opponent's next move (odd index) is played automatically
+    const oppIdx = newUserSolutions.length * 2 - 1;
+    const oppSan = puzzle?.solution?.[oppIdx];
+    if (oppSan && oppIdx < (puzzle?.solution?.length ?? 0)) {
+      setLocked(true);
+      const token = restartToken.current;
+      setTimeout(() => {
+        if (restartToken.current !== token) return;
+        const resolved = resolveSan(newState, oppSan);
+        if (resolved) {
+          const oppState = executeMove(newState, resolved.from, resolved.to, resolved.promotionPiece);
+          setGameState(oppState);
+          setCurrentFen(toFen(oppState));
+          setCurrentTurn(oppState.currentTurn);
+        }
+        setFeedback(null);
+        setFeedbackMsg('');
+        setLocked(false);
+      }, 650);
+    }
   };
 
   const handleRestart = () => {
+    restartToken.current++;
     if (puzzle) {
       setCurrentFen(puzzle.fen);
       setCurrentTurn(puzzle.color);
@@ -161,6 +200,8 @@ export default function DailyPuzzleView(): JSX.Element {
       setUserSolutions([]);
       setSolved(false);
       setFeedback(null);
+      setFeedbackMsg('');
+      setLocked(false);
     }
   };
 
@@ -220,12 +261,12 @@ export default function DailyPuzzleView(): JSX.Element {
               return (
                 <span key={key} style={{
                   background: light ? theme.light : theme.dark,
-                  cursor: (piece && piece.color === currentTurn) ? 'pointer' : 'default',
+                  cursor: (piece && piece.color === userColor && !locked && !solved) ? 'pointer' : 'default',
                   position: 'relative',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                 }}
                 onClick={() => {
-                  if (piece && piece.color === currentTurn) {
+                  if (piece && piece.color === userColor) {
                     handleSquareClick(boardRow, boardCol);
                   } else if (selectedPos) {
                     handleDestClick(boardRow, boardCol);
@@ -266,7 +307,7 @@ export default function DailyPuzzleView(): JSX.Element {
                   <span style={{ background: '#9c27b0', padding: '2px 8px', borderRadius: 12, fontSize: 12, color: '#fff' }}>{puzzle.mateIn} move{puzzle.mateIn > 1 ? 's' : ''}</span>
                 </div>
                 <p style={{ margin: '8px 0 0', fontSize: 13, color: '#888' }}>
-                  {currentTurn === 'white' ? 'White' : 'Black'} to move
+                  {locked ? `${currentTurn === 'white' ? 'White' : 'Black'} (auto)` : `${userColor === 'white' ? 'White' : 'Black'} to move`}
                 </p>
                 <p style={{ margin: '4px 0 0', fontSize: 13, color: '#ccc' }}>
                   {puzzle.description}
@@ -287,11 +328,11 @@ export default function DailyPuzzleView(): JSX.Element {
                 </div>
               )}
 
-              {!solved && totalMoves > 0 && (
+              {!solved && userMoveCount > 0 && (
                 <div style={{ background: '#1a1a2e', borderRadius: 10, padding: 12, border: '1px solid #333' }}>
                   <span style={{ fontSize: 12, color: '#888' }}>Progress: </span>
                   <div style={{ height: 6, background: '#333', borderRadius: 3, overflow: 'hidden', marginTop: 4 }}>
-                    <div style={{ height: '100%', width: `${userSolutions.length / totalMoves * 100}%`, background: '#4caf50', borderRadius: 3, transition: 'width 0.3s' }} />
+                    <div style={{ height: '100%', width: `${(userSolutions.length / userMoveCount) * 100}%`, background: '#4caf50', borderRadius: 3, transition: 'width 0.3s' }} />
                   </div>
                 </div>
               )}
