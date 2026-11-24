@@ -11,6 +11,55 @@
       "fen": "r1bqkbnr/pppp1ppp/2n5/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 2 4"
     },
     {
+      "id": "kings-gambit",
+      "file": "kings-gambit.json",
+      "name": "King's Gambit",
+      "desc": "Aggressive 1.e4 e5 2.f4: sacrifice a pawn for rapid development and attack on the kingside.",
+      "fen": "r1bqkbnr/pppp1ppp/2n5/4p3/5PP1/8/PPPPPKBP/RNBQN1B1 b kq - 0 3"
+    },
+    {
+      "id": "four-knights",
+      "file": "four-knights.json",
+      "name": "Four Knights Game",
+      "desc": "1.e4 e5 2.Nc3 Nc6 3.Nf3 Nf6: the most popular opening. Solid and symmetric.",
+      "fen": "r1bqkbnr/ppp1pppp/2np4/8/8/2N2N2/PPPPPPPP/R1BQKBNR w KQkq - 3 4"
+    },
+    {
+      "id": "dutch-defense",
+      "file": "dutch-defense.json",
+      "name": "Dutch Defense",
+      "desc": "1.d4 f5: aggressive counterattacking system for Black. Covers Stonewall, Leningrad and Staunton Gambit.",
+      "fen": "rnbqkbnr/ppp1pppp/8/3p4/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2"
+    },
+    {
+      "id": "benoni-defense",
+      "file": "benoni-defense.json",
+      "name": "Benoni Defense",
+      "desc": "1.d4 c5: the Benoni — dynamic counterplay on the queenside. Modern Benoni, Classical and Austrian variants.",
+      "fen": "rnbqkbnr/pp3ppp/4p3/3p1B2/3P4/8/PPP1PPPP/RNBQK1NR w KQkq - 0 5"
+    },
+    {
+      "id": "trompousky-attack",
+      "file": "trompousky-attack.json",
+      "name": "Trompousky Attack",
+      "desc": "1.d4 Nf6 2.Bg5: aggressive bishop pin that avoids mainline theory. Classical, Japanese and Rubinstein variations.",
+      "fen": "rnbqkbnr/ppp1pppp/3p4/3P4/8/5N2/PPPP1PPP/RNBQKB1R w KQkq - 1 3"
+    },
+    {
+      "id": "birds-opening",
+      "file": "birds-opening.json",
+      "name": "Bird's Opening",
+      "desc": "1.f4: Bird's Opening — aggressive flank opening that controls e5. Dutch, Stoltz-Grob and Haldex Gambit.",
+      "fen": "rnbqkbnr/ppp1pppp/8/3p4/5P2/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"
+    },
+    {
+      "id": "benko-gambit",
+      "file": "benko-gambit.json",
+      "name": "Benko Gambit",
+      "desc": "1.d4 Nf6 2.c4 c5 3.Nf3 cxd4: sacrifice a pawn for long-term queenside pressure. Accepted and Modern variations.",
+      "fen": "rnbqkbnr/ppp1pppp/3p4/8/3Pp3/2N2N2/PPP1PPPP/R1BQKB1R w KQkq - 0 4"
+    },
+    {
       "id": "italian-game",
       "file": "italian-game.json",
       "name": "Italian Game",
