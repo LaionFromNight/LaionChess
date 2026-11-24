@@ -220,33 +220,6 @@ export default function App() {
     }
   }, []);
 
-  // Update hash when view changes (prevent infinite loop)
-  const viewHashRef = useRef<string | null>(null);
-  useEffect(() => {
-    const viewNames: Record<ActiveView, string> = {
-      home: '',
-      analysis: 'analysis',
-      openings: 'openings',
-      trainer: 'trainer',
-      create: 'create',
-      master: 'master',
-      vision: 'vision',
-      endgames: 'endgames',
-      sparring: 'sparring',
-      'daily-puzzle': 'daily-puzzle',
-    };
-    const current = viewNames[activeView];
-    const newHash = current ? `/${current}` : '';
-    if (newHash !== viewHashRef.current) {
-      viewHashRef.current = newHash;
-      if (newHash) {
-        window.location.hash = newHash;
-      } else {
-        history.replaceState(null, '', '/');
-      }
-    }
-  }, [activeView]);
-
   // ── analysis / create panel toggles ──────────────────────────────────────────
   const [showEval, setShowEval] = useState(true);
   const [showBook, setShowBook] = useState(true);
